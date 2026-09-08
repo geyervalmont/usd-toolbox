@@ -1,0 +1,17 @@
+[package]
+name = "usd-toolbox-usd"
+description = "OpenUSD and USDZ material import/export for usd-toolbox"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+usd-toolbox-core.workspace = true
+openusd.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+zip.workspace = true
+
+[lints]
+workspace = true

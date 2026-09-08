@@ -1,0 +1,106 @@
+name: Build artifacts
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  native:
+    name: Native (${{ matrix.platform }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux
+            os: ubuntu-latest
+            archive: usd-toolbox-linux.tar.gz
+            dynamic_library: libusd_toolbox_ffi.so
+          - platform: macos
+            os: macos-latest
+            archive: usd-toolbox-macos.tar.gz
+            dynamic_library: libusd_toolbox_ffi.dylib
+          - platform: windows
+            os: windows-latest
+            archive: usd-toolbox-windows.zip
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build CLI and C ABI
+        run: cargo build --locked --release -p usd-toolbox-cli -p usd-toolbox-ffi
+
+      - name: Package Unix bundle
+        if: runner.os != 'Windows'
+        shell: bash
+        env:
+          ARTIFACT_NAME: usd-toolbox-${{ matrix.platform }}
+          DYNAMIC_LIBRARY: ${{ matrix.dynamic_library }}
+        run: |
+          mkdir -p "dist/$ARTIFACT_NAME"
+          cp target/release/usd-toolbox "dist/$ARTIFACT_NAME/"
+          cp "target/release/$DYNAMIC_LIBRARY" "dist/$ARTIFACT_NAME/"
+          cp target/release/libusd_toolbox_ffi.a "dist/$ARTIFACT_NAME/"
+          cp crates/ffi/include/usd_toolbox.h "dist/$ARTIFACT_NAME/"
+          cp README.md "dist/$ARTIFACT_NAME/"
+          tar -czf "dist/${{ matrix.archive }}" -C dist "$ARTIFACT_NAME"
+
+      - name: Package Windows bundle
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          ARTIFACT_NAME: usd-toolbox-${{ matrix.platform }}
+        run: |
+          $package = Join-Path dist $env:ARTIFACT_NAME
+          New-Item -ItemType Directory -Force -Path $package | Out-Null
+          Copy-Item target/release/usd-toolbox.exe $package
+          Copy-Item target/release/usd_toolbox_ffi.dll $package
+          Get-ChildItem target/release -File |
+            Where-Object { $_.Name -like 'usd_toolbox_ffi*.lib' } |
+            Copy-Item -Destination $package
+          Copy-Item crates/ffi/include/usd_toolbox.h $package
+          Copy-Item README.md $package
+          Compress-Archive -Path $package -DestinationPath "dist/${{ matrix.archive }}"
+
+      - name: Upload native bundle
+        uses: actions/upload-artifact@v7
+        with:
+          name: usd-toolbox-${{ matrix.platform }}
+          path: dist/${{ matrix.archive }}
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+
+  wasm:
+    name: Browser WASM
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - name: Install wasm-pack
+        run: cargo install wasm-pack --version 0.15.0 --locked
+      - name: Build browser package
+        run: >-
+          wasm-pack build crates/wasm
+          --target web
+          --release
+          --out-dir ../../dist/wasm
+      - name: Package browser bundle
+        run: tar -czf dist/usd-toolbox-wasm-web.tar.gz -C dist wasm
+      - name: Upload browser bundle
+        uses: actions/upload-artifact@v7
+        with:
+          name: usd-toolbox-wasm-web
+          path: dist/usd-toolbox-wasm-web.tar.gz
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0

@@ -1,0 +1,14 @@
+[package]
+name = "usd-toolbox-omniverse"
+description = "NVIDIA Omniverse-compatible OpenUSD export for usd-toolbox"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+serde.workspace = true
+usd-toolbox-core.workspace = true
+usd-toolbox-usd.workspace = true
+
+[lints]
+workspace = true

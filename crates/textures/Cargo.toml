@@ -1,0 +1,19 @@
+[package]
+name = "usd-toolbox-textures"
+description = "Texture-set import and deterministic resolution tier generation"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+fast_image_resize.workspace = true
+image.workspace = true
+usd-toolbox-core.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+thiserror.workspace = true
+time.workspace = true
+
+[lints]
+workspace = true

@@ -1,0 +1,51 @@
+[workspace]
+members = [
+    "crates/cli",
+    "crates/core",
+    "crates/materials",
+    "crates/textures",
+    "crates/materialx",
+    "crates/gltf",
+    "crates/revit",
+    "crates/omniverse",
+    "crates/usd",
+    "crates/wasm",
+    "crates/ffi",
+]
+resolver = "3"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.96"
+
+[workspace.dependencies]
+base64 = "0.22"
+clap = { version = "4.6", features = ["derive"] }
+fast_image_resize = "6.1"
+image = { version = "0.25", default-features = false, features = ["jpeg", "png"] }
+usd-toolbox-core = { path = "crates/core" }
+usd-toolbox-gltf = { path = "crates/gltf" }
+usd-toolbox-materialx = { path = "crates/materialx" }
+usd-toolbox-materials = { path = "crates/materials" }
+usd-toolbox-omniverse = { path = "crates/omniverse" }
+usd-toolbox-revit = { path = "crates/revit" }
+usd-toolbox-textures = { path = "crates/textures" }
+usd-toolbox-usd = { path = "crates/usd" }
+openusd = { version = "0.7.0", features = ["serde"] }
+quick-xml = "0.42"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+tempfile = "3"
+thiserror = "2"
+time = { version = "0.3", features = ["formatting", "parsing", "serde", "serde-well-known"] }
+wasm-bindgen = "0.2"
+serde-wasm-bindgen = "0.6"
+zip = { version = "8.2", default-features = false }
+
+[workspace.lints.rust]
+unsafe_op_in_unsafe_fn = "deny"
+
+[workspace.lints.clippy]
+all = "warn"

@@ -1,0 +1,75 @@
+#usda 1.0
+(
+    defaultPrim = "Materials"
+    metersPerUnit = 1.0
+    upAxis = "Y"
+    customLayerData = {
+    string olsyn_builder = "usd-toolbox"
+    string olsyn_builderVersion = "0.1.0"
+    string olsyn_manifestJson = "{\"schema_version\":1,\"materials\":[{\"id\":\"reference_material\",\"name\":\"Reference Material\",\"model\":\"open_pbr\",\"surface\":{\"base_color\":{\"kind\":\"constant\",\"value\":[0.32,0.12,0.04,1.0]},\"base_metalness\":{\"kind\":\"constant\",\"value\":0.15},\"specular_roughness\":{\"kind\":\"constant\",\"value\":0.42},\"specular_ior\":{\"kind\":\"constant\",\"value\":1.5},\"specular_weight\":null,\"specular_anisotropy\":null,\"transmission_weight\":null,\"transmission_thickness\":null,\"coat_weight\":null,\"coat_roughness\":null,\"fuzz_weight\":null,\"fuzz_roughness\":null,\"subsurface_weight\":null,\"emission_color\":null},\"geometry\":{\"normal\":null,\"height\":null,\"bump\":null,\"opacity\":null,\"ambient_occlusion\":null},\"tiling\":null,\"auxiliary\":[],\"provenance\":{\"builder\":null,\"builder_version\":null,\"built_at\":null,\"source_identifier\":null,\"supplier_source\":null,\"version\":null,\"derivations\":{},\"source_assets\":{},\"events\":[]},\"variants\":[{\"name\":\"colour way\",\"default\":\"warm red\",\"variants\":[{\"name\":\"warm red\",\"overrides\":{\"base_color\":{\"type\":\"color4\",\"value\":{\"kind\":\"constant\",\"value\":[0.55,0.04,0.02,1.0]}}}},{\"name\":\"cool blue\",\"overrides\":{\"base_color\":{\"type\":\"color4\",\"value\":{\"kind\":\"constant\",\"value\":[0.03,0.12,0.55,1.0]}}}}]}]}]}"
+    string olsyn_manifestSha256 = "3047305973341f8688036be05bc1fe2bbda10d4848f8be1f64a5f08fa787ee8b"
+}
+)
+
+def Scope "Materials"
+{
+    def Material "reference_material" (
+        assetInfo = {
+    string identifier = "reference_material"
+    string name = "Reference Material"
+}
+        customData = {
+    string olsyn_provenance = "{\"builder\":null,\"builder_version\":null,\"built_at\":null,\"source_identifier\":null,\"supplier_source\":null,\"version\":null,\"derivations\":{},\"source_assets\":{},\"events\":[]}"
+    string olsyn_tiling = "null"
+}
+        prepend variantSets = "colour_way"
+        variants = { string "colour_way" = "warm_red" }
+    )
+    {
+        token outputs:surface
+        token outputs:surface.connect = </Materials/reference_material/OpenPBR.outputs:out>
+        variantSet "colour_way" = {
+            "warm_red" (
+                customData = {
+    string olsyn_overrides = "{\"base_color\":{\"type\":\"color4\",\"value\":{\"kind\":\"constant\",\"value\":[0.55,0.04,0.02,1.0]}}}"
+}
+            ) {
+                over "OpenPBR"
+                {
+                    color3f inputs:base_color = (0.550000011920929, 0.03999999910593033, 0.019999999552965164) (
+                        assetInfo = {
+    float olsyn_alpha = 1.0
+}
+                    )
+                }
+            }
+            "cool_blue" (
+                customData = {
+    string olsyn_overrides = "{\"base_color\":{\"type\":\"color4\",\"value\":{\"kind\":\"constant\",\"value\":[0.03,0.12,0.55,1.0]}}}"
+}
+            ) {
+                over "OpenPBR"
+                {
+                    color3f inputs:base_color = (0.029999999329447746, 0.11999999731779099, 0.550000011920929) (
+                        assetInfo = {
+    float olsyn_alpha = 1.0
+}
+                    )
+                }
+            }
+        }
+        def Shader "OpenPBR"
+        {
+            token info:id = "ND_open_pbr_surface_surfaceshader"
+            token outputs:out
+            color3f inputs:base_color = (0.3199999928474426, 0.11999999731779099, 0.03999999910593033) (
+                assetInfo = {
+    float olsyn_alpha = 1.0
+}
+            )
+            float inputs:base_metalness = 0.15000000596046448
+            float inputs:specular_roughness = 0.41999998688697815
+            float inputs:specular_ior = 1.5
+        }
+    }
+}

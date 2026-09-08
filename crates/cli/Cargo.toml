@@ -1,0 +1,34 @@
+[package]
+name = "usd-toolbox-cli"
+description = "Filesystem-oriented command-line interface for usd-toolbox"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "usd-toolbox"
+path = "src/main.rs"
+
+[dependencies]
+clap.workspace = true
+image.workspace = true
+usd-toolbox-core.workspace = true
+usd-toolbox-gltf.workspace = true
+usd-toolbox-materials.workspace = true
+usd-toolbox-materialx.workspace = true
+usd-toolbox-omniverse.workspace = true
+usd-toolbox-revit.workspace = true
+usd-toolbox-textures.workspace = true
+usd-toolbox-usd.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+tempfile.workspace = true
+thiserror.workspace = true
+time.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true
