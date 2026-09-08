@@ -999,7 +999,7 @@ checksum = "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75"
 
 [[package]]
 name = "usd-toolbox-cli"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "clap",
  "image",
@@ -1021,7 +1021,7 @@ dependencies = [
 
 [[package]]
 name = "usd-toolbox-core"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "serde",
  "serde_json",
@@ -1031,7 +1031,7 @@ dependencies = [
 
 [[package]]
 name = "usd-toolbox-ffi"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "cbindgen",
  "serde",
@@ -1049,7 +1049,7 @@ dependencies = [
 
 [[package]]
 name = "usd-toolbox-gltf"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "base64",
  "image",
@@ -1061,7 +1061,7 @@ dependencies = [
 
 [[package]]
 name = "usd-toolbox-materials"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "image",
  "serde",
@@ -1074,7 +1074,7 @@ dependencies = [
 
 [[package]]
 name = "usd-toolbox-materialx"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "quick-xml",
  "serde",
@@ -1085,7 +1085,7 @@ dependencies = [
 
 [[package]]
 name = "usd-toolbox-omniverse"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "serde",
  "usd-toolbox-core",
@@ -1094,7 +1094,7 @@ dependencies = [
 
 [[package]]
 name = "usd-toolbox-revit"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "image",
  "serde",
@@ -1106,7 +1106,7 @@ dependencies = [
 
 [[package]]
 name = "usd-toolbox-textures"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "fast_image_resize",
  "image",
@@ -1120,7 +1120,7 @@ dependencies = [
 
 [[package]]
 name = "usd-toolbox-usd"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "openusd",
  "serde",
@@ -1132,7 +1132,7 @@ dependencies = [
 
 [[package]]
 name = "usd-toolbox-wasm"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "serde",
  "serde-wasm-bindgen",

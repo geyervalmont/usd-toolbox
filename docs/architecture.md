@@ -51,6 +51,12 @@ metadata, bad defaults, and duplicate variants.
 - Roles use the fixed OPAL vocabulary.
 - Tiers are `preview`, `1k`, `2k`, `4k`, and `8k` in stable order.
 - Texture filenames are SHA-256-addressed and deduplicated in packages.
+- Empty payload fields are omitted from packaged metadata. Provenance refers to
+  retained sources by SHA-256 and reuses an existing texture or auxiliary entry
+  when that exact content is already present.
+- The default codec policy preserves JPEG/PNG for base colour. Normal, roughness,
+  metallic, AO, height, and other data maps use lossless PNG. Callers of the
+  lower-level texture API can override the policy per role.
 - Tiling is a physical millimetre repeat, not a context-dependent UV multiplier.
 
 ## USDZ layout
@@ -60,7 +66,7 @@ material.usdz
 ├── material.usda
 ├── textures/<sha256>.<ext>
 ├── auxiliary/<sha256>.<ext>
-├── provenance/sources/<sha256>.<ext>
+├── provenance/sources/<sha256>.<ext>  # only when content is not already packaged
 └── provenance/provenance.usda
 ```
 

@@ -16,6 +16,14 @@ fn png(width: u32, height: u32, color: Rgba<u8>) -> Vec<u8> {
     out.into_inner()
 }
 
+fn jpeg(width: u32, height: u32, color: Rgba<u8>) -> Vec<u8> {
+    let mut out = Cursor::new(Vec::new());
+    DynamicImage::ImageRgba8(RgbaImage::from_pixel(width, height, color))
+        .write_to(&mut out, ImageFormat::Jpeg)
+        .unwrap();
+    out.into_inner()
+}
+
 #[test]
 fn requires_explicit_colour_space() {
     let input = TextureInput {
@@ -94,6 +102,79 @@ fn missing_preview_is_generated_deterministically() {
     assert_eq!(texture.tiers[&Tier::Preview].width, Some(512));
     let derivation = &first.material.provenance.derivations[&texture.tiers[&Tier::Preview].hash];
     assert_eq!(derivation.operation, Operation::Downscale);
+}
+
+#[test]
+fn base_color_downscales_preserve_a_jpeg_source_codec() {
+    let bytes = jpeg(1024, 512, Rgba([20, 40, 60, 255]));
+    let input = TextureInput {
+        name: "paint_base_color_1k.jpg".into(),
+        bytes: bytes.clone(),
+        metadata: TextureMetadata {
+            role: Some(MapRole::BaseColor),
+            tier: Some(Tier::K1),
+            color_space: Some(ColorSpace::Srgb),
+            channel: None,
+            normal_convention: None,
+        },
+    };
+    let options = TextureImportOptions {
+        material_id: "paint".into(),
+        material_name: "Paint".into(),
+        required_tiers: vec![Tier::Preview, Tier::K1],
+        ..Default::default()
+    };
+    let first = TextureSetImporter
+        .import_set(std::slice::from_ref(&input), &options)
+        .unwrap();
+    let second = TextureSetImporter.import_set(&[input], &options).unwrap();
+    assert_eq!(first, second);
+
+    let texture = first.material.surface.base_color.texture().unwrap();
+    assert_eq!(texture.tiers[&Tier::K1].bytes, bytes);
+    assert_eq!(texture.tiers[&Tier::Preview].extension, "jpg");
+    assert_eq!(texture.tiers[&Tier::Preview].media_type, "image/jpeg");
+    assert_eq!(
+        image::guess_format(&texture.tiers[&Tier::Preview].bytes).unwrap(),
+        ImageFormat::Jpeg
+    );
+}
+
+#[test]
+fn data_maps_use_lossless_png_storage_by_default() {
+    let bytes = jpeg(512, 512, Rgba([90, 90, 90, 255]));
+    let input = TextureInput {
+        name: "paint_roughness_preview.jpg".into(),
+        bytes: bytes.clone(),
+        metadata: TextureMetadata {
+            role: Some(MapRole::Roughness),
+            tier: Some(Tier::Preview),
+            color_space: Some(ColorSpace::Raw),
+            channel: Some(Channel::R),
+            normal_convention: None,
+        },
+    };
+    let result = TextureSetImporter
+        .import_set(
+            &[input],
+            &TextureImportOptions {
+                material_id: "paint".into(),
+                material_name: "Paint".into(),
+                required_tiers: vec![Tier::Preview],
+                ..Default::default()
+            },
+        )
+        .unwrap();
+
+    let texture = result.material.surface.specular_roughness.texture().unwrap();
+    assert_eq!(texture.tiers[&Tier::Preview].extension, "png");
+    assert_eq!(texture.tiers[&Tier::Preview].media_type, "image/png");
+    assert_eq!(result.material.provenance.source_assets.len(), 1);
+    assert_eq!(
+        result.material.provenance.source_assets.values().next().unwrap().bytes,
+        bytes
+    );
+    assert!(result.losses[0].detail.contains("codec policy"));
 }
 
 #[test]

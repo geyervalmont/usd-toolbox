@@ -5,8 +5,8 @@ use std::io::{Cursor, Read};
 
 use sha2::{Digest, Sha256 as Sha256Hasher};
 use usd_toolbox_core::{
-    AuxiliaryAsset, AuxiliaryRole, ColorSpace, Exporter, Importer, Input, MapRole, Material, ParameterValue, Sha256,
-    TextureRef, TextureSource, Tier, Value, Variant, VariantSet,
+    AuxiliaryAsset, AuxiliaryRole, ColorSpace, Exporter, Importer, Input, MapRole, Material, ParameterValue,
+    ProvenanceAsset, Sha256, TextureRef, TextureSource, Tier, Value, Variant, VariantSet,
 };
 use usd_toolbox_usd::{UsdExportOptions, UsdExporter, UsdFormat, UsdImportOptions, UsdImporter};
 
@@ -118,6 +118,50 @@ fn usdz_is_deterministic_aligned_and_lossless() {
 
     let imported = UsdImporter
         .import(Input::Bytes(&first.bytes), &UsdImportOptions::default())
+        .unwrap();
+    assert_eq!(imported, vec![material]);
+}
+
+#[test]
+fn usdz_references_payloads_by_hash_without_inline_bytes_or_duplicate_sources() {
+    let mut material = textured_material();
+    let source = material.surface.base_color.texture().unwrap().tiers[&Tier::Preview].clone();
+    material.provenance.source_assets.insert(
+        source.hash.clone(),
+        ProvenanceAsset {
+            name: "original.png".into(),
+            extension: source.extension.clone(),
+            media_type: source.media_type.clone(),
+            bytes: source.bytes.clone(),
+        },
+    );
+
+    let export = UsdExporter
+        .export(std::slice::from_ref(&material), &UsdExportOptions::default())
+        .unwrap();
+    let mut archive = zip::ZipArchive::new(Cursor::new(&export.bytes)).unwrap();
+    let mut stage = String::new();
+    archive
+        .by_name("material.usda")
+        .unwrap()
+        .read_to_string(&mut stage)
+        .unwrap();
+    assert!(!stage.contains("\"bytes\":"));
+    assert!(stage.lines().map(str::len).max().unwrap_or(0) < 10_000);
+
+    let names = (0..archive.len())
+        .map(|index| archive.by_index(index).unwrap().name().to_owned())
+        .collect::<Vec<_>>();
+    assert_eq!(
+        names.iter().filter(|name| name.contains(&source.hash.0)).count(),
+        1,
+        "content-addressed payload must only be stored once: {names:?}"
+    );
+    assert!(names.contains(&source.package_path()));
+    assert!(!names.contains(&format!("provenance/sources/{}.png", source.hash)));
+
+    let imported = UsdImporter
+        .import(Input::Bytes(&export.bytes), &UsdImportOptions::default())
         .unwrap();
     assert_eq!(imported, vec![material]);
 }

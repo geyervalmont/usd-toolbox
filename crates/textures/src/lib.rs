@@ -8,7 +8,7 @@ use std::io::Cursor;
 use std::str::FromStr;
 
 use fast_image_resize::{PixelType, Resizer, images::Image as ResizeImage};
-use image::{DynamicImage, ImageFormat, RgbaImage};
+use image::{DynamicImage, ExtendedColorType, ImageFormat, RgbaImage, codecs::jpeg::JpegEncoder};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use sha2::{Digest, Sha256 as Sha256Hasher};
@@ -46,6 +46,54 @@ pub struct TextureInput {
     pub metadata: TextureMetadata,
 }
 
+/// Encoding rule applied to stored and generated tiers for one map role.
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum TextureEncoding {
+    /// Keep PNG as PNG and JPEG as JPEG. Resized JPEG tiers are encoded at the
+    /// deterministic quality configured by [`TextureCodecPolicy`].
+    PreserveSource,
+    /// Store decoded pixels as PNG so subsequent processing adds no lossy
+    /// compression. This cannot restore information already lost in a JPEG.
+    Lossless,
+}
+
+/// Per-role texture encoding policy.
+///
+/// Unlisted roles use the library defaults: base colour preserves its source
+/// codec, while normal, scalar, mask, and other data maps use lossless PNG.
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(default)]
+pub struct TextureCodecPolicy {
+    /// Optional overrides keyed by semantic map role.
+    pub roles: BTreeMap<MapRole, TextureEncoding>,
+    /// Quality used only when a generated tier preserves a JPEG source codec.
+    pub jpeg_quality: u8,
+}
+
+impl Default for TextureCodecPolicy {
+    fn default() -> Self {
+        Self {
+            roles: BTreeMap::new(),
+            jpeg_quality: 90,
+        }
+    }
+}
+
+impl TextureCodecPolicy {
+    /// Returns the configured encoding or the safe default for a role.
+    #[must_use]
+    pub fn encoding_for(&self, role: MapRole) -> TextureEncoding {
+        self.roles.get(&role).copied().unwrap_or_else(|| {
+            if role == MapRole::BaseColor {
+                TextureEncoding::PreserveSource
+            } else {
+                TextureEncoding::Lossless
+            }
+        })
+    }
+}
+
 /// Texture-set import configuration.
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(default)]
@@ -61,6 +109,8 @@ pub struct TextureImportOptions {
     /// Permit `_gl`/`_dx` filename hints when explicit normal metadata is absent.
     /// Disabled by default because a filename is not authoritative colour data.
     pub infer_normal_convention_from_filename: bool,
+    /// Codec selection for supplied and generated texture tiers.
+    pub codec_policy: TextureCodecPolicy,
     /// Exact timestamp recorded on generated derivations. Defaults to the Unix epoch
     /// for reproducibility; production callers should supply their ingest time.
     #[serde(with = "time::serde::rfc3339")]
@@ -77,6 +127,7 @@ impl Default for TextureImportOptions {
             required_tiers: vec![Tier::Preview, Tier::K1, Tier::K2, Tier::K4, Tier::K8],
             normal_target: None,
             infer_normal_convention_from_filename: false,
+            codec_policy: TextureCodecPolicy::default(),
             created: OffsetDateTime::UNIX_EPOCH,
             files: BTreeMap::new(),
         }
@@ -108,6 +159,12 @@ impl TextureSetImporter {
         }
         if options.material_id.trim().is_empty() {
             return Err(ImportError::Missing("material_id".into()));
+        }
+        if !(1..=100).contains(&options.codec_policy.jpeg_quality) {
+            return Err(ImportError::Invalid {
+                format: "texture set",
+                detail: "codec_policy.jpeg_quality must be between 1 and 100".into(),
+            });
         }
 
         let mut material = Material::new(&options.material_id, &options.material_name);
@@ -240,7 +297,9 @@ fn prepare_input(
         ));
     }
 
-    let source = if let Some((parameter, detail)) = conversion {
+    let target_format = output_format(&options.codec_policy, role, format);
+    let encoding_changed = target_format != format;
+    let source = if conversion.is_some() || encoding_changed {
         let (extension, media_type) = format_details(format)?;
         material.provenance.source_assets.insert(
             original_hash.clone(),
@@ -251,8 +310,21 @@ fn prepare_input(
                 bytes: input.bytes.clone(),
             },
         );
-        let bytes = encode_png(&transformed)?;
+        let bytes = encode_image(&transformed, target_format, options.codec_policy.jpeg_quality)?;
         let result_hash = digest(&bytes);
+        let (result_extension, result_media_type) = format_details(target_format)?;
+        let (parameter, mut details) = conversion.map_or_else(
+            || (parameter_for_role(role), Vec::new()),
+            |(parameter, detail)| (parameter, vec![detail]),
+        );
+        if encoding_changed {
+            details.push(format!(
+                "{} source was stored as {} by the `{role}` codec policy",
+                extension.to_ascii_uppercase(),
+                result_extension.to_ascii_uppercase()
+            ));
+        }
+        let detail = details.join("; ");
         material.provenance.derivations.insert(
             result_hash.clone(),
             Derivation {
@@ -261,7 +333,11 @@ fn prepare_input(
                 tool: "usd-toolbox".into(),
                 tool_version: env!("CARGO_PKG_VERSION").into(),
                 model: None,
-                parameters: json!({ "detail": detail }),
+                parameters: json!({
+                    "detail": detail,
+                    "source_codec": extension,
+                    "result_codec": result_extension,
+                }),
                 created: options.created,
             },
         );
@@ -278,8 +354,8 @@ fn prepare_input(
         });
         TextureSource {
             hash: result_hash,
-            extension: "png".into(),
-            media_type: "image/png".into(),
+            extension: result_extension.into(),
+            media_type: result_media_type.into(),
             width: Some(width),
             height: Some(height),
             bytes,
@@ -374,7 +450,9 @@ fn assemble_texture(
             )));
         }
         let resized = resize_to_longest(&parent_image, tier.pixels())?;
-        let bytes = encode_png(&resized)?;
+        let parent_format = source_format(&parent)?;
+        let target_format = output_format(&options.codec_policy, role, parent_format);
+        let bytes = encode_image(&resized, target_format, options.codec_policy.jpeg_quality)?;
         let hash = digest(&bytes);
         let operation = if tier.pixels() < parent_longest {
             Operation::Downscale
@@ -384,6 +462,7 @@ fn assemble_texture(
             Operation::Copied
         };
         let (width, height) = resized.dimensions();
+        let (extension, media_type) = format_details(target_format)?;
         material
             .provenance
             .derivations
@@ -399,6 +478,9 @@ fn assemble_texture(
                     "tier": tier.as_str(),
                     "width": width,
                     "height": height,
+                    "codec": extension,
+                    "jpeg_quality": (target_format == ImageFormat::Jpeg)
+                        .then_some(options.codec_policy.jpeg_quality),
                 }),
                 created: options.created,
             });
@@ -406,8 +488,8 @@ fn assemble_texture(
             tier,
             TextureSource {
                 hash,
-                extension: "png".into(),
-                media_type: "image/png".into(),
+                extension: extension.into(),
+                media_type: media_type.into(),
                 width: Some(width),
                 height: Some(height),
                 bytes,
@@ -628,6 +710,45 @@ fn encode_png(image: &RgbaImage) -> Result<Vec<u8>, ImportError> {
             detail: format!("could not encode deterministic PNG tier: {error}"),
         })?;
     Ok(cursor.into_inner())
+}
+
+fn encode_jpeg(image: &RgbaImage, quality: u8) -> Result<Vec<u8>, ImportError> {
+    let rgb = DynamicImage::ImageRgba8(image.clone()).to_rgb8();
+    let mut bytes = Vec::new();
+    JpegEncoder::new_with_quality(&mut bytes, quality)
+        .encode(&rgb, rgb.width(), rgb.height(), ExtendedColorType::Rgb8)
+        .map_err(|error| ImportError::Invalid {
+            format: "image",
+            detail: format!("could not encode deterministic JPEG tier: {error}"),
+        })?;
+    Ok(bytes)
+}
+
+fn encode_image(image: &RgbaImage, format: ImageFormat, jpeg_quality: u8) -> Result<Vec<u8>, ImportError> {
+    match format {
+        ImageFormat::Png => encode_png(image),
+        ImageFormat::Jpeg => encode_jpeg(image, jpeg_quality),
+        _ => Err(ImportError::Unsupported(format!(
+            "image format {format:?}; the initial build accepts PNG and JPEG"
+        ))),
+    }
+}
+
+fn output_format(policy: &TextureCodecPolicy, role: MapRole, source: ImageFormat) -> ImageFormat {
+    match policy.encoding_for(role) {
+        TextureEncoding::PreserveSource => source,
+        TextureEncoding::Lossless => ImageFormat::Png,
+    }
+}
+
+fn source_format(source: &TextureSource) -> Result<ImageFormat, ImportError> {
+    match source.media_type.as_str() {
+        "image/png" => Ok(ImageFormat::Png),
+        "image/jpeg" => Ok(ImageFormat::Jpeg),
+        media_type => Err(ImportError::Unsupported(format!(
+            "texture media type `{media_type}`; the initial build accepts image/png and image/jpeg"
+        ))),
+    }
 }
 
 fn format_details(format: ImageFormat) -> Result<(&'static str, &'static str), ImportError> {

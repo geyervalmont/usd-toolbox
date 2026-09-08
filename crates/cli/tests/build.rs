@@ -33,6 +33,19 @@ fn invoke(manifest: &std::path::Path, output: &std::path::Path, report: &std::pa
 }
 
 #[test]
+fn version_output_is_bare_semver() {
+    let process = Command::new(env!("CARGO_BIN_EXE_usd-toolbox"))
+        .arg("--version")
+        .output()
+        .unwrap();
+    assert!(process.status.success());
+    assert_eq!(
+        String::from_utf8(process.stdout).unwrap(),
+        concat!(env!("CARGO_PKG_VERSION"), "\n")
+    );
+}
+
+#[test]
 fn builds_the_laravel_manifest_contract_and_reports_the_result() {
     let directory = tempdir().unwrap();
     let sources = directory.path().join("sources");

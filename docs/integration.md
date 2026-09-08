@@ -68,13 +68,19 @@ the largest supplied image fail instead of being upscaled, because enhancement
 belongs to the upgrade pipeline. `ingested_at` is written into provenance; the
 Laravel caller intentionally excludes it from its build digest.
 
+The default tier codec policy preserves a base-colour source codec: JPEG inputs
+produce deterministic JPEG downscales, while PNG inputs remain PNG. Data maps
+use lossless PNG. Package metadata carries hashes and paths rather than encoded
+image byte arrays, and an identical provenance source reuses the existing
+content-addressed texture or auxiliary entry.
+
 On success the report contains the fields the worker records, plus output
 integrity information:
 
 ```json
 {
   "schema": 1,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "tiers": ["preview", "1k", "2k", "4k"],
   "losses": [],
   "output": { "sha256": "<sha256>", "bytes": 987654 }

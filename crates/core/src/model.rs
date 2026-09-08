@@ -476,7 +476,7 @@ pub struct TextureSource {
     /// Decoded pixel height when known.
     pub height: Option<u32>,
     /// Complete encoded image bytes.
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub bytes: Vec<u8>,
 }
 
@@ -556,7 +556,7 @@ pub struct AuxiliaryAsset {
     /// IANA media type.
     pub media_type: String,
     /// Complete file bytes.
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub bytes: Vec<u8>,
 }
 
@@ -645,7 +645,7 @@ pub struct ProvenanceAsset {
     /// IANA media type.
     pub media_type: String,
     /// Complete source bytes.
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub bytes: Vec<u8>,
 }
 

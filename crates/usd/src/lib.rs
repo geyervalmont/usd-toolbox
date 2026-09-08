@@ -6,7 +6,7 @@
 //! own round trips preserve every field even when another USD implementation does
 //! not understand Olsyn metadata.
 
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::io::{Cursor, Read};
 
 use openusd::gf;
@@ -21,7 +21,8 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256 as Sha256Hasher};
 use usd_toolbox_core::{
     Capabilities, Color3, Color4, Export, ExportError, Exporter, ImportError, Importer, Input, Material,
-    ParameterValue, Sha256, ShadingModel, Target, TextureRef, Tier, Value, target_capabilities, validate_materials,
+    ParameterValue, Provenance, Sha256, ShadingModel, Target, TextureRef, Tier, Value, target_capabilities,
+    validate_materials,
 };
 use zip::CompressionMethod;
 
@@ -129,7 +130,10 @@ impl Exporter for UsdExporter {
 
         let manifest = Manifest::from_materials(materials, options.format == UsdFormat::Usdz);
         let manifest_json = serde_json::to_vec(&manifest).map_err(encode_error)?;
-        let data = author_layer(materials, &manifest_json, options.graph_tier)?;
+        // Author package metadata from the payload-free manifest projection.
+        // The original materials are still passed to the USDZ writer below so
+        // each content-addressed file is emitted exactly once.
+        let data = author_layer(&manifest.materials, &manifest_json, options.graph_tier)?;
         let losses = self.dry_run(materials);
         let bytes = match options.format {
             UsdFormat::Usda => TextWriter::write_to_string(&data)
@@ -283,7 +287,9 @@ fn author_material(
             ),
             (
                 "olsyn_provenance".into(),
-                UsdValue::String(serde_json::to_string(&material.provenance).map_err(encode_error)?),
+                UsdValue::String(
+                    serde_json::to_string(&provenance_metadata(&material.provenance)).map_err(encode_error)?,
+                ),
             ),
         ])),
     );
@@ -869,6 +875,7 @@ fn write_usdz(
 ) -> Result<Vec<u8>, ExportError> {
     let stage = TextWriter::write_to_string(data).map_err(|error| encode_error(error.to_string()))?;
     let mut entries = BTreeMap::<String, Vec<u8>>::new();
+    let mut packaged_hashes = BTreeSet::new();
     for material in materials {
         let mut unsupported_texture = None;
         material.visit_textures(|parameter, texture| {
@@ -887,6 +894,7 @@ fn write_usdz(
         }
         material.visit_textures(|_, texture| {
             for source in texture.tiers.values() {
+                packaged_hashes.insert(source.hash.clone());
                 entries
                     .entry(source.package_path())
                     .or_insert_with(|| source.bytes.clone());
@@ -894,16 +902,24 @@ fn write_usdz(
         });
         for asset in &material.auxiliary {
             if is_usdz_allowed_extension(path_extension(&asset.name)) {
+                packaged_hashes.insert(asset.hash.clone());
                 entries
                     .entry(auxiliary_path(&asset.hash, &asset.name))
                     .or_insert_with(|| asset.bytes.clone());
             }
         }
+    }
+    for material in materials {
         for (hash, asset) in &material.provenance.source_assets {
             if is_usdz_allowed_extension(&asset.extension) {
-                entries
-                    .entry(asset.package_path(hash))
-                    .or_insert_with(|| asset.bytes.clone());
+                // A provenance asset is identified by its hash. If that payload
+                // is already a texture or auxiliary entry, the provenance map
+                // references the existing content instead of storing a copy.
+                if packaged_hashes.insert(hash.clone()) {
+                    entries
+                        .entry(asset.package_path(hash))
+                        .or_insert_with(|| asset.bytes.clone());
+                }
             }
         }
     }
@@ -997,10 +1013,7 @@ fn provenance_mirror(materials: &[Material]) -> Result<Vec<u8>, ExportError> {
     let mirror: Vec<_> = materials
         .iter()
         .map(|material| {
-            let mut provenance = material.provenance.clone();
-            for asset in provenance.source_assets.values_mut() {
-                asset.bytes.clear();
-            }
+            let provenance = provenance_metadata(&material.provenance);
             (&material.id, provenance)
         })
         .collect();
@@ -1013,6 +1026,14 @@ fn provenance_mirror(materials: &[Material]) -> Result<Vec<u8>, ExportError> {
     TextWriter::write_to_string(&data)
         .map(String::into_bytes)
         .map_err(|error| encode_error(error.to_string()))
+}
+
+fn provenance_metadata(provenance: &Provenance) -> Provenance {
+    let mut metadata = provenance.clone();
+    for asset in metadata.source_assets.values_mut() {
+        asset.bytes.clear();
+    }
+    metadata
 }
 
 fn import_layer(bytes: &[u8], options: &UsdImportOptions) -> Result<Vec<Material>, ImportError> {
@@ -1277,10 +1298,9 @@ fn rehydrate(
                 continue;
             }
             let asset_path = asset.package_path(hash);
-            let bytes = entries
-                .get(&asset_path)
-                .ok_or_else(|| ImportError::Missing(asset_path.clone()))?;
-            verify_hash(hash, bytes, &asset_path, verify_hashes)?;
+            let (resolved_path, bytes) =
+                content_entry(entries, hash, &asset_path).ok_or_else(|| ImportError::Missing(asset_path.clone()))?;
+            verify_hash(hash, bytes, resolved_path, verify_hashes)?;
             asset.bytes.clone_from(bytes);
         }
     }
@@ -1295,6 +1315,23 @@ fn rehydrate(
         ));
     }
     Ok(materials)
+}
+
+fn content_entry<'a>(
+    entries: &'a BTreeMap<String, Vec<u8>>,
+    hash: &Sha256,
+    preferred_path: &str,
+) -> Option<(&'a str, &'a Vec<u8>)> {
+    if let Some((path, bytes)) = entries.get_key_value(preferred_path) {
+        return Some((path.as_str(), bytes));
+    }
+    entries.iter().find_map(|(path, bytes)| {
+        let filename = path.rsplit('/').next()?;
+        filename
+            .strip_prefix(&hash.0)
+            .is_some_and(|suffix| suffix.starts_with('.'))
+            .then_some((path.as_str(), bytes))
+    })
 }
 
 fn verify_hash(hash: &Sha256, bytes: &[u8], path: &str, verify: bool) -> Result<(), ImportError> {

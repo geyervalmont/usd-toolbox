@@ -368,6 +368,15 @@ struct OutputReport {
 }
 
 fn main() -> ExitCode {
+    let mut arguments = std::env::args_os().skip(1);
+    if matches!(
+        arguments.next().as_deref().and_then(std::ffi::OsStr::to_str),
+        Some("--version" | "-V")
+    ) && arguments.next().is_none()
+    {
+        println!("{}", env!("CARGO_PKG_VERSION"));
+        return ExitCode::SUCCESS;
+    }
     let cli = Cli::parse();
     let result = match cli.command {
         Command::Build(args) => build(&args),
@@ -425,6 +434,7 @@ fn build(args: &BuildArgs) -> Result<(), BuildError> {
         required_tiers: manifest.required_tiers.clone(),
         normal_target: Some(NormalConvention::OpenGl),
         infer_normal_convention_from_filename: false,
+        codec_policy: Default::default(),
         created: manifest.ingested_at,
         files: BTreeMap::new(),
     };
