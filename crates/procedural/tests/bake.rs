@@ -77,3 +77,29 @@ fn malformed_and_unbounded_recipes_are_refused() {
     let json = r##"{"schema":1,"generator":"paint","parameters":{"colour":"#ffffff","mystery":2}}"##;
     assert!(serde_json::from_str::<ProceduralDefinition>(json).is_err());
 }
+
+#[test]
+fn patterned_recipes_refuse_cropped_non_tileable_repeats() {
+    let mut definition = ProceduralDefinition {
+        schema: 1,
+        width_px: 64,
+        height_px: 64,
+        width_mm: 480.0,
+        height_mm: 172.0,
+        seed: 7,
+        recipe: Recipe::Masonry(Masonry {
+            unit_width_mm: 230.0,
+            unit_height_mm: 76.0,
+            joint_mm: 10.0,
+            bond: Bond::Running,
+            unit_colours: vec![Colour::new(160, 80, 55)],
+            joint_colour: Colour::new(205, 202, 192),
+            roughness: 0.68,
+            edge_depth_mm: 3.0,
+            tone_variation: 0.12,
+        }),
+    };
+    definition.width_mm = 500.0;
+
+    assert!(bake(&definition).unwrap_err().to_string().contains("whole number"));
+}

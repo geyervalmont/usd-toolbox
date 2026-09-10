@@ -433,6 +433,18 @@ fn validate(definition: &ProceduralDefinition) -> Result<(), ProceduralError> {
                     "joint_mm must be smaller than each masonry unit".into(),
                 ));
             }
+            whole_repeats("width_mm", definition.width_mm, value.unit_width_mm + value.joint_mm, 1)?;
+            let row_multiple = match value.bond {
+                Bond::Stack => 1,
+                Bond::Running => 2,
+                Bond::Quarter => 4,
+            };
+            whole_repeats(
+                "height_mm",
+                definition.height_mm,
+                value.unit_height_mm + value.joint_mm,
+                row_multiple,
+            )?;
         }
         Recipe::Timber(value) => {
             positive("board_width_mm", value.board_width_mm)?;
@@ -441,6 +453,18 @@ fn validate(definition: &ProceduralDefinition) -> Result<(), ProceduralError> {
             unit("roughness", value.roughness)?;
             unit("grain_strength", value.grain_strength)?;
             colours("colours", &value.colours)?;
+            whole_repeats(
+                "width_mm",
+                definition.width_mm,
+                value.board_length_mm + value.joint_mm,
+                1,
+            )?;
+            whole_repeats(
+                "height_mm",
+                definition.height_mm,
+                value.board_width_mm + value.joint_mm,
+                if value.stagger { 2 } else { 1 },
+            )?;
         }
         Recipe::Terrazzo(value) => {
             positive("chip_size_mm", value.chip_size_mm)?;
@@ -453,9 +477,27 @@ fn validate(definition: &ProceduralDefinition) -> Result<(), ProceduralError> {
             positive("thread_mm", value.thread_mm)?;
             unit("roughness", value.roughness)?;
             non_negative("depth_mm", value.depth_mm)?;
+            let repeat = value.thread_mm * 2.0;
+            whole_repeats("width_mm", definition.width_mm, repeat, 1)?;
+            whole_repeats("height_mm", definition.height_mm, repeat, 1)?;
         }
     }
     Ok(())
+}
+
+fn whole_repeats(name: &str, dimension: f32, pitch: f32, multiple: u32) -> Result<(), ProceduralError> {
+    let repeats = dimension / pitch;
+    let rounded = repeats.round();
+    let aligned = (repeats - rounded).abs() <= 0.0001;
+    let count = rounded.max(0.0) as u32;
+
+    if aligned && count >= multiple && count.is_multiple_of(multiple) {
+        return Ok(());
+    }
+
+    Err(ProceduralError::Invalid(format!(
+        "{name} must contain a whole number of {pitch:.3} mm repeats, in multiples of {multiple}"
+    )))
 }
 
 fn colours(name: &str, values: &[Colour]) -> Result<(), ProceduralError> {

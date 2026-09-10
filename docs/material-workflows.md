@@ -72,6 +72,12 @@ the bake produces deterministic base-colour, OpenGL normal, roughness, height,
 and metallic PNGs. Masonry, timber, and textile also produce an editable SVG
 hatch and a model-scale Revit PAT file.
 
+Patterned definitions must describe a complete repeat: masonry dimensions align
+to unit-plus-joint pitches (and a complete bond cycle), staggered timber aligns
+to pairs of board rows, and textile dimensions align to its weave repeat. The
+baker rejects cropped edges instead of labelling a visibly seamed image as
+tileable.
+
 ```bash
 usd-toolbox bake-procedural --definition recipe.json \
   --output-dir generated --report bake.json
