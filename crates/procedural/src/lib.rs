@@ -88,6 +88,10 @@ fn default_edge_depth() -> f32 {
     3.0
 }
 
+fn default_surface_detail() -> f32 {
+    0.22
+}
+
 fn default_unit_width() -> f32 {
     230.0
 }
@@ -180,6 +184,8 @@ pub struct Masonry {
     pub roughness: f32,
     #[serde(default = "default_edge_depth")]
     pub edge_depth_mm: f32,
+    #[serde(default = "default_surface_detail")]
+    pub surface_detail: f32,
     #[serde(default)]
     pub tone_variation: f32,
 }
@@ -375,7 +381,14 @@ pub fn bake(definition: &ProceduralDefinition) -> Result<ProceduralBake, Procedu
 
     let mut assets = vec![
         rgb_asset("base_color", definition.width_px, definition.height_px, &colours)?,
-        normal_asset(definition.width_px, definition.height_px, &heights)?,
+        normal_asset(
+            definition.width_px,
+            definition.height_px,
+            definition.width_mm,
+            definition.height_mm,
+            normal_height_mm(&definition.recipe),
+            &heights,
+        )?,
         scalar_asset("roughness", definition.width_px, definition.height_px, &roughness)?,
         scalar_asset("height", definition.width_px, definition.height_px, &heights)?,
         scalar_asset("metallic", definition.width_px, definition.height_px, &metalness)?,
@@ -425,6 +438,7 @@ fn validate(definition: &ProceduralDefinition) -> Result<(), ProceduralError> {
             positive("unit_height_mm", value.unit_height_mm)?;
             non_negative("joint_mm", value.joint_mm)?;
             non_negative("edge_depth_mm", value.edge_depth_mm)?;
+            unit("surface_detail", value.surface_detail)?;
             unit("roughness", value.roughness)?;
             unit("tone_variation", value.tone_variation)?;
             colours("unit_colours", &value.unit_colours)?;
@@ -597,12 +611,14 @@ fn masonry(value: &Masonry, seed: u64, x: f32, y: f32) -> Surface {
         clamp(distance / value.edge_depth_mm)
     };
     let random = random(seed, column, row, 1);
+    let detail_seed = seed ^ (column as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15) ^ (row as u64).rotate_left(31);
+    let face_detail = masonry_noise(detail_seed, local_x, local_y) * value.surface_detail;
     let colour =
         value.unit_colours[(random * value.unit_colours.len() as f32).floor() as usize % value.unit_colours.len()];
     Surface {
-        colour: vary(colour, (random - 0.5) * value.tone_variation),
-        height: 0.2 + bevel * 0.75,
-        roughness: clamp(value.roughness + (random - 0.5) * 0.08),
+        colour: vary(colour, (random - 0.5) * value.tone_variation + face_detail * 0.055),
+        height: clamp(0.2 + bevel * 0.72 + face_detail * 0.13),
+        roughness: clamp(value.roughness + (random - 0.5) * 0.08 + face_detail * 0.04),
         metalness: 0.0,
     }
 }
@@ -745,8 +761,17 @@ fn scalar_asset(role: &'static str, width: u32, height: u32, values: &[f32]) -> 
     encode(role, DynamicImage::ImageLuma8(image))
 }
 
-fn normal_asset(width: u32, height: u32, values: &[f32]) -> Result<BakedAsset, ProceduralError> {
+fn normal_asset(
+    width: u32,
+    height: u32,
+    width_mm: f32,
+    height_mm: f32,
+    height_scale_mm: f32,
+    values: &[f32],
+) -> Result<BakedAsset, ProceduralError> {
     let mut image = RgbImage::new(width, height);
+    let pixel_width_mm = width_mm / width as f32;
+    let pixel_height_mm = height_mm / height as f32;
     let at = |x: i64, y: i64| {
         let x = x.rem_euclid(i64::from(width)) as u32;
         let y = y.rem_euclid(i64::from(height)) as u32;
@@ -754,8 +779,10 @@ fn normal_asset(width: u32, height: u32, values: &[f32]) -> Result<BakedAsset, P
     };
     for y in 0..height {
         for x in 0..width {
-            let dx = (at(i64::from(x) + 1, i64::from(y)) - at(i64::from(x) - 1, i64::from(y))) * 3.0;
-            let dy = (at(i64::from(x), i64::from(y) + 1) - at(i64::from(x), i64::from(y) - 1)) * 3.0;
+            let dx = (at(i64::from(x) + 1, i64::from(y)) - at(i64::from(x) - 1, i64::from(y))) * height_scale_mm
+                / (2.0 * pixel_width_mm);
+            let dy = (at(i64::from(x), i64::from(y) + 1) - at(i64::from(x), i64::from(y) - 1)) * height_scale_mm
+                / (2.0 * pixel_height_mm);
             let length = (dx * dx + dy * dy + 1.0).sqrt();
             let normal = [
                 -dx / length * 0.5 + 0.5,
@@ -766,6 +793,13 @@ fn normal_asset(width: u32, height: u32, values: &[f32]) -> Result<BakedAsset, P
         }
     }
     encode("normal", DynamicImage::ImageRgb8(image))
+}
+
+fn normal_height_mm(recipe: &Recipe) -> f32 {
+    match recipe {
+        Recipe::Masonry(value) => value.edge_depth_mm.max(value.surface_detail * 0.5),
+        Recipe::Paint(_) | Recipe::Timber(_) | Recipe::Terrazzo(_) | Recipe::Textile(_) => 1.0,
+    }
 }
 
 fn encode(role: &'static str, image: DynamicImage) -> Result<BakedAsset, ProceduralError> {
@@ -815,6 +849,28 @@ fn periodic_noise(seed: u64, x: f32, y: f32) -> f32 {
     ((x * std::f32::consts::TAU * 7.0 + phase).sin() * (y * std::f32::consts::TAU * 5.0 + phase).cos()
         + (x * std::f32::consts::TAU * 13.0 - phase).sin() * 0.35)
         / 1.35
+}
+
+fn masonry_noise(seed: u64, x_mm: f32, y_mm: f32) -> f32 {
+    value_noise(seed, x_mm / 34.0, y_mm / 34.0, 41) * 0.5
+        + value_noise(seed, x_mm / 12.0, y_mm / 12.0, 42) * 0.32
+        + value_noise(seed, x_mm / 4.0, y_mm / 4.0, 43) * 0.18
+}
+
+fn value_noise(seed: u64, x: f32, y: f32, salt: u64) -> f32 {
+    let x0 = x.floor() as i64;
+    let y0 = y.floor() as i64;
+    let tx = smooth(x.fract());
+    let ty = smooth(y.fract());
+    let at = |dx, dy| random(seed, x0 + dx, y0 + dy, salt) * 2.0 - 1.0;
+    let top = at(0, 0) + (at(1, 0) - at(0, 0)) * tx;
+    let bottom = at(0, 1) + (at(1, 1) - at(0, 1)) * tx;
+
+    top + (bottom - top) * ty
+}
+
+fn smooth(value: f32) -> f32 {
+    value * value * (3.0 - 2.0 * value)
 }
 
 fn wrapped_distance(left: f32, right: f32, period: f32) -> f32 {

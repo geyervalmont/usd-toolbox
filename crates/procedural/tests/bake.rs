@@ -37,8 +37,8 @@ fn paint_bakes_a_complete_deterministic_pbr_set() {
 fn masonry_adds_editable_vector_and_revit_hatches() {
     let definition = ProceduralDefinition {
         schema: 1,
-        width_px: 64,
-        height_px: 64,
+        width_px: 320,
+        height_px: 320,
         width_mm: 480.0,
         height_mm: 172.0,
         seed: 7,
@@ -51,6 +51,7 @@ fn masonry_adds_editable_vector_and_revit_hatches() {
             joint_colour: Colour::new(205, 202, 192),
             roughness: 0.68,
             edge_depth_mm: 3.0,
+            surface_detail: 0.22,
             tone_variation: 0.12,
         }),
     };
@@ -61,6 +62,44 @@ fn masonry_adds_editable_vector_and_revit_hatches() {
     assert!(String::from_utf8_lossy(&pat.bytes).contains(";%TYPE=MODEL"));
     assert!(String::from_utf8_lossy(&svg.bytes).contains("<svg"));
     assert!(baked.assets.iter().all(|asset| asset.sha256.len() == 64));
+
+    let normal = image::load_from_memory(&baked.assets.iter().find(|asset| asset.role == "normal").unwrap().bytes)
+        .unwrap()
+        .to_rgb8();
+    let mut face_normals = std::collections::HashSet::new();
+    for y in 24..116 {
+        for x in 20..140 {
+            face_normals.insert(*normal.get_pixel(x, y));
+        }
+    }
+    assert!(face_normals.len() > 8, "brick faces should carry visible micro-relief");
+
+    let mean_slope = |image: &image::RgbImage| {
+        let count = f64::from(image.width() * image.height());
+        image
+            .pixels()
+            .map(|pixel| f64::from(pixel[0].abs_diff(128)) + f64::from(pixel[1].abs_diff(128)))
+            .sum::<f64>()
+            / count
+    };
+    let mut higher_resolution = definition.clone();
+    higher_resolution.width_px = 640;
+    higher_resolution.height_px = 640;
+    let higher_bake = bake(&higher_resolution).unwrap();
+    let higher_normal = image::load_from_memory(
+        &higher_bake
+            .assets
+            .iter()
+            .find(|asset| asset.role == "normal")
+            .unwrap()
+            .bytes,
+    )
+    .unwrap()
+    .to_rgb8();
+    assert!(
+        (mean_slope(&normal) - mean_slope(&higher_normal)).abs() < 1.0,
+        "normal strength should not depend on output resolution"
+    );
 }
 
 #[test]
@@ -96,6 +135,7 @@ fn patterned_recipes_refuse_cropped_non_tileable_repeats() {
             joint_colour: Colour::new(205, 202, 192),
             roughness: 0.68,
             edge_depth_mm: 3.0,
+            surface_detail: 0.22,
             tone_variation: 0.12,
         }),
     };
