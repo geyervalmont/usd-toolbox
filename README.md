@@ -32,6 +32,8 @@ architectural dependency.
   metadata policy, actual image checks, and duplicate candidates.
 - Provider-agnostic tier jobs, safe automatic downscales, stable multimodal
   embedding inputs, cosine similarity, and deterministic clustering.
+- Versioned procedural paint, masonry, timber, terrazzo, and textile recipes
+  with deterministic PBR texture baking and SVG/Revit hatch outputs.
 - MaterialX 1.39 read/write and glTF 2.0/GLB material export with ratified
   `KHR_materials_*` extensions and channel packing.
 - Revit Generic appearance-asset image-set ZIP export matching the OPAL
@@ -55,6 +57,7 @@ Geometry and material bindings remain deliberately outside the model for now.
 | `usd-toolbox-cli` | Isolated filesystem/process boundary for workers and scripts |
 | `usd-toolbox-core` | Neutral model, validation, capabilities, loss contract |
 | `usd-toolbox-materials` | Inspect/edit/audit/tier/embedding workflows |
+| `usd-toolbox-procedural` | Versioned recipes, deterministic PBR baking, vector hatches |
 | `usd-toolbox-textures` | Image ingest, map conventions, tier generation |
 | `usd-toolbox-usd` | USDA/USDC/USDZ import and export |
 | `usd-toolbox-materialx` | MaterialX graph import and export |

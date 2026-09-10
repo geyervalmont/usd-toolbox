@@ -46,6 +46,55 @@ fn version_output_is_bare_semver() {
 }
 
 #[test]
+fn bakes_procedural_materials_to_files_and_a_compact_report() {
+    let directory = tempdir().unwrap();
+    let definition = directory.path().join("definition.json");
+    std::fs::write(
+        &definition,
+        serde_json::to_vec(&json!({
+            "schema": 1,
+            "width_px": 32,
+            "height_px": 16,
+            "width_mm": 1000.0,
+            "height_mm": 500.0,
+            "seed": 12,
+            "generator": "paint",
+            "parameters": {
+                "colour": "#d4caba",
+                "roughness": 0.6,
+                "variation": 0.02,
+                "texture_depth": 0.1
+            }
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+    let output = directory.path().join("assets");
+    let report = directory.path().join("report.json");
+    let process = Command::new(env!("CARGO_BIN_EXE_usd-toolbox"))
+        .args(["bake-procedural", "--definition"])
+        .arg(&definition)
+        .arg("--output-dir")
+        .arg(&output)
+        .arg("--report")
+        .arg(&report)
+        .output()
+        .unwrap();
+
+    assert!(process.status.success(), "{}", String::from_utf8_lossy(&process.stderr));
+    assert!(
+        std::fs::read(output.join("base_color.png"))
+            .unwrap()
+            .starts_with(b"\x89PNG")
+    );
+    let report: Value = serde_json::from_slice(&std::fs::read(report).unwrap()).unwrap();
+    assert_eq!(report["schema"], "usd-toolbox.procedural-bake.v1");
+    assert_eq!(report["generator"], "paint");
+    assert_eq!(report["assets"].as_array().unwrap().len(), 5);
+    assert!(report["assets"][0].get("bytes").unwrap().is_number());
+}
+
+#[test]
 fn builds_the_laravel_manifest_contract_and_reports_the_result() {
     let directory = tempdir().unwrap();
     let sources = directory.path().join("sources");

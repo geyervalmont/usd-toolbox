@@ -10,6 +10,11 @@
 #include <stdlib.h>
 
 /**
+ * C ABI status code.
+ */
+typedef uint32_t UsdToolboxStatus;
+
+/**
  * Library-owned byte allocation.
  */
 typedef struct UsdToolboxBuffer {
@@ -26,11 +31,6 @@ typedef struct UsdToolboxBuffer {
    */
   size_t capacity;
 } UsdToolboxBuffer;
-
-/**
- * C ABI status code.
- */
-typedef uint32_t UsdToolboxStatus;
 
 /**
  * C ABI target selector.
@@ -106,6 +106,23 @@ typedef uint32_t UsdToolboxTarget;
  * USDZ package target.
  */
 #define USD_TOOLBOX_TARGET_USDZ 1
+
+/**
+ * Bakes a versioned procedural definition to PBR maps and vector hatches.
+ *
+ * The JSON result includes each asset's encoded bytes. Filesystem-oriented
+ * callers should prefer the `bake-procedural` CLI command, whose report only
+ * contains paths and metadata.
+ *
+ * # Safety
+ *
+ * Every non-null pointer must be valid for its supplied length/capacity.
+ */
+UsdToolboxStatus usd_toolbox_bake_procedural(const uint8_t *definition_json,
+                                             size_t definition_len,
+                                             uint8_t *output_json,
+                                             size_t output_capacity,
+                                             size_t *required_output);
 
 /**
  * Releases one library-owned buffer and resets the struct to empty.

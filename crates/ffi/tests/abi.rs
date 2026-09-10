@@ -97,3 +97,33 @@ fn material_inspection_uses_the_same_two_pass_contract() {
     assert_eq!(inspection["schema"], "usd-toolbox.inspection.v1");
     assert_eq!(inspection["material_count"], 1);
 }
+
+#[test]
+fn procedural_bake_is_available_through_the_two_pass_contract() {
+    let definition = br##"{"schema":1,"width_px":8,"height_px":8,"width_mm":100,"height_mm":100,"seed":1,"generator":"paint","parameters":{"colour":"#e1ded4","roughness":0.6,"variation":0.01,"texture_depth":0.1}}"##;
+    let mut required = 0;
+    let status = unsafe {
+        usd_toolbox_bake_procedural(
+            definition.as_ptr(),
+            definition.len(),
+            std::ptr::null_mut(),
+            0,
+            &mut required,
+        )
+    };
+    assert_eq!(status, USD_TOOLBOX_STATUS_BUFFER_TOO_SMALL);
+    let mut output = vec![0; required];
+    let status = unsafe {
+        usd_toolbox_bake_procedural(
+            definition.as_ptr(),
+            definition.len(),
+            output.as_mut_ptr(),
+            output.len(),
+            &mut required,
+        )
+    };
+    assert_eq!(status, USD_TOOLBOX_STATUS_OK);
+    let result: serde_json::Value = serde_json::from_slice(&output).unwrap();
+    assert_eq!(result["generator"], "paint");
+    assert_eq!(result["assets"].as_array().unwrap().len(), 5);
+}

@@ -26,6 +26,7 @@ use usd_toolbox_materials::{
 };
 use usd_toolbox_materialx::{MaterialXExportOptions, MaterialXExporter, MaterialXImportOptions, MaterialXImporter};
 use usd_toolbox_omniverse::{OmniverseExportOptions, OmniverseExporter};
+use usd_toolbox_procedural::{ProceduralDefinition, bake as bake_procedural};
 use usd_toolbox_revit::{RevitExportOptions, RevitExporter};
 use usd_toolbox_textures::{TextureImportOptions, TextureInput, TextureMetadata, TextureSetImporter, parse_role};
 use usd_toolbox_usd::{UsdExportOptions, UsdExporter, UsdFormat, UsdImportOptions, UsdImporter};
@@ -69,6 +70,8 @@ enum Command {
     Cluster(ClusterArgs),
     /// Upgrade legacy neutral JSON to the current versioned schema.
     Migrate(MigrateArgs),
+    /// Bake a deterministic procedural material recipe to PBR maps and hatches.
+    BakeProcedural(ProceduralArgs),
 }
 
 #[derive(Debug, Args)]
@@ -255,6 +258,19 @@ struct MigrateArgs {
 }
 
 #[derive(Debug, Args)]
+struct ProceduralArgs {
+    /// Versioned procedural material definition JSON.
+    #[arg(long)]
+    definition: PathBuf,
+    /// Directory receiving named texture and hatch assets.
+    #[arg(long)]
+    output_dir: PathBuf,
+    /// Destination JSON bake report.
+    #[arg(long)]
+    report: PathBuf,
+}
+
+#[derive(Debug, Args)]
 struct BuildArgs {
     /// JSON build manifest. Texture paths are relative to this file.
     #[arg(long)]
@@ -290,6 +306,8 @@ enum BuildError {
     Export(#[from] ExportError),
     #[error("material workflow failed: {0}")]
     Workflow(#[from] MaterialWorkflowError),
+    #[error("procedural bake failed: {0}")]
+    Procedural(#[from] usd_toolbox_procedural::ProceduralError),
     #[error("unsupported input or option: {0}")]
     Unsupported(String),
     #[error("validation failed for {0} material(s); see the report for diagnostics")]
@@ -394,6 +412,7 @@ fn main() -> ExitCode {
         Command::EmbeddingInput(args) => embedding_input_command(&args),
         Command::Cluster(args) => cluster_command(&args),
         Command::Migrate(args) => migrate_command(&args),
+        Command::BakeProcedural(args) => bake_procedural_command(&args),
     };
     match result {
         Ok(()) => ExitCode::SUCCESS,
@@ -1095,6 +1114,39 @@ fn migrate_command(args: &MigrateArgs) -> Result<(), BuildError> {
     let bytes = read(&args.input, "read neutral JSON")?;
     let document = migrate_document_json(&bytes)?;
     write_json(Some(&args.output), &document, "write migrated neutral JSON")
+}
+
+fn bake_procedural_command(args: &ProceduralArgs) -> Result<(), BuildError> {
+    let definition: ProceduralDefinition = read_json(&args.definition)?;
+    let baked = bake_procedural(&definition)?;
+    let mut assets = Vec::with_capacity(baked.assets.len());
+    for asset in baked.assets {
+        let filename = format!("{}.{}", asset.role, asset.extension);
+        atomic_write(&args.output_dir.join(&filename), &asset.bytes, "write procedural asset")?;
+        assets.push(serde_json::json!({
+            "role": asset.role,
+            "path": filename,
+            "extension": asset.extension,
+            "media_type": asset.media_type,
+            "sha256": asset.sha256,
+            "bytes": asset.bytes.len(),
+        }));
+    }
+    write_json(
+        Some(&args.report),
+        &serde_json::json!({
+            "schema": baked.schema,
+            "generator": baked.generator,
+            "generator_version": baked.generator_version,
+            "definition_digest": baked.definition_digest,
+            "width_px": baked.width_px,
+            "height_px": baked.height_px,
+            "width_mm": baked.width_mm,
+            "height_mm": baked.height_mm,
+            "assets": assets,
+        }),
+        "write procedural bake report",
+    )
 }
 
 fn load_materials(path: &Path) -> Result<Vec<Material>, BuildError> {

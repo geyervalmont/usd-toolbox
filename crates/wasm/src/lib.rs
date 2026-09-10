@@ -11,6 +11,7 @@ use usd_toolbox_materials::{
 };
 use usd_toolbox_materialx::{MaterialXExportOptions, MaterialXExporter, MaterialXImportOptions, MaterialXImporter};
 use usd_toolbox_omniverse::{OmniverseExportOptions, OmniverseExporter};
+use usd_toolbox_procedural::{ProceduralDefinition, bake as bake_procedural_definition};
 use usd_toolbox_revit::{RevitExportOptions, RevitExporter};
 use usd_toolbox_textures::{TextureImportOptions, TextureInput, TextureSetImporter};
 use usd_toolbox_usd::{UsdExportOptions, UsdExporter, UsdImportOptions, UsdImporter};
@@ -70,6 +71,13 @@ pub fn import_texture_set(inputs: JsValue, options: Option<JsValue>) -> Result<W
         material: to_js(&result.material)?,
         losses: to_js(&result.losses)?,
     })
+}
+
+/// Bakes a versioned procedural definition to deterministic PBR maps and hatches.
+#[wasm_bindgen]
+pub fn bake_procedural(definition: JsValue) -> Result<JsValue, JsError> {
+    let definition: ProceduralDefinition = from_js(definition)?;
+    to_js(&bake_procedural_definition(&definition).map_err(js_error)?)
 }
 
 /// Exports neutral materials as USDA, USDC, or USDZ.

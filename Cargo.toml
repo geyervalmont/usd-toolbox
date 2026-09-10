@@ -3,6 +3,7 @@ members = [
     "crates/cli",
     "crates/core",
     "crates/materials",
+    "crates/procedural",
     "crates/textures",
     "crates/materialx",
     "crates/gltf",
@@ -29,6 +30,7 @@ usd-toolbox-gltf = { path = "crates/gltf" }
 usd-toolbox-materialx = { path = "crates/materialx" }
 usd-toolbox-materials = { path = "crates/materials" }
 usd-toolbox-omniverse = { path = "crates/omniverse" }
+usd-toolbox-procedural = { path = "crates/procedural" }
 usd-toolbox-revit = { path = "crates/revit" }
 usd-toolbox-textures = { path = "crates/textures" }
 usd-toolbox-usd = { path = "crates/usd" }

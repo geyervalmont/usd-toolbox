@@ -63,6 +63,47 @@ and an RFC3339 timestamp). The toolbox verifies encoding, exact tier size,
 metadata consistency, parent resolution, and content hash before writing a new
 revision. It never overwrites the source material.
 
+## Procedural material recipes
+
+Procedural materials are clean, versioned inputs rather than opaque editor
+state. The first schema supports `paint`, `masonry`, `timber`, `terrazzo`, and
+`textile`. Every definition includes pixel size, real-world size, and a seed;
+the bake produces deterministic base-colour, OpenGL normal, roughness, height,
+and metallic PNGs. Masonry, timber, and textile also produce an editable SVG
+hatch and a model-scale Revit PAT file.
+
+```bash
+usd-toolbox bake-procedural --definition recipe.json \
+  --output-dir generated --report bake.json
+```
+
+The report is `usd-toolbox.procedural-bake.v1` and contains the canonical
+definition digest plus each output path, media type, byte count, and SHA-256;
+it never repeats image bytes inside JSON. The same `bake_procedural` operation
+is available through WASM and the panic-safe C ABI. Applications own recipe
+drafts, access control, review, and publication. A bake is a candidate revision
+and must not silently replace an approved catalog representation.
+
+Example paint definition:
+
+```json
+{
+  "schema": 1,
+  "width_px": 1024,
+  "height_px": 1024,
+  "width_mm": 1000,
+  "height_mm": 1000,
+  "seed": 42,
+  "generator": "paint",
+  "parameters": {
+    "colour": "#D4CABA",
+    "roughness": 0.62,
+    "variation": 0.02,
+    "texture_depth": 0.1
+  }
+}
+```
+
 ## Embeddings and clustering
 
 ```bash

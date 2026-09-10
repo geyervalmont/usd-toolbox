@@ -21,6 +21,7 @@ use usd_toolbox_materials::{
 };
 use usd_toolbox_materialx::{MaterialXExportOptions, MaterialXExporter, MaterialXImportOptions, MaterialXImporter};
 use usd_toolbox_omniverse::{OmniverseExportOptions, OmniverseExporter};
+use usd_toolbox_procedural::{ProceduralDefinition, bake as bake_procedural_definition};
 use usd_toolbox_revit::{RevitExportOptions, RevitExporter};
 use usd_toolbox_textures::{TextureImportOptions, TextureInput, TextureSetImporter};
 use usd_toolbox_usd::{UsdExportOptions, UsdExporter, UsdFormat, UsdImportOptions, UsdImporter};
@@ -254,6 +255,32 @@ pub unsafe extern "C" fn usd_toolbox_import_texture_set(
             "losses": result.losses,
         }))
         .map_err(invalid_json)?;
+        unsafe { write_single(&json, output_json, output_capacity, required_output) }
+    })
+}
+
+/// Bakes a versioned procedural definition to PBR maps and vector hatches.
+///
+/// The JSON result includes each asset's encoded bytes. Filesystem-oriented
+/// callers should prefer the `bake-procedural` CLI command, whose report only
+/// contains paths and metadata.
+///
+/// # Safety
+///
+/// Every non-null pointer must be valid for its supplied length/capacity.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn usd_toolbox_bake_procedural(
+    definition_json: *const u8,
+    definition_len: usize,
+    output_json: *mut u8,
+    output_capacity: usize,
+    required_output: *mut usize,
+) -> UsdToolboxStatus {
+    boundary(|| {
+        let bytes = unsafe { input_slice(definition_json, definition_len, "definition_json")? };
+        let definition: ProceduralDefinition = parse_json(bytes, "definition_json")?;
+        let result = bake_procedural_definition(&definition).map_err(|error| FfiError::invalid(error.to_string()))?;
+        let json = serde_json::to_vec(&result).map_err(invalid_json)?;
         unsafe { write_single(&json, output_json, output_capacity, required_output) }
     })
 }

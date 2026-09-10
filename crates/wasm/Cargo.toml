@@ -14,6 +14,7 @@ usd-toolbox-gltf.workspace = true
 usd-toolbox-materials.workspace = true
 usd-toolbox-materialx.workspace = true
 usd-toolbox-omniverse.workspace = true
+usd-toolbox-procedural.workspace = true
 usd-toolbox-revit.workspace = true
 usd-toolbox-textures.workspace = true
 usd-toolbox-usd.workspace = true
