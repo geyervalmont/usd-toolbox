@@ -1,5 +1,5 @@
 use image::GenericImageView;
-use usd_toolbox_procedural::{Bond, Colour, Masonry, Paint, ProceduralDefinition, Recipe, bake};
+use usd_toolbox_procedural::{Bond, Colour, Masonry, Paint, ProceduralDefinition, Recipe, Terrazzo, bake};
 
 fn paint() -> ProceduralDefinition {
     ProceduralDefinition {
@@ -142,4 +142,45 @@ fn patterned_recipes_refuse_cropped_non_tileable_repeats() {
     definition.width_mm = 500.0;
 
     assert!(bake(&definition).unwrap_err().to_string().contains("whole number"));
+}
+
+#[test]
+fn terrazzo_has_dense_irregular_multi_scale_aggregate() {
+    let definition = ProceduralDefinition {
+        schema: 1,
+        width_px: 256,
+        height_px: 256,
+        width_mm: 500.0,
+        height_mm: 500.0,
+        seed: 42,
+        recipe: Recipe::Terrazzo(Terrazzo {
+            matrix_colour: Colour::new(189, 186, 178),
+            chip_colours: vec![
+                Colour::new(228, 220, 207),
+                Colour::new(104, 104, 101),
+                Colour::new(188, 151, 119),
+            ],
+            chip_size_mm: 18.0,
+            density: 0.5,
+            roughness: 0.5,
+            chip_depth_mm: 0.5,
+        }),
+    };
+    let baked = bake(&definition).unwrap();
+    let base = image::load_from_memory(&baked.assets[0].bytes).unwrap().to_rgb8();
+    let distinct = base.pixels().copied().collect::<std::collections::HashSet<_>>();
+    let coloured = base
+        .pixels()
+        .filter(|pixel| pixel[0].abs_diff(pixel[1]) > 8 || pixel[1].abs_diff(pixel[2]) > 8)
+        .count();
+    let coverage = coloured as f32 / (base.width() * base.height()) as f32;
+
+    assert!(
+        distinct.len() > 24,
+        "aggregate should vary naturally rather than repeat flat circles"
+    );
+    assert!(
+        coverage > 0.08,
+        "aggregate should be visibly present at the default density"
+    );
 }

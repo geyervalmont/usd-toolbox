@@ -656,44 +656,94 @@ fn timber(value: &Timber, seed: u64, x: f32, y: f32) -> Surface {
 }
 
 fn terrazzo(value: &Terrazzo, seed: u64, x: f32, y: f32, width: f32, height: f32) -> Surface {
-    let cell = value.chip_size_mm * 1.6;
+    let matrix_grain = periodic_noise(seed ^ 0xA67E_2201, x / width, y / height) * 0.012;
+
+    // Two aggregate scales read much more like a poured terrazzo than one
+    // regular field of circles. Each layer is periodic over the requested
+    // repeat, so chips crossing an edge continue on the opposite edge.
+    if let Some(chip) = terrazzo_chip(value, seed, x, y, width, height, 1.0, 101) {
+        return chip;
+    }
+    if let Some(chip) = terrazzo_chip(value, seed ^ 0x5A17_91E3, x, y, width, height, 0.28, 131) {
+        return chip;
+    }
+
+    Surface {
+        colour: vary(value.matrix_colour, matrix_grain),
+        height: 0.5 + matrix_grain * 0.15,
+        roughness: clamp(value.roughness + matrix_grain * 0.35),
+        metalness: 0.0,
+    }
+}
+
+#[allow(clippy::too_many_arguments)]
+fn terrazzo_chip(
+    value: &Terrazzo,
+    seed: u64,
+    x: f32,
+    y: f32,
+    width: f32,
+    height: f32,
+    scale: f32,
+    salt: u64,
+) -> Option<Surface> {
+    let chip_size = value.chip_size_mm * scale;
+    let cell = chip_size * 0.86;
     let columns = (width / cell).ceil().max(1.0) as i64;
     let rows = (height / cell).ceil().max(1.0) as i64;
     let cell_x = (x / width * columns as f32).floor() as i64;
     let cell_y = (y / height * rows as f32).floor() as i64;
+    let probability = if scale < 0.5 {
+        value.density * 0.72
+    } else {
+        value.density
+    };
+    let mut nearest: Option<(f32, i64, i64)> = None;
+
     for dy in -1..=1 {
         for dx in -1..=1 {
             let candidate_x = (cell_x + dx).rem_euclid(columns);
             let candidate_y = (cell_y + dy).rem_euclid(rows);
-            let exists = random(seed, candidate_x, candidate_y, 11);
-            if exists > value.density {
+            if random(seed, candidate_x, candidate_y, salt) > probability {
                 continue;
             }
-            let centre_x =
-                (candidate_x as f32 + 0.15 + random(seed, candidate_x, candidate_y, 12) * 0.7) * width / columns as f32;
-            let centre_y =
-                (candidate_y as f32 + 0.15 + random(seed, candidate_x, candidate_y, 13) * 0.7) * height / rows as f32;
-            let distance_x = wrapped_distance(x, centre_x, width);
-            let distance_y = wrapped_distance(y, centre_y, height);
-            let radius = value.chip_size_mm * (0.22 + random(seed, candidate_x, candidate_y, 14) * 0.28);
-            if distance_x * distance_x + distance_y * distance_y <= radius * radius {
-                let choice =
-                    (random(seed, candidate_x, candidate_y, 15) * value.chip_colours.len() as f32).floor() as usize;
-                return Surface {
-                    colour: linear(value.chip_colours[choice % value.chip_colours.len()]),
-                    height: clamp(0.5 + value.chip_depth_mm * 0.1),
-                    roughness: clamp(value.roughness - 0.04),
-                    metalness: 0.0,
-                };
+            let centre_x = (candidate_x as f32 + 0.12 + random(seed, candidate_x, candidate_y, salt + 1) * 0.76)
+                * width
+                / columns as f32;
+            let centre_y = (candidate_y as f32 + 0.12 + random(seed, candidate_x, candidate_y, salt + 2) * 0.76)
+                * height
+                / rows as f32;
+            let distance_x = wrapped_delta(x, centre_x, width);
+            let distance_y = wrapped_delta(y, centre_y, height);
+            let rotation = random(seed, candidate_x, candidate_y, salt + 3) * std::f32::consts::TAU;
+            let (sine, cosine) = rotation.sin_cos();
+            let rotated_x = distance_x * cosine - distance_y * sine;
+            let rotated_y = distance_x * sine + distance_y * cosine;
+            let radius = chip_size * (0.3 + random(seed, candidate_x, candidate_y, salt + 4) * 0.3);
+            let aspect = 0.55 + random(seed, candidate_x, candidate_y, salt + 5) * 0.42;
+            let normalized = ((rotated_x / (radius * aspect)).powi(2) + (rotated_y / radius).powi(2)).sqrt();
+            let angle = rotated_y.atan2(rotated_x);
+            let facets = 4.0 + (random(seed, candidate_x, candidate_y, salt + 6) * 5.0).floor();
+            let phase = random(seed, candidate_x, candidate_y, salt + 7) * std::f32::consts::TAU;
+            let boundary =
+                0.82 + (angle * facets + phase).sin() * 0.13 + (angle * (facets + 2.0) - phase * 0.7).sin() * 0.05;
+            let score = normalized / boundary.max(0.55);
+
+            if score <= 1.0 && nearest.is_none_or(|current| score < current.0) {
+                nearest = Some((score, candidate_x, candidate_y));
             }
         }
     }
-    Surface {
-        colour: linear(value.matrix_colour),
-        height: 0.5,
-        roughness: value.roughness,
+
+    let (edge, candidate_x, candidate_y) = nearest?;
+    let choice = (random(seed, candidate_x, candidate_y, salt + 8) * value.chip_colours.len() as f32).floor() as usize;
+    let colour_variation = (random(seed, candidate_x, candidate_y, salt + 9) - 0.5) * 0.1;
+    Some(Surface {
+        colour: vary(value.chip_colours[choice % value.chip_colours.len()], colour_variation),
+        height: clamp(0.53 + value.chip_depth_mm.min(4.0) * 0.09 + (1.0 - edge) * 0.025),
+        roughness: clamp(value.roughness - 0.055 + colour_variation * 0.12),
         metalness: 0.0,
-    }
+    })
 }
 
 fn textile(value: &Textile, x: f32, y: f32) -> Surface {
@@ -873,9 +923,8 @@ fn smooth(value: f32) -> f32 {
     value * value * (3.0 - 2.0 * value)
 }
 
-fn wrapped_distance(left: f32, right: f32, period: f32) -> f32 {
-    let direct = (left - right).abs();
-    direct.min(period - direct)
+fn wrapped_delta(left: f32, right: f32, period: f32) -> f32 {
+    (left - right + period * 0.5).rem_euclid(period) - period * 0.5
 }
 
 fn hex(bytes: impl AsRef<[u8]>) -> String {
