@@ -11,7 +11,7 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer, de};
 use sha2::{Digest, Sha256};
 use thiserror::Error;
 
-pub const GENERATOR_VERSION: &str = env!("CARGO_PKG_VERSION");
+pub const GENERATOR_VERSION: &str = concat!(env!("CARGO_PKG_VERSION"), "-surface.2");
 
 fn default_schema() -> u32 {
     1
@@ -491,7 +491,7 @@ fn validate(definition: &ProceduralDefinition) -> Result<(), ProceduralError> {
             positive("thread_mm", value.thread_mm)?;
             unit("roughness", value.roughness)?;
             non_negative("depth_mm", value.depth_mm)?;
-            let repeat = value.thread_mm * 2.0;
+            let repeat = value.thread_mm * if value.basket { 4.0 } else { 2.0 };
             whole_repeats("width_mm", definition.width_mm, repeat, 1)?;
             whole_repeats("height_mm", definition.height_mm, repeat, 1)?;
         }
@@ -557,8 +557,8 @@ fn unit(name: &str, value: f32) -> Result<(), ProceduralError> {
 fn sample(recipe: &Recipe, seed: u64, x: f32, y: f32, width: f32, height: f32) -> Surface {
     match recipe {
         Recipe::Paint(value) => paint(value, seed, x / width, y / height),
-        Recipe::Masonry(value) => masonry(value, seed, x, y),
-        Recipe::Timber(value) => timber(value, seed, x, y),
+        Recipe::Masonry(value) => masonry(value, seed, x, y, width, height),
+        Recipe::Timber(value) => timber(value, seed, x, y, width, height),
         Recipe::Terrazzo(value) => terrazzo(value, seed, x, y, width, height),
         Recipe::Textile(value) => textile(value, x, y),
     }
@@ -574,10 +574,10 @@ fn paint(value: &Paint, seed: u64, x: f32, y: f32) -> Surface {
     }
 }
 
-fn masonry(value: &Masonry, seed: u64, x: f32, y: f32) -> Surface {
+fn masonry(value: &Masonry, seed: u64, x: f32, y: f32, width: f32, height: f32) -> Surface {
     let pitch_x = value.unit_width_mm + value.joint_mm;
     let pitch_y = value.unit_height_mm + value.joint_mm;
-    let row = (y / pitch_y).floor() as i64;
+    let row = ((y / pitch_y).floor() as i64).rem_euclid((height / pitch_y).round() as i64);
     let fraction = match value.bond {
         Bond::Stack => 0.0,
         Bond::Running => {
@@ -590,14 +590,14 @@ fn masonry(value: &Masonry, seed: u64, x: f32, y: f32) -> Surface {
         Bond::Quarter => row.rem_euclid(4) as f32 * 0.25,
     };
     let shifted = x + pitch_x * fraction;
-    let column = (shifted / pitch_x).floor() as i64;
+    let column = ((shifted / pitch_x).floor() as i64).rem_euclid((width / pitch_x).round() as i64);
     let local_x = shifted.rem_euclid(pitch_x);
     let local_y = y.rem_euclid(pitch_y);
     let in_joint = local_x >= value.unit_width_mm || local_y >= value.unit_height_mm;
     if in_joint {
         return Surface {
-            colour: linear(value.joint_colour),
-            height: 0.08,
+            colour: vary(value.joint_colour, periodic_noise(seed, x / width, y / height) * 0.018),
+            height: 0.08 + periodic_noise(seed ^ 93, x / width, y / height) * 0.015,
             roughness: clamp(value.roughness + 0.2),
             metalness: 0.0,
         };
@@ -608,7 +608,7 @@ fn masonry(value: &Masonry, seed: u64, x: f32, y: f32) -> Surface {
     let bevel = if value.edge_depth_mm == 0.0 {
         1.0
     } else {
-        clamp(distance / value.edge_depth_mm)
+        smooth(clamp(distance / value.edge_depth_mm))
     };
     let random = random(seed, column, row, 1);
     let detail_seed = seed ^ (column as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15) ^ (row as u64).rotate_left(31);
@@ -623,17 +623,17 @@ fn masonry(value: &Masonry, seed: u64, x: f32, y: f32) -> Surface {
     }
 }
 
-fn timber(value: &Timber, seed: u64, x: f32, y: f32) -> Surface {
+fn timber(value: &Timber, seed: u64, x: f32, y: f32, width: f32, height: f32) -> Surface {
     let pitch_y = value.board_width_mm + value.joint_mm;
     let pitch_x = value.board_length_mm + value.joint_mm;
-    let row = (y / pitch_y).floor() as i64;
+    let row = ((y / pitch_y).floor() as i64).rem_euclid((height / pitch_y).round() as i64);
     let offset = if value.stagger && row.rem_euclid(2) != 0 {
         pitch_x * 0.5
     } else {
         0.0
     };
     let shifted = x + offset;
-    let column = (shifted / pitch_x).floor() as i64;
+    let column = ((shifted / pitch_x).floor() as i64).rem_euclid((width / pitch_x).round() as i64);
     let local_x = shifted.rem_euclid(pitch_x);
     let local_y = y.rem_euclid(pitch_y);
     if local_x >= value.board_length_mm || local_y >= value.board_width_mm {
@@ -646,11 +646,24 @@ fn timber(value: &Timber, seed: u64, x: f32, y: f32) -> Surface {
     }
     let random = random(seed, column, row, 7);
     let colour = value.colours[(random * value.colours.len() as f32).floor() as usize % value.colours.len()];
-    let grain = ((x * 0.055 + random * 9.0).sin() * 0.5 + (x * 0.17 + y * 0.012).sin() * 0.25) * value.grain_strength;
+    // Longitudinal fibres with slow, irregular cathedral grain across the board.
+    // Evaluate in board coordinates so a staggered board is continuous at the tile edge.
+    let detail_seed = seed ^ (column as u64).wrapping_mul(0x9E37_79B9) ^ (row as u64).rotate_left(23);
+    let along = local_x / value.board_length_mm;
+    let across = local_y / value.board_width_mm;
+    let wander = value_noise(detail_seed, along * 4.0, across * 3.0, 61);
+    let rings = across * 16.0 + wander * 1.2 + (along * 6.0 + random * 8.0).sin() * 0.9;
+    let latewood = (rings * std::f32::consts::TAU).sin().max(0.0).powi(2);
+    let fibres = value_noise(detail_seed, along * 9.0, across * 180.0, 62);
+    let grain = (0.25 - latewood + fibres * 0.3) * value.grain_strength;
+    let edge = local_x
+        .min(value.board_length_mm - local_x)
+        .min(local_y.min(value.board_width_mm - local_y));
+    let bevel = smooth(clamp(edge / 1.2));
     Surface {
-        colour: vary(colour, grain * 0.18 + (random - 0.5) * 0.12),
-        height: clamp(0.72 + grain * 0.16),
-        roughness: clamp(value.roughness - grain * 0.08),
+        colour: vary(colour, grain * 0.24 + (random - 0.5) * 0.045),
+        height: clamp(0.18 + bevel * 0.54 + grain * 0.08),
+        roughness: clamp(value.roughness - grain * 0.12 + fibres * 0.015),
         metalness: 0.0,
     }
 }
@@ -715,6 +728,9 @@ fn terrazzo_chip(
                 / rows as f32;
             let distance_x = wrapped_delta(x, centre_x, width);
             let distance_y = wrapped_delta(y, centre_y, height);
+            if distance_x * distance_x + distance_y * distance_y > (chip_size * 0.6).powi(2) {
+                continue;
+            }
             let rotation = random(seed, candidate_x, candidate_y, salt + 3) * std::f32::consts::TAU;
             let (sine, cosine) = rotation.sin_cos();
             let rotated_x = distance_x * cosine - distance_y * sine;
@@ -722,11 +738,18 @@ fn terrazzo_chip(
             let radius = chip_size * (0.3 + random(seed, candidate_x, candidate_y, salt + 4) * 0.3);
             let aspect = 0.55 + random(seed, candidate_x, candidate_y, salt + 5) * 0.42;
             let normalized = ((rotated_x / (radius * aspect)).powi(2) + (rotated_y / radius).powi(2)).sqrt();
-            let angle = rotated_y.atan2(rotated_x);
-            let facets = 4.0 + (random(seed, candidate_x, candidate_y, salt + 6) * 5.0).floor();
-            let phase = random(seed, candidate_x, candidate_y, salt + 7) * std::f32::consts::TAU;
-            let boundary =
-                0.82 + (angle * facets + phase).sin() * 0.13 + (angle * (facets + 2.0) - phase * 0.7).sin() * 0.05;
+            // Intersect a ray with straight edges between irregular vertices.
+            // Rounded sinusoidal boundaries made aggregate look like petals.
+            let angle = (rotated_y / radius)
+                .atan2(rotated_x / (radius * aspect))
+                .rem_euclid(std::f32::consts::TAU);
+            let facets = 4 + (random(seed, candidate_x, candidate_y, salt + 6) * 5.0).floor() as u64;
+            let step = std::f32::consts::TAU / facets as f32;
+            let sector = (angle / step).floor() as u64;
+            let t = angle - sector as f32 * step;
+            let r0 = 0.65 + random(seed, candidate_x, candidate_y, salt + 20 + sector % facets) * 0.35;
+            let r1 = 0.65 + random(seed, candidate_x, candidate_y, salt + 20 + (sector + 1) % facets) * 0.35;
+            let boundary = r0 * r1 * step.sin() / (r1 * (step - t).sin() + r0 * t.sin()).max(0.001);
             let score = normalized / boundary.max(0.55);
 
             if score <= 1.0 && nearest.is_none_or(|current| score < current.0) {
@@ -894,11 +917,28 @@ fn random(seed: u64, x: i64, y: i64, salt: u64) -> f32 {
     ((value ^ (value >> 31)) >> 40) as f32 / 16_777_215.0
 }
 
+// Periodic lattice noise avoids the obvious sinusoidal bands of the original
+// paint/matrix texture while preserving a deterministic, seamless repeat.
 fn periodic_noise(seed: u64, x: f32, y: f32) -> f32 {
-    let phase = random(seed, 0, 0, 29) * std::f32::consts::TAU;
-    ((x * std::f32::consts::TAU * 7.0 + phase).sin() * (y * std::f32::consts::TAU * 5.0 + phase).cos()
-        + (x * std::f32::consts::TAU * 13.0 - phase).sin() * 0.35)
-        / 1.35
+    periodic_octave(seed, x, y, 8, 29) * 0.55
+        + periodic_octave(seed, x, y, 32, 30) * 0.3
+        + periodic_octave(seed, x, y, 128, 31) * 0.15
+}
+
+fn periodic_octave(seed: u64, x: f32, y: f32, cells: i64, salt: u64) -> f32 {
+    let x = x * cells as f32;
+    let y = y * cells as f32;
+    let ix = x.floor() as i64;
+    let iy = y.floor() as i64;
+    let tx = smooth(x - x.floor());
+    let ty = smooth(y - y.floor());
+    let at =
+        |dx: i64, dy: i64| random(seed, (ix + dx).rem_euclid(cells), (iy + dy).rem_euclid(cells), salt) * 2.0 - 1.0;
+    let a = at(0, 0);
+    let b = at(0, 1);
+    let top = a + (at(1, 0) - a) * tx;
+    let bottom = b + (at(1, 1) - b) * tx;
+    top + (bottom - top) * ty
 }
 
 fn masonry_noise(seed: u64, x_mm: f32, y_mm: f32) -> f32 {
@@ -929,4 +969,76 @@ fn wrapped_delta(left: f32, right: f32, period: f32) -> f32 {
 
 fn hex(bytes: impl AsRef<[u8]>) -> String {
     bytes.as_ref().iter().map(|byte| format!("{byte:02x}")).collect()
+}
+
+#[cfg(test)]
+mod surface_tests {
+    use super::*;
+
+    #[test]
+    fn staggered_units_keep_their_identity_across_the_repeat() {
+        for (generator, parameters, width, height, y) in [
+            (
+                "masonry",
+                serde_json::json!({"joint_colour":"#AAAAAA", "tone_variation":0.4}),
+                480.0,
+                172.0,
+                110.0,
+            ),
+            (
+                "timber",
+                serde_json::json!({"stagger":true, "grain_strength":0.5}),
+                2420.0,
+                300.0,
+                190.0,
+            ),
+        ] {
+            let recipe: Recipe =
+                serde_json::from_value(serde_json::json!({"generator":generator,"parameters":parameters})).unwrap();
+            let left = sample(&recipe, 42, 0.0, y, width, height);
+            let right = sample(&recipe, 42, width, y, width, height);
+            assert_eq!(left.colour, right.colour, "{generator} colour seam");
+            assert_eq!(left.height, right.height, "{generator} height seam");
+            assert_eq!(left.roughness, right.roughness, "{generator} roughness seam");
+        }
+    }
+
+    #[test]
+    fn layered_noise_is_periodic_on_both_axes_and_seeded() {
+        for y in [0.0, 0.13, 0.62, 1.0] {
+            assert!((periodic_noise(42, 0.0, y) - periodic_noise(42, 1.0, y)).abs() < 0.00001);
+            assert!((periodic_noise(42, y, 0.0) - periodic_noise(42, y, 1.0)).abs() < 0.00001);
+        }
+        assert_ne!(periodic_noise(42, 0.3, 0.7), periodic_noise(43, 0.3, 0.7));
+    }
+
+    #[test]
+    fn timber_fibres_run_along_the_board() {
+        let timber: Timber = serde_json::from_value(serde_json::json!({"grain_strength":0.6})).unwrap();
+        let mut along = 0.0;
+        let mut across = 0.0;
+        for i in 0..200 {
+            let x = 100.0 + i as f32 * 4.0;
+            let y = 20.0 + (i % 90) as f32;
+            let at = |x, y| super::timber(&timber, 42, x, y, 1210.0, 150.0).colour[0];
+            along += (at(x + 1.0, y) - at(x, y)).abs();
+            across += (at(x, y + 1.0) - at(x, y)).abs();
+        }
+        assert!(
+            across > along * 4.0,
+            "longitudinal grain should vary slowly along its length"
+        );
+    }
+
+    #[test]
+    fn basket_weave_requires_the_full_four_thread_cycle() {
+        let mut definition: ProceduralDefinition = serde_json::from_value(serde_json::json!({
+            "generator":"textile", "width_mm":12.0, "height_mm":16.0,
+            "parameters":{"warp_colour":"#AAAAAA","weft_colour":"#BBBBBB","thread_mm":2.0,"basket":true}
+        }))
+        .unwrap();
+        assert!(validate(&definition).is_err());
+        definition.width_mm = 16.0;
+        assert!(validate(&definition).is_ok());
+    }
 }
