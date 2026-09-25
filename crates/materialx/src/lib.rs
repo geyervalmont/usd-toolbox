@@ -4,6 +4,11 @@
 //! Olsyn's neutral manifest is stored in a standard MaterialX property set so
 //! complete provenance can survive tools which preserve unknown properties.
 
+mod bundle;
+pub use bundle::{MaterialXAsset, MaterialXBundle, export_bundle};
+mod document;
+pub use document::{parse_document, referenced_files, validate_asset_path};
+
 use std::collections::BTreeMap;
 use std::io::Cursor;
 
@@ -12,8 +17,8 @@ use quick_xml::{Reader, Writer};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use usd_toolbox_core::{
-    Capabilities, Color3, Color4, Export, ExportError, Exporter, ImportError, Importer, Input, Loss, LossKind,
-    Material, Target, TextureRef, Tier, Value, target_capabilities, validate_materials,
+    Capabilities, Export, ExportError, Exporter, ImportError, Importer, Input, Loss, LossKind, Material, Target, Tier,
+    Value, target_capabilities, validate_materials,
 };
 
 const MANIFEST_PROPERTY_SET: &str = "olsyn_neutral_manifest";
@@ -46,9 +51,8 @@ impl Default for MaterialXExportOptions {
 /// MaterialX import settings.
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct MaterialXImportOptions {
-    /// Permit documents without the neutral manifest. Generic graph parsing is
-    /// intentionally rejected in this first implementation instead of silently
-    /// producing a partial material.
+    /// Permit inspection of unbound surface fragments. Complete native graphs
+    /// with a surfacematerial binding are supported without this opt-in.
     pub allow_partial_graph: bool,
 }
 
@@ -133,16 +137,52 @@ impl Importer for MaterialXImporter {
     type Options = MaterialXImportOptions;
 
     fn import(&self, input: Input<'_>, options: &Self::Options) -> Result<Vec<Material>, ImportError> {
-        let bytes = input.single_bytes().ok_or_else(|| ImportError::Invalid {
+        let bytes = match input {
+            Input::Bundle(files) => {
+                let documents: Vec<_> = files.iter().filter(|file| file.name.ends_with(".mtlx")).collect();
+                if documents.len() != 1 {
+                    return Err(ImportError::Invalid {
+                        format: "MaterialX",
+                        detail: "bundle requires exactly one .mtlx document".into(),
+                    });
+                }
+                Some(documents[0].bytes)
+            }
+            _ => input.single_bytes(),
+        }
+        .ok_or_else(|| ImportError::Invalid {
             format: "MaterialX",
             detail: "MaterialX input must be one XML byte buffer".into(),
         })?;
+        let document = parse_document(bytes)?;
         match read_manifest(bytes)? {
-            Some(materials) => Ok(materials),
-            None if options.allow_partial_graph => read_generic_graph(bytes),
-            None => Err(ImportError::Missing(format!(
-                "propertyset `{MANIFEST_PROPERTY_SET}` / property `{MANIFEST_PROPERTY}`"
-            ))),
+            Some(materials) => {
+                for material in &materials {
+                    if let Some(graph) = &material.materialx {
+                        let mut authored = document.clone();
+                        authored.children.retain(|element| {
+                            !(element.category == "propertyset" && element.attribute("name") == MANIFEST_PROPERTY_SET)
+                        });
+                        if !graph.document.attributes.contains_key("xmlns:olsyn") {
+                            authored.attributes.remove("xmlns:olsyn");
+                        }
+                        if authored != graph.document {
+                            return Err(ImportError::Invalid { format: "MaterialX", detail: "the native graph differs from its embedded neutral manifest; remove the olsyn_neutral_manifest property set and import the edited document with its image bundle".into() });
+                        }
+                    }
+                }
+                Ok(materials)
+            }
+            None => {
+                let document = parse_document(bytes)?;
+                if document.children.iter().any(|node| node.category == "surfacematerial") {
+                    document::import_native(input, bytes)
+                } else if options.allow_partial_graph {
+                    read_generic_graph(bytes)
+                } else {
+                    Err(ImportError::Missing("MaterialX surfacematerial binding".into()))
+                }
+            }
         }
     }
 }
@@ -167,6 +207,11 @@ fn read_generic_graph(bytes: &[u8]) -> Result<Vec<Material>, ImportError> {
                     .provenance
                     .metadata
                     .insert("partial_graph_import".into(), serde_json::Value::Bool(true));
+                material.model = if event.name().into_inner() == "standard_surface" {
+                    usd_toolbox_core::ShadingModel::StandardSurface
+                } else {
+                    usd_toolbox_core::ShadingModel::OpenPbr
+                };
                 current = Some(material);
             }
             Ok(Event::Empty(event)) if current.is_some() && event.name().into_inner() == "input" => {
@@ -222,16 +267,18 @@ fn assign_generic_constant(material: &mut Material, name: &str, value: &str) -> 
         }
         "base_metalness" | "metalness" => material.surface.base_metalness = Value::from(scalar()?),
         "specular_roughness" => material.surface.specular_roughness = Value::from(scalar()?),
-        "specular_ior" => material.surface.specular_ior = Some(Value::from(scalar()?)),
-        "specular_weight" => material.surface.specular_weight = Some(Value::from(scalar()?)),
-        "specular_anisotropy" => material.surface.specular_anisotropy = Some(Value::from(scalar()?)),
-        "transmission_weight" => material.surface.transmission_weight = Some(Value::from(scalar()?)),
+        "specular_ior" | "specular_IOR" => material.surface.specular_ior = Some(Value::from(scalar()?)),
+        "specular_weight" | "specular" => material.surface.specular_weight = Some(Value::from(scalar()?)),
+        "specular_anisotropy" | "specular_roughness_anisotropy" => {
+            material.surface.specular_anisotropy = Some(Value::from(scalar()?))
+        }
+        "transmission_weight" | "transmission" => material.surface.transmission_weight = Some(Value::from(scalar()?)),
         "transmission_depth" => material.surface.transmission_thickness = Some(Value::from(scalar()?)),
-        "coat_weight" => material.surface.coat_weight = Some(Value::from(scalar()?)),
+        "coat_weight" | "coat" => material.surface.coat_weight = Some(Value::from(scalar()?)),
         "coat_roughness" => material.surface.coat_roughness = Some(Value::from(scalar()?)),
-        "fuzz_weight" => material.surface.fuzz_weight = Some(Value::from(scalar()?)),
-        "fuzz_roughness" => material.surface.fuzz_roughness = Some(Value::from(scalar()?)),
-        "subsurface_weight" => material.surface.subsurface_weight = Some(Value::from(scalar()?)),
+        "fuzz_weight" | "sheen" => material.surface.fuzz_weight = Some(Value::from(scalar()?)),
+        "fuzz_roughness" | "sheen_roughness" => material.surface.fuzz_roughness = Some(Value::from(scalar()?)),
+        "subsurface_weight" | "subsurface" => material.surface.subsurface_weight = Some(Value::from(scalar()?)),
         "emission_color" => material.surface.emission_color = Some(Value::from(parse_color(value)?)),
         "geometry_height" => material.geometry.height = Some(Value::from(scalar()?)),
         "geometry_bump" => material.geometry.bump = Some(Value::from(scalar()?)),
@@ -267,12 +314,37 @@ fn write_document(materials: &[Material], options: &MaterialXExportOptions) -> R
         .write_event(Event::Decl(BytesDecl::new("1.0", Some("UTF-8"), None)))
         .map_err(xml_export_error)?;
     let mut root = BytesStart::new("materialx");
-    root.push_attribute(("version", "1.39"));
+    if let Some(graph) = materials.first().and_then(|m| m.materialx.as_ref()) {
+        for (key, value) in &graph.document.attributes {
+            if key != "xmlns:olsyn" {
+                root.push_attribute((key.as_str(), value.as_str()));
+            }
+        }
+    } else {
+        root.push_attribute(("version", "1.39"));
+    }
     root.push_attribute(("xmlns:olsyn", "https://olsyn.com/ns/usd-toolbox/1"));
     writer.write_event(Event::Start(root)).map_err(xml_export_error)?;
 
+    let native: Vec<_> = materials
+        .iter()
+        .filter_map(|material| material.materialx.as_ref())
+        .collect();
+    if let Some(graph) = native.first() {
+        if native.len() != materials.len() || native.iter().any(|other| other.document != graph.document) {
+            return Err(ExportError::Unsupported(
+                "export native MaterialX documents separately; graph names cannot be merged implicitly".into(),
+            ));
+        }
+        for element in &graph.document.children {
+            if element.category == "propertyset" && element.attribute("name") == MANIFEST_PROPERTY_SET {
+                continue;
+            }
+            document::write_element(&mut writer, element).map_err(xml_export_error)?;
+        }
+    }
     let mut used_names = BTreeMap::<String, usize>::new();
-    for material in materials {
+    for material in materials.iter().filter(|material| material.materialx.is_none()) {
         let base = xml_name(&material.id.0);
         let suffix = used_names.entry(base.clone()).or_default();
         let material_name = if *suffix == 0 { base } else { format!("{base}_{suffix}") };
@@ -312,6 +384,15 @@ fn write_document(materials: &[Material], options: &MaterialXExportOptions) -> R
 
 fn validate_payload_hashes(materials: &[Material]) -> Result<(), ExportError> {
     for material in materials {
+        if let Some(graph) = &material.materialx {
+            for (path, asset) in &graph.assets {
+                if path != &asset.package_path() || format!("{:x}", Sha256::digest(&asset.bytes)) != asset.hash.0 {
+                    return Err(ExportError::InvalidModel(format!(
+                        "MaterialX asset hash/path mismatch: {path}"
+                    )));
+                }
+            }
+        }
         let mut mismatch = None;
         material.visit_textures(|parameter, texture| {
             if mismatch.is_none() {
@@ -364,356 +445,27 @@ fn write_material(
     material_name: &str,
     graph_tier: Tier,
 ) -> Result<(), ExportError> {
-    let surface_name = format!("{material_name}_openpbr");
-    let opacity = combined_opacity(material);
-    let mut nodes = Vec::new();
-    collect_color4_node(
-        &mut nodes,
-        material_name,
-        "base_color",
-        &material.surface.base_color,
-        graph_tier,
-    )?;
-    collect_scalar_node(
-        &mut nodes,
-        material_name,
-        "base_metalness",
-        &material.surface.base_metalness,
-        graph_tier,
-    )?;
-    collect_scalar_node(
-        &mut nodes,
-        material_name,
-        "specular_roughness",
-        &material.surface.specular_roughness,
-        graph_tier,
-    )?;
-    macro_rules! scalar_node {
-        ($field:expr, $name:literal) => {
-            if let Some(value) = $field {
-                collect_scalar_node(&mut nodes, material_name, $name, value, graph_tier)?;
+    let mut graph = usd_toolbox_core::materialx_graph(material, graph_tier)?;
+    fn namespace(element: &mut usd_toolbox_core::MaterialXElement, prefix: &str) {
+        for key in ["nodename", "nodegraph"] {
+            if let Some(name) = element.attributes.get_mut(key) {
+                *name = format!("{prefix}_{name}");
             }
-        };
-    }
-    scalar_node!(&material.surface.specular_ior, "specular_ior");
-    scalar_node!(&material.surface.specular_weight, "specular_weight");
-    scalar_node!(&material.surface.specular_anisotropy, "specular_anisotropy");
-    scalar_node!(&material.surface.transmission_weight, "transmission_weight");
-    scalar_node!(&material.surface.transmission_thickness, "transmission_depth");
-    scalar_node!(&material.surface.coat_weight, "coat_weight");
-    scalar_node!(&material.surface.coat_roughness, "coat_roughness");
-    scalar_node!(&material.surface.fuzz_weight, "fuzz_weight");
-    scalar_node!(&material.surface.fuzz_roughness, "fuzz_roughness");
-    scalar_node!(&material.surface.subsurface_weight, "subsurface_weight");
-    scalar_node!(&material.geometry.height, "geometry_height");
-    scalar_node!(&material.geometry.bump, "geometry_bump");
-    scalar_node!(opacity.as_ref(), "geometry_opacity");
-    scalar_node!(&material.geometry.ambient_occlusion, "ambient_occlusion");
-    if let Some(value) = &material.surface.emission_color {
-        collect_color3_node(&mut nodes, material_name, "emission_color", value, graph_tier)?;
-    }
-    if let Some(value) = &material.geometry.normal {
-        collect_color3_node(&mut nodes, material_name, "geometry_normal", value, graph_tier)?;
-    }
-    for node in &nodes {
-        write_image_node(writer, node)?;
-        if node.factor.is_some() {
-            write_multiply_node(writer, node)?;
+        }
+        if !matches!(element.category.as_str(), "input" | "output")
+            && let Some(name) = element.attributes.get_mut("name")
+        {
+            *name = format!("{prefix}_{name}");
+        }
+        for child in &mut element.children {
+            namespace(child, prefix);
         }
     }
-
-    let mut surface = BytesStart::new("open_pbr_surface");
-    surface.push_attribute(("name", surface_name.as_str()));
-    surface.push_attribute(("type", "surfaceshader"));
-    writer.write_event(Event::Start(surface)).map_err(xml_export_error)?;
-    write_color4_input(
-        writer,
-        material_name,
-        "base_color",
-        &material.surface.base_color,
-        &nodes,
-    )?;
-    write_scalar_input(
-        writer,
-        material_name,
-        "base_metalness",
-        &material.surface.base_metalness,
-        &nodes,
-    )?;
-    write_scalar_input(
-        writer,
-        material_name,
-        "specular_roughness",
-        &material.surface.specular_roughness,
-        &nodes,
-    )?;
-    macro_rules! scalar_input {
-        ($field:expr, $name:literal) => {
-            if let Some(value) = $field {
-                write_scalar_input(writer, material_name, $name, value, &nodes)?;
-            }
-        };
+    for element in &mut graph.document.children {
+        namespace(element, material_name);
+        document::write_element(writer, element).map_err(xml_export_error)?;
     }
-    scalar_input!(&material.surface.specular_ior, "specular_ior");
-    scalar_input!(&material.surface.specular_weight, "specular_weight");
-    scalar_input!(&material.surface.specular_anisotropy, "specular_anisotropy");
-    scalar_input!(&material.surface.transmission_weight, "transmission_weight");
-    scalar_input!(&material.surface.transmission_thickness, "transmission_depth");
-    scalar_input!(&material.surface.coat_weight, "coat_weight");
-    scalar_input!(&material.surface.coat_roughness, "coat_roughness");
-    scalar_input!(&material.surface.fuzz_weight, "fuzz_weight");
-    scalar_input!(&material.surface.fuzz_roughness, "fuzz_roughness");
-    scalar_input!(&material.surface.subsurface_weight, "subsurface_weight");
-    scalar_input!(&material.geometry.height, "geometry_height");
-    scalar_input!(&material.geometry.bump, "geometry_bump");
-    scalar_input!(opacity.as_ref(), "geometry_opacity");
-    scalar_input!(&material.geometry.ambient_occlusion, "ambient_occlusion");
-    if let Some(value) = &material.surface.emission_color {
-        write_color3_input(writer, material_name, "emission_color", value, &nodes)?;
-    }
-    if let Some(value) = &material.geometry.normal {
-        write_color3_input(writer, material_name, "geometry_normal", value, &nodes)?;
-    }
-    writer
-        .write_event(Event::End(BytesEnd::new("open_pbr_surface")))
-        .map_err(xml_export_error)?;
-
-    let mut surface_material = BytesStart::new("surfacematerial");
-    surface_material.push_attribute(("name", material_name));
-    surface_material.push_attribute(("type", "material"));
-    writer
-        .write_event(Event::Start(surface_material))
-        .map_err(xml_export_error)?;
-    let mut input = BytesStart::new("input");
-    input.push_attribute(("name", "surfaceshader"));
-    input.push_attribute(("type", "surfaceshader"));
-    input.push_attribute(("nodename", surface_name.as_str()));
-    writer.write_event(Event::Empty(input)).map_err(xml_export_error)?;
-    writer
-        .write_event(Event::End(BytesEnd::new("surfacematerial")))
-        .map_err(xml_export_error)
-}
-
-#[derive(Clone, Debug)]
-struct TextureNode {
-    parameter: &'static str,
-    image_name: String,
-    multiply_name: String,
-    value_type: &'static str,
-    source_path: String,
-    color_space: &'static str,
-    channel: &'static str,
-    factor: Option<String>,
-}
-
-fn collect_scalar_node(
-    nodes: &mut Vec<TextureNode>,
-    material_name: &str,
-    parameter: &'static str,
-    value: &Value<f32>,
-    tier: Tier,
-) -> Result<(), ExportError> {
-    collect_texture_node(
-        nodes,
-        material_name,
-        parameter,
-        "float",
-        value.texture(),
-        tier,
-        |value| value.to_string(),
-        value,
-    )
-}
-
-fn collect_color3_node(
-    nodes: &mut Vec<TextureNode>,
-    material_name: &str,
-    parameter: &'static str,
-    value: &Value<Color3>,
-    tier: Tier,
-) -> Result<(), ExportError> {
-    collect_texture_node(
-        nodes,
-        material_name,
-        parameter,
-        "color3",
-        value.texture(),
-        tier,
-        format_color3,
-        value,
-    )
-}
-
-fn collect_color4_node(
-    nodes: &mut Vec<TextureNode>,
-    material_name: &str,
-    parameter: &'static str,
-    value: &Value<Color4>,
-    tier: Tier,
-) -> Result<(), ExportError> {
-    collect_texture_node(
-        nodes,
-        material_name,
-        parameter,
-        "color3",
-        value.texture(),
-        tier,
-        |value| format_color3(&[value[0], value[1], value[2]]),
-        value,
-    )
-}
-
-#[allow(clippy::too_many_arguments)]
-fn collect_texture_node<T>(
-    nodes: &mut Vec<TextureNode>,
-    material_name: &str,
-    parameter: &'static str,
-    value_type: &'static str,
-    texture: Option<&TextureRef>,
-    tier: Tier,
-    format_factor: impl Fn(&T) -> String,
-    value: &Value<T>,
-) -> Result<(), ExportError> {
-    let Some(texture) = texture else {
-        return Ok(());
-    };
-    let source = texture
-        .source_for(tier)
-        .ok_or_else(|| ExportError::InvalidModel(format!("texture `{parameter}` has no tiers")))?;
-    let factor = match value {
-        Value::Modulated { factor, .. } => Some(format_factor(factor)),
-        Value::Constant { .. } | Value::Texture { .. } => None,
-    };
-    nodes.push(TextureNode {
-        parameter,
-        image_name: format!("{material_name}_{parameter}_image"),
-        multiply_name: format!("{material_name}_{parameter}_multiply"),
-        value_type,
-        source_path: source.package_path(),
-        color_space: match texture.color_space {
-            usd_toolbox_core::ColorSpace::Srgb => "srgb_texture",
-            usd_toolbox_core::ColorSpace::Raw => "none",
-            usd_toolbox_core::ColorSpace::Linear => "lin_rec709",
-        },
-        channel: match texture.channel {
-            usd_toolbox_core::Channel::Rgb => "rgb",
-            usd_toolbox_core::Channel::R => "r",
-            usd_toolbox_core::Channel::G => "g",
-            usd_toolbox_core::Channel::B => "b",
-            usd_toolbox_core::Channel::A => "a",
-        },
-        factor,
-    });
     Ok(())
-}
-
-fn write_image_node(writer: &mut Writer<Cursor<Vec<u8>>>, node: &TextureNode) -> Result<(), ExportError> {
-    let mut image = BytesStart::new("image");
-    image.push_attribute(("name", node.image_name.as_str()));
-    image.push_attribute(("type", node.value_type));
-    writer.write_event(Event::Start(image)).map_err(xml_export_error)?;
-    let mut file = BytesStart::new("input");
-    file.push_attribute(("name", "file"));
-    file.push_attribute(("type", "filename"));
-    file.push_attribute(("value", node.source_path.as_str()));
-    file.push_attribute(("colorspace", node.color_space));
-    writer.write_event(Event::Empty(file)).map_err(xml_export_error)?;
-    let mut channels = BytesStart::new("input");
-    channels.push_attribute(("name", "channels"));
-    channels.push_attribute(("type", "string"));
-    channels.push_attribute(("value", node.channel));
-    writer.write_event(Event::Empty(channels)).map_err(xml_export_error)?;
-    writer
-        .write_event(Event::End(BytesEnd::new("image")))
-        .map_err(xml_export_error)
-}
-
-fn write_multiply_node(writer: &mut Writer<Cursor<Vec<u8>>>, node: &TextureNode) -> Result<(), ExportError> {
-    let mut multiply = BytesStart::new("multiply");
-    multiply.push_attribute(("name", node.multiply_name.as_str()));
-    multiply.push_attribute(("type", node.value_type));
-    writer.write_event(Event::Start(multiply)).map_err(xml_export_error)?;
-    let mut input1 = BytesStart::new("input");
-    input1.push_attribute(("name", "in1"));
-    input1.push_attribute(("type", node.value_type));
-    input1.push_attribute(("nodename", node.image_name.as_str()));
-    writer.write_event(Event::Empty(input1)).map_err(xml_export_error)?;
-    let mut input2 = BytesStart::new("input");
-    input2.push_attribute(("name", "in2"));
-    input2.push_attribute(("type", node.value_type));
-    input2.push_attribute(("value", node.factor.as_deref().unwrap_or("1")));
-    writer.write_event(Event::Empty(input2)).map_err(xml_export_error)?;
-    writer
-        .write_event(Event::End(BytesEnd::new("multiply")))
-        .map_err(xml_export_error)
-}
-
-fn write_scalar_input(
-    writer: &mut Writer<Cursor<Vec<u8>>>,
-    material_name: &str,
-    parameter: &'static str,
-    value: &Value<f32>,
-    nodes: &[TextureNode],
-) -> Result<(), ExportError> {
-    write_input(writer, material_name, parameter, "float", value, nodes, |value| {
-        value.to_string()
-    })
-}
-
-fn write_color3_input(
-    writer: &mut Writer<Cursor<Vec<u8>>>,
-    material_name: &str,
-    parameter: &'static str,
-    value: &Value<Color3>,
-    nodes: &[TextureNode],
-) -> Result<(), ExportError> {
-    write_input(writer, material_name, parameter, "color3", value, nodes, format_color3)
-}
-
-fn write_color4_input(
-    writer: &mut Writer<Cursor<Vec<u8>>>,
-    material_name: &str,
-    parameter: &'static str,
-    value: &Value<Color4>,
-    nodes: &[TextureNode],
-) -> Result<(), ExportError> {
-    write_input(writer, material_name, parameter, "color3", value, nodes, |value| {
-        format_color3(&[value[0], value[1], value[2]])
-    })
-}
-
-fn write_input<T>(
-    writer: &mut Writer<Cursor<Vec<u8>>>,
-    _material_name: &str,
-    parameter: &'static str,
-    value_type: &'static str,
-    value: &Value<T>,
-    nodes: &[TextureNode],
-    format_constant: impl Fn(&T) -> String,
-) -> Result<(), ExportError> {
-    let mut input = BytesStart::new("input");
-    input.push_attribute(("name", parameter));
-    input.push_attribute(("type", value_type));
-    match value {
-        Value::Constant { value } => {
-            let formatted = format_constant(value);
-            input.push_attribute(("value", formatted.as_str()));
-            writer.write_event(Event::Empty(input)).map_err(xml_export_error)
-        }
-        Value::Texture { .. } | Value::Modulated { .. } => {
-            let node = nodes
-                .iter()
-                .find(|node| node.parameter == parameter)
-                .expect("texture node was collected");
-            let node_name = if node.factor.is_some() {
-                &node.multiply_name
-            } else {
-                &node.image_name
-            };
-            input.push_attribute(("nodename", node_name.as_str()));
-            writer.write_event(Event::Empty(input)).map_err(xml_export_error)
-        }
-    }
 }
 
 fn read_manifest(bytes: &[u8]) -> Result<Option<Vec<Material>>, ImportError> {
@@ -790,6 +542,11 @@ fn attribute(event: &BytesStart<'_>, name: &str) -> Result<Option<String>, Impor
 
 fn clear_payloads(materials: &mut [Material]) {
     for material in materials {
+        if let Some(graph) = &mut material.materialx {
+            for asset in graph.assets.values_mut() {
+                asset.bytes.clear();
+            }
+        }
         material.visit_textures_mut(|_, texture| {
             for source in texture.tiers.values_mut() {
                 source.bytes.clear();
@@ -802,34 +559,6 @@ fn clear_payloads(materials: &mut [Material]) {
             asset.bytes.clear();
         }
     }
-}
-
-fn combined_opacity(material: &Material) -> Option<Value<f32>> {
-    let base_alpha = match &material.surface.base_color {
-        Value::Constant { value } => value[3],
-        Value::Texture { .. } => 1.0,
-        Value::Modulated { factor, .. } => factor[3],
-    };
-    match &material.geometry.opacity {
-        Some(Value::Constant { value }) => Some(Value::from(base_alpha * value)),
-        Some(Value::Texture { texture }) if base_alpha != 1.0 => Some(Value::Modulated {
-            texture: texture.clone(),
-            factor: base_alpha,
-        }),
-        Some(Value::Texture { texture }) => Some(Value::Texture {
-            texture: texture.clone(),
-        }),
-        Some(Value::Modulated { texture, factor }) => Some(Value::Modulated {
-            texture: texture.clone(),
-            factor: base_alpha * factor,
-        }),
-        None if base_alpha != 1.0 => Some(Value::from(base_alpha)),
-        None => None,
-    }
-}
-
-fn format_color3(value: &Color3) -> String {
-    format!("{}, {}, {}", value[0], value[1], value[2])
 }
 
 fn xml_name(value: &str) -> String {

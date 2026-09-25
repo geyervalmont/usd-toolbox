@@ -34,7 +34,8 @@ architectural dependency.
   embedding inputs, cosine similarity, and deterministic clustering.
 - Versioned procedural paint, masonry, timber, terrazzo, and textile recipes
   with deterministic PBR texture baking and SVG/Revit hatch outputs.
-- MaterialX 1.39 read/write and glTF 2.0/GLB material export with ratified
+- Native MaterialX 1.38/1.39 graphs, checked dependencies, shared XML/USD shading
+  authoring, and browser preview bundles; glTF 2.0/GLB export with ratified
   `KHR_materials_*` extensions and channel packing.
 - Revit Generic appearance-asset image-set ZIP export matching the OPAL
   connector's diffuse/bump/glossiness contract.
@@ -44,10 +45,9 @@ architectural dependency.
 - CLI, `wasm-bindgen`, and panic-safe C ABI surfaces for the same workflows.
 
 USD and MaterialX importers guarantee full fidelity for documents written by
-this library, using an embedded versioned neutral manifest. They also support a
-conservative inspection of direct constants in third-party USD Preview Surface,
-USD OpenPBR, MaterialX OpenPBR, and MaterialX Standard Surface graphs. Unknown
-connections are reported as unresolved metadata instead of being guessed.
+this library, using an embedded versioned neutral manifest. Native MaterialX Standard Surface/OpenPBR documents preserve procedural graphs
+and supplied images. Third-party USD inspection remains conservative: direct
+constants are projected and unresolved connections are reported instead of guessed.
 Geometry and material bindings remain deliberately outside the model for now.
 
 ## Workspace
@@ -154,9 +154,8 @@ MaterialX-enabled `usdchecker` remains the release gate.
 
 - Image decoding and tier generation currently support PNG and JPEG.
 - glTF is export-only.
-- Generic external graphs are currently a conservative inspection path: direct
-  standard constants are imported, while unresolved texture connections remain
-  explicit metadata until bytes and colour interpretation can be proven.
+- External USD graphs remain a conservative inspection path. Native MaterialX
+  support and its explicit boundaries are described in [materialx.md](docs/materialx.md).
 - Shader code generation and rendering are intentionally out of scope.
 - Geometry will arrive as another spoke plus a binding table; `Material` will
   remain independently addressable.

@@ -184,6 +184,10 @@ pub struct Material {
     pub auxiliary: Vec<AuxiliaryAsset>,
     /// Lineage which must survive every operation.
     pub provenance: Provenance,
+    /// Native MaterialX graph, authoritative when present. The surface fields
+    /// remain an explicitly partial projection for simpler consumers.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub materialx: Option<crate::MaterialXGraph>,
     /// Arbitrary orthogonal variant axes.
     pub variants: Vec<VariantSet>,
 }
@@ -202,6 +206,7 @@ impl Material {
             auxiliary: Vec::new(),
             provenance: Provenance::default(),
             variants: Vec::new(),
+            materialx: None,
         }
     }
 

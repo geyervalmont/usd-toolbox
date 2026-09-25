@@ -6,6 +6,8 @@
 //! own round trips preserve every field even when another USD implementation does
 //! not understand Olsyn metadata.
 
+mod materialx;
+
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::io::{Cursor, Read};
 
@@ -177,6 +179,11 @@ impl Manifest {
         let mut materials = materials.to_vec();
         if for_usdz {
             for material in &mut materials {
+                if let Some(graph) = &mut material.materialx {
+                    for asset in graph.assets.values_mut() {
+                        asset.bytes.clear();
+                    }
+                }
                 material.visit_textures_mut(|_, texture| {
                     for source in texture.tiers.values_mut() {
                         source.bytes.clear();
@@ -262,8 +269,6 @@ fn author_material(
     graph_tier: Tier,
 ) -> Result<(), ExportError> {
     let material_path = parent.append_path(prim_name).map_err(path_error)?;
-    let mut children = vec![Token::new("OpenPBR")];
-    let mut properties = vec![Token::new("outputs:surface")];
     let mut asset_info = HashMap::from([
         ("identifier".into(), UsdValue::String(material.id.0.clone())),
         ("name".into(), UsdValue::String(material.name.clone())),
@@ -294,128 +299,11 @@ fn author_material(
         ])),
     );
 
-    let shader_path = material_path.append_path("OpenPBR").map_err(path_error)?;
-    let mut shader_properties = vec![Token::new("info:id"), Token::new("outputs:out")];
-    create_attribute(
-        data,
-        &shader_path,
-        "info:id",
-        "token",
-        Some(UsdValue::Token("ND_open_pbr_surface_surfaceshader".into())),
-        None,
-        None,
-    )?;
-    create_attribute(data, &shader_path, "outputs:out", "token", None, None, None)?;
-
-    author_color4(
-        data,
-        &material_path,
-        &shader_path,
-        "base_color",
-        &material.surface.base_color,
-        graph_tier,
-        &mut children,
-        &mut shader_properties,
-    )?;
-    author_scalar(
-        data,
-        &material_path,
-        &shader_path,
-        "base_metalness",
-        &material.surface.base_metalness,
-        graph_tier,
-        &mut children,
-        &mut shader_properties,
-    )?;
-    author_scalar(
-        data,
-        &material_path,
-        &shader_path,
-        "specular_roughness",
-        &material.surface.specular_roughness,
-        graph_tier,
-        &mut children,
-        &mut shader_properties,
-    )?;
-    macro_rules! scalar {
-        ($field:expr, $name:literal) => {
-            if let Some(value) = $field {
-                author_scalar(
-                    data,
-                    &material_path,
-                    &shader_path,
-                    $name,
-                    value,
-                    graph_tier,
-                    &mut children,
-                    &mut shader_properties,
-                )?;
-            }
-        };
+    let graph = usd_toolbox_core::materialx_graph(material, graph_tier)?;
+    materialx::author(data, &material_path, &graph)?;
+    if material.materialx.is_none() {
+        author_variants(data, &material_path, material, graph_tier)?;
     }
-    scalar!(&material.surface.specular_ior, "specular_ior");
-    scalar!(&material.surface.specular_weight, "specular_weight");
-    scalar!(&material.surface.specular_anisotropy, "specular_anisotropy");
-    scalar!(&material.surface.transmission_weight, "transmission_weight");
-    scalar!(&material.surface.transmission_thickness, "transmission_depth");
-    scalar!(&material.surface.coat_weight, "coat_weight");
-    scalar!(&material.surface.coat_roughness, "coat_roughness");
-    scalar!(&material.surface.fuzz_weight, "fuzz_weight");
-    scalar!(&material.surface.fuzz_roughness, "fuzz_roughness");
-    scalar!(&material.surface.subsurface_weight, "subsurface_weight");
-    scalar!(&material.geometry.height, "geometry_height");
-    scalar!(&material.geometry.bump, "geometry_bump");
-    let opacity = combined_opacity(material);
-    scalar!(opacity.as_ref(), "geometry_opacity");
-    scalar!(&material.geometry.ambient_occlusion, "ambient_occlusion");
-    if let Some(value) = &material.surface.emission_color {
-        author_color3(
-            data,
-            &material_path,
-            &shader_path,
-            "emission_color",
-            value,
-            graph_tier,
-            &mut children,
-            &mut shader_properties,
-        )?;
-    }
-    if let Some(value) = &material.geometry.normal {
-        author_color3(
-            data,
-            &material_path,
-            &shader_path,
-            "geometry_normal",
-            value,
-            graph_tier,
-            &mut children,
-            &mut shader_properties,
-        )?;
-    }
-
-    let shader_spec = data.create_spec(shader_path.clone(), SpecType::Prim);
-    shader_spec.add(FieldKey::Specifier, UsdValue::Specifier(Specifier::Def));
-    shader_spec.add(FieldKey::TypeName, UsdValue::Token("Shader".into()));
-    shader_spec.add(ChildrenKey::PropertyChildren, UsdValue::TokenVec(shader_properties));
-
-    let shader_output = shader_path.append_property("outputs:out").map_err(path_error)?;
-    create_attribute(
-        data,
-        &material_path,
-        "outputs:surface",
-        "token",
-        None,
-        Some(shader_output),
-        None,
-    )?;
-
-    author_variants(data, &material_path, material, graph_tier)?;
-    let material_spec = data.spec_mut(&material_path).expect("material prim exists");
-    material_spec.add(ChildrenKey::PrimChildren, UsdValue::TokenVec(children));
-    material_spec.add(
-        ChildrenKey::PropertyChildren,
-        UsdValue::TokenVec(std::mem::take(&mut properties)),
-    );
     Ok(())
 }
 
@@ -549,7 +437,7 @@ const fn variant_scalar_name(parameter: &str) -> Option<&'static str> {
         b"specular_roughness" => Some("specular_roughness"),
         b"specular_ior" => Some("specular_ior"),
         b"specular_weight" => Some("specular_weight"),
-        b"specular_anisotropy" => Some("specular_anisotropy"),
+        b"specular_anisotropy" => Some("specular_roughness_anisotropy"),
         b"transmission_weight" => Some("transmission_weight"),
         b"transmission_thickness" => Some("transmission_depth"),
         b"coat_weight" => Some("coat_weight"),
@@ -817,30 +705,6 @@ fn author_texture_node(
     node_path.append_property("outputs:out").map_err(path_error)
 }
 
-fn combined_opacity(material: &Material) -> Option<Value<f32>> {
-    let base_alpha = match &material.surface.base_color {
-        Value::Constant { value } => value[3],
-        Value::Texture { .. } => 1.0,
-        Value::Modulated { factor, .. } => factor[3],
-    };
-    match &material.geometry.opacity {
-        Some(Value::Constant { value }) => Some(Value::from(base_alpha * value)),
-        Some(Value::Texture { texture }) if base_alpha != 1.0 => Some(Value::Modulated {
-            texture: texture.clone(),
-            factor: base_alpha,
-        }),
-        Some(Value::Texture { texture }) => Some(Value::Texture {
-            texture: texture.clone(),
-        }),
-        Some(Value::Modulated { texture, factor }) => Some(Value::Modulated {
-            texture: texture.clone(),
-            factor: base_alpha * factor,
-        }),
-        None if base_alpha != 1.0 => Some(Value::from(base_alpha)),
-        None => None,
-    }
-}
-
 fn create_attribute(
     data: &mut sdf::Data,
     prim_path: &Path,
@@ -877,6 +741,16 @@ fn write_usdz(
     let mut entries = BTreeMap::<String, Vec<u8>>::new();
     let mut packaged_hashes = BTreeSet::new();
     for material in materials {
+        if let Some(graph) = &material.materialx {
+            for (path, asset) in &graph.assets {
+                if !is_usdz_allowed_extension(&asset.extension) {
+                    return Err(ExportError::Unsupported(format!(
+                        "USDZ cannot contain MaterialX asset `{path}`"
+                    )));
+                }
+                entries.insert(path.clone(), asset.bytes.clone());
+            }
+        }
         let mut unsupported_texture = None;
         material.visit_textures(|parameter, texture| {
             if unsupported_texture.is_none() {
@@ -1256,6 +1130,13 @@ fn rehydrate(
     verify_hashes: bool,
 ) -> Result<Vec<Material>, ImportError> {
     for material in &mut materials {
+        if let Some(graph) = &mut material.materialx {
+            for (path, asset) in &mut graph.assets {
+                let bytes = entries.get(path).ok_or_else(|| ImportError::Missing(path.clone()))?;
+                verify_hash(&asset.hash, bytes, path, verify_hashes)?;
+                asset.bytes.clone_from(bytes);
+            }
+        }
         let mut error = None;
         material.visit_textures_mut(|parameter, texture| {
             if error.is_some() {
@@ -1417,6 +1298,15 @@ fn digest(bytes: &[u8]) -> Sha256 {
 
 fn validate_payload_hashes(materials: &[Material]) -> Result<(), ExportError> {
     for material in materials {
+        if let Some(graph) = &material.materialx {
+            for (path, asset) in &graph.assets {
+                if path != &asset.package_path() || digest(&asset.bytes) != asset.hash {
+                    return Err(ExportError::InvalidModel(format!(
+                        "MaterialX asset hash/path mismatch: {path}"
+                    )));
+                }
+            }
+        }
         let mut mismatch = None;
         material.visit_textures(|parameter, texture| {
             if mismatch.is_none() {

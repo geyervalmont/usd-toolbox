@@ -81,6 +81,9 @@ pub fn validate_material(material: &Material) -> Vec<ValidationIssue> {
         }
     }
 
+    if let Some(graph) = &material.materialx {
+        validate_materialx_graph(graph, &mut issues);
+    }
     let mut content_hashes = BTreeSet::new();
     material.visit_textures(|parameter, texture| {
         if texture.tiers.is_empty() {
@@ -367,5 +370,72 @@ const fn severity_rank(kind: ValidationIssueKind) -> u8 {
     match kind {
         ValidationIssueKind::Error => 0,
         ValidationIssueKind::Warning => 1,
+    }
+}
+
+fn validate_materialx_graph(graph: &crate::MaterialXGraph, issues: &mut Vec<ValidationIssue>) {
+    if graph.document.category != "materialx" || !matches!(graph.document.attribute("version"), "1.38" | "1.39") {
+        error(issues, "materialx.document", "expected a MaterialX 1.38 or 1.39 root");
+    }
+    if !graph
+        .document
+        .children
+        .iter()
+        .any(|node| node.category == "surfacematerial" && node.attribute("name") == graph.material_name)
+    {
+        error(issues, "materialx.material_name", "selected surfacematerial is missing");
+    }
+    fn visit(
+        element: &crate::MaterialXElement,
+        graph: &crate::MaterialXGraph,
+        depth: usize,
+        issues: &mut Vec<ValidationIssue>,
+    ) {
+        if depth > 64 {
+            error(issues, "materialx.document", "graph nesting exceeds 64 levels");
+            return;
+        }
+        if matches!(element.category.as_str(), "include" | "xi:include")
+            || !element.attribute("fileprefix").is_empty()
+            || !element.attribute("sourceuri").is_empty()
+        {
+            error(
+                issues,
+                "materialx.document",
+                "external includes and prefixes must be resolved before import",
+            );
+        }
+        if element.attribute("type") == "filename"
+            && element.attributes.contains_key("value")
+            && !graph.assets.contains_key(element.attribute("value"))
+        {
+            error(
+                issues,
+                "materialx.assets",
+                "every filename must resolve to a supplied graph asset",
+            );
+        }
+        let mut names = BTreeSet::new();
+        for child in &element.children {
+            let name = child.attribute("name");
+            if !name.is_empty() && !names.insert(name) {
+                error(issues, "materialx.document", "duplicate element name in a graph scope");
+            }
+            visit(child, graph, depth + 1, issues);
+        }
+    }
+    visit(&graph.document, graph, 0, issues);
+    for (path, asset) in &graph.assets {
+        if path != &asset.package_path()
+            || asset.hash.0.len() != 64
+            || !asset.hash.0.bytes().all(|b| b.is_ascii_hexdigit())
+            || !matches!(asset.extension.as_str(), "png" | "jpg" | "jpeg" | "exr")
+        {
+            error(
+                issues,
+                "materialx.assets",
+                "graph images must use checked content-addressed paths",
+            );
+        }
     }
 }

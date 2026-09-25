@@ -100,6 +100,8 @@ pub struct Capabilities {
     pub target: &'static str,
     /// Per-parameter fidelity.
     pub parameters: BTreeMap<Parameter, Support>,
+    /// Whether a native MaterialX graph can remain authoritative.
+    pub materialx_graphs: bool,
     /// Whether all texture tiers survive as separately addressable data.
     pub texture_tiers: bool,
     /// Whether physical millimetre tiling survives.
@@ -118,6 +120,7 @@ impl Capabilities {
     pub fn new(target: &'static str) -> Self {
         Self {
             target,
+            materialx_graphs: false,
             parameters: BTreeMap::new(),
             texture_tiers: false,
             physical_tiling: false,
@@ -139,6 +142,10 @@ impl Capabilities {
     pub fn assess(&self, materials: &[Material]) -> Vec<Loss> {
         let mut losses = Vec::new();
         for material in materials {
+            if material.materialx.is_some() && !self.materialx_graphs {
+                losses.push(Loss { material: material.id.clone(), parameter: "materialx", kind: LossKind::Reduced,
+                    detail: "native MaterialX graph is retained only by USD/MaterialX targets; this output uses its partial surface projection".into() });
+            }
             for parameter in authored_parameters(material) {
                 match self.parameters.get(&parameter).copied().unwrap_or(Support::Unsupported) {
                     Support::Exact => {}
@@ -259,16 +266,20 @@ pub fn dry_run(materials: &[Material], target: Target) -> Vec<Loss> {
 #[must_use]
 pub fn target_capabilities(target: Target) -> Capabilities {
     match target {
-        Target::Usd => all_parameters(Capabilities::new("USD")).tap(|capabilities| {
-            capabilities.texture_tiers = true;
-            capabilities.physical_tiling = true;
-            capabilities.variants = true;
-            capabilities.provenance = true;
-            capabilities.auxiliary_assets = true;
-        }),
-        Target::MaterialX => all_parameters(Capabilities::new("MaterialX"))
-            .with(Parameter::AmbientOcclusion, Support::Approximated("ambient_occlusion"))
+        Target::Usd => all_parameters(Capabilities::new("USD"))
+            .with(Parameter::AmbientOcclusion, Support::Unsupported)
             .tap(|capabilities| {
+                capabilities.materialx_graphs = true;
+                capabilities.texture_tiers = true;
+                capabilities.physical_tiling = true;
+                capabilities.variants = true;
+                capabilities.provenance = true;
+                capabilities.auxiliary_assets = true;
+            }),
+        Target::MaterialX => all_parameters(Capabilities::new("MaterialX"))
+            .with(Parameter::AmbientOcclusion, Support::Unsupported)
+            .tap(|capabilities| {
+                capabilities.materialx_graphs = true;
                 capabilities.provenance = true;
                 capabilities.auxiliary_assets = true;
             }),
@@ -307,13 +318,16 @@ pub fn target_capabilities(target: Target) -> Capabilities {
             capabilities.physical_tiling = true;
             capabilities
         }
-        Target::Omniverse => all_parameters(Capabilities::new("NVIDIA Omniverse OpenUSD")).tap(|capabilities| {
-            capabilities.texture_tiers = true;
-            capabilities.physical_tiling = true;
-            capabilities.variants = true;
-            capabilities.provenance = true;
-            capabilities.auxiliary_assets = true;
-        }),
+        Target::Omniverse => all_parameters(Capabilities::new("NVIDIA Omniverse OpenUSD"))
+            .with(Parameter::AmbientOcclusion, Support::Unsupported)
+            .tap(|capabilities| {
+                capabilities.materialx_graphs = true;
+                capabilities.texture_tiers = true;
+                capabilities.physical_tiling = true;
+                capabilities.variants = true;
+                capabilities.provenance = true;
+                capabilities.auxiliary_assets = true;
+            }),
     }
 }
 

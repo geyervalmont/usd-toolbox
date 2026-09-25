@@ -908,6 +908,12 @@ pub struct TextureAttachment {
 
 /// Attaches a verified image and records its complete derivation.
 pub fn attach_texture(material: &mut Material, attachment: TextureAttachment) -> Result<Sha256, MaterialWorkflowError> {
+    if material.materialx.is_some() {
+        return Err(MaterialWorkflowError::InvalidPatch(
+            "edit native MaterialX image nodes or explicitly clear materialx before editing the surface projection"
+                .into(),
+        ));
+    }
     if attachment.role == MapRole::Glossiness {
         return Err(MaterialWorkflowError::InvalidAttachment(
             "neutral materials store roughness, not glossiness".into(),
@@ -996,6 +1002,12 @@ pub fn attach_texture(material: &mut Material, attachment: TextureAttachment) ->
 /// Removes one tier. If it was the last tier, the authored texture input is
 /// reset to a conservative constant/absence rather than leaving an invalid ref.
 pub fn remove_texture(material: &mut Material, role: MapRole, tier: Tier) -> Result<(), MaterialWorkflowError> {
+    if material.materialx.is_some() {
+        return Err(MaterialWorkflowError::InvalidPatch(
+            "edit native MaterialX image nodes or explicitly clear materialx before editing the surface projection"
+                .into(),
+        ));
+    }
     let Some(texture) = texture_mut(material, role) else {
         return Err(MaterialWorkflowError::TextureNotFound(role.to_string()));
     };
@@ -1029,6 +1041,17 @@ pub fn apply_merge_patch(material: &Material, patch: &JsonValue) -> Result<Mater
     let mut value = serde_json::to_value(material)?;
     merge_patch(&mut value, patch);
     let updated: Material = serde_json::from_value(value)?;
+    if material.materialx.is_some()
+        && updated.materialx == material.materialx
+        && (updated.surface != material.surface
+            || updated.geometry != material.geometry
+            || updated.model != material.model)
+    {
+        return Err(MaterialWorkflowError::InvalidPatch(
+            "edit the native MaterialX graph, or explicitly clear materialx before editing its surface projection"
+                .into(),
+        ));
+    }
     let issues = validate_material(&updated);
     if !issues.is_empty() {
         return Err(MaterialWorkflowError::InvalidPatch(

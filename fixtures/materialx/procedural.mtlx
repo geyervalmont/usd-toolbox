@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<materialx version="1.39" colorspace="lin_rec709">
+  <nodegraph name="Pattern">
+    <noise3d name="Grain" type="color3">
+      <input name="amplitude" type="float" value="0.5"/>
+      <input name="pivot" type="float" value="0.5"/>
+    </noise3d>
+    <multiply name="Tint" type="color3">
+      <input name="in1" type="color3" nodename="Grain"/>
+      <input name="in2" type="color3" value="0.15, 0.5, 0.22"/>
+    </multiply>
+    <output name="Color" type="color3" nodename="Tint"/>
+  </nodegraph>
+  <standard_surface name="Surface" type="surfaceshader">
+    <input name="base_color" type="color3" nodegraph="Pattern" output="Color"/>
+    <input name="specular_roughness" type="float" value="0.38"/>
+    <input name="coat" type="float" value="0.25"/>
+  </standard_surface>
+  <surfacematerial name="Procedural" type="material">
+    <input name="surfaceshader" type="surfaceshader" nodename="Surface"/>
+  </surfacematerial>
+</materialx>

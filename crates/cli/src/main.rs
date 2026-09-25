@@ -213,7 +213,7 @@ struct CompleteTiersArgs {
 struct ExportArgs {
     #[arg(long)]
     input: PathBuf,
-    /// usd, usda, usdc, usdz, materialx, gltf, glb, revit, or omniverse.
+    /// usd, usda, usdc, usdz, materialx, materialx-preview, gltf, glb, revit, or omniverse.
     #[arg(long)]
     target: String,
     #[arg(long)]
@@ -1040,6 +1040,13 @@ fn export_command(args: &ExportArgs) -> Result<(), BuildError> {
                 include_provenance_mirror: false,
             },
         )?,
+        "materialx-preview" => {
+            let bundle = usd_toolbox_materialx::export_bundle(&materials, tier)?;
+            usd_toolbox_core::Export {
+                losses: bundle.losses.clone(),
+                bytes: serde_json::to_vec(&bundle).map_err(|error| BuildError::Unsupported(error.to_string()))?,
+            }
+        }
         "materialx" | "mtlx" => MaterialXExporter.export(
             &materials,
             &MaterialXExportOptions {
@@ -1082,7 +1089,56 @@ fn export_command(args: &ExportArgs) -> Result<(), BuildError> {
             )));
         }
     };
+    if matches!(target.as_str(), "materialx" | "mtlx") {
+        write_materialx_assets(&materials, tier, &args.output)?;
+    }
     write_export(args, &target, export)
+}
+
+fn write_materialx_assets(materials: &[Material], tier: Tier, output: &Path) -> Result<(), BuildError> {
+    let parent = output
+        .parent()
+        .filter(|p| !p.as_os_str().is_empty())
+        .unwrap_or_else(|| Path::new("."));
+    fs::create_dir_all(parent).map_err(|e| BuildError::Unsupported(e.to_string()))?;
+    let root = parent
+        .canonicalize()
+        .map_err(|e| BuildError::Unsupported(e.to_string()))?;
+    for material in materials {
+        for (relative, asset) in usd_toolbox_core::materialx_graph(material, tier)?.assets {
+            usd_toolbox_materialx::validate_asset_path(&relative)?;
+            let path = root.join(relative);
+            let directory = path.parent().expect("asset is beneath output directory");
+            fs::create_dir_all(directory).map_err(|e| BuildError::Unsupported(e.to_string()))?;
+            if !directory
+                .canonicalize()
+                .map_err(|e| BuildError::Unsupported(e.to_string()))?
+                .starts_with(&root)
+            {
+                return Err(BuildError::Unsupported(
+                    "MaterialX output image directory escapes output root".into(),
+                ));
+            }
+            // Content-addressed dependencies are immutable; never replace a
+            // conflicting file or follow a destination symlink.
+            if let Ok(metadata) = fs::symlink_metadata(&path) {
+                if metadata.file_type().is_symlink()
+                    || format!(
+                        "{:x}",
+                        Sha256Hasher::digest(read(&path, "verify existing MaterialX image")?)
+                    ) != asset.hash.0
+                {
+                    return Err(BuildError::Unsupported(format!(
+                        "conflicting MaterialX output image `{}`",
+                        path.display()
+                    )));
+                }
+            } else {
+                atomic_write(&path, &asset.bytes, "write MaterialX image")?;
+            }
+        }
+    }
+    Ok(())
 }
 
 fn embedding_input_command(args: &EmbeddingInputArgs) -> Result<(), BuildError> {
@@ -1167,15 +1223,37 @@ fn load_materials(path: &Path) -> Result<Vec<Material>, BuildError> {
                 ..UsdImportOptions::default()
             },
         )?),
-        Some("mtlx") => Ok(MaterialXImporter.import(
-            Input::Named {
-                name: path.to_str().unwrap_or("material.mtlx"),
-                bytes: &bytes,
-            },
-            &MaterialXImportOptions {
-                allow_partial_graph: true,
-            },
-        )?),
+        Some("mtlx") => {
+            match MaterialXImporter.import(Input::Bytes(&bytes), &MaterialXImportOptions::default()) {
+                Ok(materials) => return Ok(materials),
+                Err(ImportError::Missing(_)) => {}
+                Err(error) => return Err(error.into()),
+            }
+            let root = path
+                .parent()
+                .unwrap_or_else(|| Path::new("."))
+                .canonicalize()
+                .map_err(|error| BuildError::Unsupported(error.to_string()))?;
+            let dependencies = usd_toolbox_materialx::referenced_files(&bytes)?;
+            let mut buffers = vec![("material.mtlx".to_owned(), bytes)];
+            for dependency in dependencies {
+                let resolved = root
+                    .join(&dependency)
+                    .canonicalize()
+                    .map_err(|error| BuildError::Unsupported(format!("MaterialX asset `{dependency}`: {error}")))?;
+                if !resolved.starts_with(&root) {
+                    return Err(BuildError::Unsupported(
+                        "MaterialX asset escapes document directory".into(),
+                    ));
+                }
+                buffers.push((dependency, read(&resolved, "read MaterialX texture")?));
+            }
+            let files: Vec<_> = buffers
+                .iter()
+                .map(|(name, bytes)| usd_toolbox_core::InputFile { name, bytes })
+                .collect();
+            Ok(MaterialXImporter.import(Input::Bundle(&files), &MaterialXImportOptions::default())?)
+        }
         Some("json") => Ok(migrate_document_json(&bytes)?.materials),
         extension => Err(BuildError::Unsupported(format!(
             "cannot infer material format from extension {:?}",

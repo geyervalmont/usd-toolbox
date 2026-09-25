@@ -31,11 +31,10 @@ def main() -> int:
     context = UsdValidation.ValidationContext(registry.GetOrLoadAllValidators())
     errors = context.Validate(stage)
 
-    materialx_node_ids = {
-        "ND_open_pbr_surface_surfaceshader",
-        "ND_image_color3",
-        "ND_image_float",
-    }
+    import MaterialX as mx
+    definitions = mx.createDocument()
+    mx.loadLibraries(mx.getDefaultDataLibraryFolders(), mx.getDefaultDataSearchPath(), definitions)
+    materialx_node_ids = {definition.getName() for definition in definitions.getNodeDefs()}
     missing_materialx_plugin = not Sdr.Registry().GetShaderNodeByIdentifier(
         "ND_open_pbr_surface_surfaceshader"
     )

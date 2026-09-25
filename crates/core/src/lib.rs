@@ -6,11 +6,13 @@
 mod capabilities;
 mod error;
 mod io;
+mod materialx;
 mod model;
 mod validation;
 
 pub use capabilities::{Capabilities, Parameter, Support, Target, dry_run, target_capabilities};
 pub use error::{ExportError, ImportError};
 pub use io::{Export, Exporter, Importer, Input, InputFile};
+pub use materialx::*;
 pub use model::*;
 pub use validation::{ValidationIssue, ValidationIssueKind, validate_material, validate_materials};

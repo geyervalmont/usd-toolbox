@@ -52,11 +52,19 @@ jobs:
         run: |
           cargo run -q -p usd-toolbox-usd --example write_usdz_fixture -- "$RUNNER_TEMP/material.usdz"
           cargo run -q -p usd-toolbox-materialx --example write_mtlx_fixture -- "$RUNNER_TEMP/material.mtlx"
+          cargo run -q -p usd-toolbox-materialx --example write_pbr_fixture -- "$RUNNER_TEMP/pbr"
+          cargo run -q -p usd-toolbox-cli -- export --input fixtures/materialx/procedural.mtlx --target usdz --output "$RUNNER_TEMP/procedural.usdz"
           cargo run -q -p usd-toolbox-gltf --example write_glb_fixture -- "$RUNNER_TEMP/material.glb"
       - name: Validate USDZ with OpenUSD
-        run: python scripts/validate_usdz.py "$RUNNER_TEMP/material.usdz"
+        run: |
+          python scripts/validate_usdz.py "$RUNNER_TEMP/material.usdz"
+          python scripts/validate_usdz.py "$RUNNER_TEMP/pbr/material.usdz"
+          python scripts/validate_usdz.py "$RUNNER_TEMP/procedural.usdz"
       - name: Validate MaterialX with reference bindings
-        run: python scripts/validate_materialx.py "$RUNNER_TEMP/material.mtlx"
+        run: |
+          python scripts/validate_materialx.py "$RUNNER_TEMP/material.mtlx"
+          python scripts/validate_materialx.py "$RUNNER_TEMP/pbr/material.mtlx"
+          python scripts/validate_materialx.py fixtures/materialx/procedural.mtlx
       - name: Validate GLB with Khronos validator
         env:
           NODE_PATH: ${{ runner.temp }}/gltf-validator/node_modules

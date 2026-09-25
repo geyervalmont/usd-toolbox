@@ -104,7 +104,7 @@ pub fn export_materialx(materials: JsValue, options: Option<JsValue>) -> Result<
     )
 }
 
-/// Imports a MaterialX document carrying an Olsyn neutral manifest.
+/// Imports a MaterialX document. Textured native graphs use import_materialx_bundle.
 #[wasm_bindgen]
 pub fn import_materialx(bytes: &[u8], options: Option<JsValue>) -> Result<JsValue, JsError> {
     let options: MaterialXImportOptions = options_from_js(options)?;
@@ -112,6 +112,36 @@ pub fn import_materialx(bytes: &[u8], options: Option<JsValue>) -> Result<JsValu
         .import(Input::Bytes(bytes), &options)
         .map_err(js_error)?;
     to_js(&materials)
+}
+
+/// Import a native document with explicit image buffers. No network I/O is performed.
+#[wasm_bindgen]
+pub fn import_materialx_bundle(document: &[u8], assets: JsValue) -> Result<JsValue, JsError> {
+    let assets: std::collections::BTreeMap<String, Vec<u8>> = from_js(assets)?;
+    let mut files = vec![usd_toolbox_core::InputFile {
+        name: "material.mtlx",
+        bytes: document,
+    }];
+    files.extend(
+        assets
+            .iter()
+            .map(|(name, bytes)| usd_toolbox_core::InputFile { name, bytes }),
+    );
+    to_js(
+        &MaterialXImporter
+            .import(Input::Bundle(&files), &MaterialXImportOptions::default())
+            .map_err(js_error)?,
+    )
+}
+
+/// Export a self-contained XML/texture handoff for MaterialX browser renderers.
+#[wasm_bindgen]
+pub fn export_materialx_preview(materials: JsValue, tier: Option<String>) -> Result<JsValue, JsError> {
+    let materials: Vec<Material> = from_js(materials)?;
+    let tier: usd_toolbox_core::Tier =
+        serde_json::from_value(serde_json::Value::String(tier.unwrap_or_else(|| "preview".into())))
+            .map_err(js_error)?;
+    to_js(&usd_toolbox_materialx::export_bundle(&materials, tier).map_err(js_error)?)
 }
 
 /// Exports neutral materials as glTF JSON or GLB.
