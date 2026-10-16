@@ -1,0 +1,620 @@
+{
+  "schema": "usd-toolbox.github-ci-evidence.v1",
+  "recorded_at": "2026-10-16T01:23:18.697664+00:00",
+  "repository": "https://github.com/geyervalmont/usd-toolbox",
+  "tested_commit": "497abea5f58dd34bbe5f109a0437b75c4158a343",
+  "scope": "Hosted correctness checks and five native platform builds with executable C consumers; artifacts expire after their retention period.",
+  "runs": {
+    "correctness": {
+      "id": 38833979663,
+      "html_url": "https://github.com/geyervalmont/usd-toolbox/actions/runs/38833979663",
+      "head_sha": "497abea5f58dd34bbe5f109a0437b75c4158a343",
+      "head_branch": "codex/model-toolbox-2026-10-16",
+      "run_attempt": 1,
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-16T01:13:49Z",
+      "updated_at": "2026-10-16T01:18:05Z",
+      "jobs": [
+        {
+          "id": 116758815706,
+          "name": "reference-formats",
+          "html_url": "https://github.com/geyervalmont/usd-toolbox/actions/runs/38833979663/job/116758815706",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-16T01:13:53Z",
+          "completed_at": "2026-10-16T01:18:04Z",
+          "labels": [
+            "ubuntu-latest"
+          ],
+          "checks": [
+            {
+              "name": "Run actions/checkout@v7",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run dtolnay/rust-toolchain@stable",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-python@v6",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v7",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install reference validators",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Generate deterministic fixtures",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Validate USDZ with OpenUSD",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Validate optional native composition adapter",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install isolated full MaterialX-enabled OpenUSD reference",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Validate all exports with full native shader registry",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/upload-artifact@v7",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Validate MaterialX with reference bindings",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Validate GLB with Khronos validator",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify native and WASM model parity",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 116758816001,
+          "name": "rust",
+          "html_url": "https://github.com/geyervalmont/usd-toolbox/actions/runs/38833979663/job/116758816001",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-16T01:13:53Z",
+          "completed_at": "2026-10-16T01:16:27Z",
+          "labels": [
+            "ubuntu-latest"
+          ],
+          "checks": [
+            {
+              "name": "Run actions/checkout@v7",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run dtolnay/rust-toolchain@stable",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run cargo fmt --all --check",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run cargo clippy --workspace --all-targets -- -D warnings",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check generated C header",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run cargo test --workspace",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check browser dependency graph",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check minimal model-only browser build",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Compile and execute a C consumer",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 116758816176,
+          "name": "browser",
+          "html_url": "https://github.com/geyervalmont/usd-toolbox/actions/runs/38833979663/job/116758816176",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-16T01:13:52Z",
+          "completed_at": "2026-10-16T01:17:25Z",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "checks": [
+            {
+              "name": "Run actions/checkout@v7",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run dtolnay/rust-toolchain@stable",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v7",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install pinned browser and package tools",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build typed model package",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exercise real engines and bundler URLs",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/upload-artifact@v7",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 12018835039,
+          "name": "browser-evidence",
+          "size_in_bytes": 7984,
+          "digest": "sha256:ef6fb737710c463efee8573d1cb378e82aec06961e57bd6753a4d6b566ca4198",
+          "created_at": "2026-10-16T01:17:23Z",
+          "expires_at": "2027-01-14T01:13:49Z",
+          "url": "https://github.com/geyervalmont/usd-toolbox/actions/runs/38833979663/artifacts/12018835039"
+        },
+        {
+          "id": 12018438384,
+          "name": "full-shader-registry-evidence",
+          "size_in_bytes": 3275,
+          "digest": "sha256:b8d0958941d31576f0654ae2aa32e7c9c5796854e14f84d9ca87bd82b988550c",
+          "created_at": "2026-10-16T01:15:43Z",
+          "expires_at": "2027-01-14T01:13:49Z",
+          "url": "https://github.com/geyervalmont/usd-toolbox/actions/runs/38833979663/artifacts/12018438384"
+        }
+      ]
+    },
+    "packages": {
+      "id": 38834013858,
+      "html_url": "https://github.com/geyervalmont/usd-toolbox/actions/runs/38834013858",
+      "head_sha": "497abea5f58dd34bbe5f109a0437b75c4158a343",
+      "head_branch": "codex/model-toolbox-2026-10-16",
+      "run_attempt": 1,
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-16T01:14:12Z",
+      "updated_at": "2026-10-16T01:22:27Z",
+      "jobs": [
+        {
+          "id": 116758927701,
+          "name": "web",
+          "html_url": "https://github.com/geyervalmont/usd-toolbox/actions/runs/38834013858/job/116758927701",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-16T01:14:16Z",
+          "completed_at": "2026-10-16T01:17:48Z",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "checks": [
+            {
+              "name": "Run actions/checkout@v7",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run dtolnay/rust-toolchain@stable",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@v7",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build versioned browser package",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/upload-artifact@v7",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 116758927870,
+          "name": "Native (aarch64-apple-darwin)",
+          "html_url": "https://github.com/geyervalmont/usd-toolbox/actions/runs/38834013858/job/116758927870",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-16T01:14:22Z",
+          "completed_at": "2026-10-16T01:19:47Z",
+          "labels": [
+            "macos-15"
+          ],
+          "checks": [
+            {
+              "name": "Run actions/checkout@v7",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run dtolnay/rust-toolchain@stable",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-python@v6",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build and test native APIs",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Compile and execute C consumer",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Package versioned native artifacts",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/upload-artifact@v7",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 116758927888,
+          "name": "Native (x86_64-unknown-linux-gnu)",
+          "html_url": "https://github.com/geyervalmont/usd-toolbox/actions/runs/38834013858/job/116758927888",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-16T01:14:16Z",
+          "completed_at": "2026-10-16T01:18:36Z",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "checks": [
+            {
+              "name": "Run actions/checkout@v7",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run dtolnay/rust-toolchain@stable",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-python@v6",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build and test native APIs",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Compile and execute C consumer",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Package versioned native artifacts",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/upload-artifact@v7",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 116758927893,
+          "name": "Native (x86_64-apple-darwin)",
+          "html_url": "https://github.com/geyervalmont/usd-toolbox/actions/runs/38834013858/job/116758927893",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-16T01:14:16Z",
+          "completed_at": "2026-10-16T01:21:51Z",
+          "labels": [
+            "macos-15-intel"
+          ],
+          "checks": [
+            {
+              "name": "Run actions/checkout@v7",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run dtolnay/rust-toolchain@stable",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-python@v6",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build and test native APIs",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Compile and execute C consumer",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Package versioned native artifacts",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/upload-artifact@v7",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 116758927963,
+          "name": "Native (x86_64-pc-windows-msvc)",
+          "html_url": "https://github.com/geyervalmont/usd-toolbox/actions/runs/38834013858/job/116758927963",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-16T01:14:17Z",
+          "completed_at": "2026-10-16T01:22:26Z",
+          "labels": [
+            "windows-2025"
+          ],
+          "checks": [
+            {
+              "name": "Run actions/checkout@v7",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run dtolnay/rust-toolchain@stable",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-python@v6",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build and test native APIs",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Compile and execute C consumer",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Package versioned native artifacts",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/upload-artifact@v7",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 116758928028,
+          "name": "Native (x86_64-unknown-linux-musl)",
+          "html_url": "https://github.com/geyervalmont/usd-toolbox/actions/runs/38834013858/job/116758928028",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-16T01:14:17Z",
+          "completed_at": "2026-10-16T01:17:31Z",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "checks": [
+            {
+              "name": "Run actions/checkout@v7",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run dtolnay/rust-toolchain@stable",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-python@v6",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install musl toolchain",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build and test native APIs",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Compile and execute musl C consumer",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Package versioned native artifacts",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/upload-artifact@v7",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 12018840057,
+          "name": "usd-toolbox-x86_64-unknown-linux-musl",
+          "size_in_bytes": 26028978,
+          "digest": "sha256:46e419ad7ac38e8332addf41056953c1fba523c6cb807802a964302d9d648fa2",
+          "created_at": "2026-10-16T01:17:29Z",
+          "expires_at": "2026-11-15T01:17:28Z",
+          "url": "https://github.com/geyervalmont/usd-toolbox/actions/runs/38834013858/artifacts/12018840057"
+        },
+        {
+          "id": 12018656567,
+          "name": "usd-toolbox-x86_64-unknown-linux-gnu",
+          "size_in_bytes": 31611947,
+          "digest": "sha256:72fb42a9870ecb35f7fc590fa09a7c854774829f2fe1322374732c12062af9f9",
+          "created_at": "2026-10-16T01:18:34Z",
+          "expires_at": "2026-11-15T01:18:33Z",
+          "url": "https://github.com/geyervalmont/usd-toolbox/actions/runs/38834013858/artifacts/12018656567"
+        },
+        {
+          "id": 12018483896,
+          "name": "usd-toolbox-aarch64-apple-darwin",
+          "size_in_bytes": 27704184,
+          "digest": "sha256:5a2191d6051d17b3fd0eac7cec54554501d06fe305156cfb00acfaffe353154e",
+          "created_at": "2026-10-16T01:19:43Z",
+          "expires_at": "2026-11-15T01:19:41Z",
+          "url": "https://github.com/geyervalmont/usd-toolbox/actions/runs/38834013858/artifacts/12018483896"
+        },
+        {
+          "id": 12018469223,
+          "name": "usd-toolbox-x86_64-apple-darwin",
+          "size_in_bytes": 29142725,
+          "digest": "sha256:118f129abc51ffbb389ce59ff1775bce6c819eefa55065251d3fda888db16283",
+          "created_at": "2026-10-16T01:21:48Z",
+          "expires_at": "2026-11-15T01:21:47Z",
+          "url": "https://github.com/geyervalmont/usd-toolbox/actions/runs/38834013858/artifacts/12018469223"
+        },
+        {
+          "id": 12018449444,
+          "name": "usd-toolbox-x86_64-pc-windows-msvc",
+          "size_in_bytes": 32235996,
+          "digest": "sha256:aaa9b733293607c48615a10420f5768849ffd96535cb55ed20b0753307792ebb",
+          "created_at": "2026-10-16T01:22:22Z",
+          "expires_at": "2026-11-15T01:22:20Z",
+          "url": "https://github.com/geyervalmont/usd-toolbox/actions/runs/38834013858/artifacts/12018449444"
+        },
+        {
+          "id": 12018114619,
+          "name": "usd-toolbox-web",
+          "size_in_bytes": 1977637,
+          "digest": "sha256:394b4a377c569c8f478daa003bfcff2ad3823fe37304356a832a31c619c49874",
+          "created_at": "2026-10-16T01:17:46Z",
+          "expires_at": "2026-11-15T01:17:46Z",
+          "url": "https://github.com/geyervalmont/usd-toolbox/actions/runs/38834013858/artifacts/12018114619"
+        }
+      ]
+    }
+  },
+  "downloaded_musl_package": {
+    "run_id": 38834013858,
+    "artifact_id": 12018840057,
+    "archive": "usd-toolbox-0.3.0-x86_64-unknown-linux-musl.tar.gz",
+    "sha256": "261d24d78aaf82e74bd64e302e568bce8887a6c64aa49add42154219f60d1bca",
+    "verified_files": 321,
+    "unwind_provenance": {
+      "component": "LLVM libunwind, distributed in Rust rust-std",
+      "target": "x86_64-unknown-linux-musl",
+      "toolchain": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.1\nLLVM version: 23.1.1",
+      "source_component": "rust-std-x86_64-unknown-linux-musl/lib/self-contained/libunwind.a",
+      "sha256": "18ad5e6b1b383da0f07b64e94f68f20021412490d38835e99268569a03c7f449",
+      "license_source": "https://github.com/llvm/llvm-project/tree/llvmorg-22.1.8/libunwind",
+      "link_order": "libusd_toolbox_ffi.a libunwind.a -ldl -lpthread -lm"
+    },
+    "extracted_c_consumer": {
+      "conclusion": "success",
+      "environment": "alpine:3.22",
+      "compiler": "GCC 14.2.0",
+      "rust_installed": false,
+      "command": "python3 /bundle/scripts/test_c_api.py /bundle/libusd_toolbox_ffi.a --build /tmp/c-consumer",
+      "cmake_tests_passed": 1,
+      "bundle_mount": "read-only",
+      "unwind_selection": "CMake auto-discovery of adjacent libunwind.a"
+    }
+  }
+}

@@ -21,9 +21,9 @@ The licensed public corpus and synthetic conformance fixtures are present. They
 are not yet a permissioned customer/exporter-version corpus. Actual Chromium,
 Firefox and WebKit plus Vite production deployment pass. A 1-CPU/1-GiB container
 benchmark is recorded; it is not a physical constrained/mobile-device result.
-Linux GNU/musl builds and compiled C consumers pass. Cross-platform jobs are
-configured, but unexecuted Windows/macOS jobs are not
-counted as successful platform tests. CI artifacts follow the repository's public
+Linux GNU/musl, Windows MSVC and macOS Intel/ARM builds and executable C consumers
+pass; [CI evidence](docs/validation-evidence/github-ci.json) records the tested
+commit, jobs and package artifacts. CI artifacts follow the repository's public
 visibility. The project has no declared distribution licence, and the npm package
 remains marked private.
 
@@ -271,7 +271,7 @@ Initial performance acceptance criteria:
   WASM/worker URL resolution, MIME requirements and deployment instructions.
 - [x] Extend native/WASM parity to query results, metadata, diagnostics, edits and
   exports. Use byte equality where promised and explicit tolerances where needed.
-- [ ] Exercise Linux GNU/musl, Windows MSVC and macOS Intel/ARM native builds and
+- [x] Exercise Linux GNU/musl, Windows MSVC and macOS Intel/ARM native builds and
   C consumers. Check numeric widths, Unicode paths, linking and ABI ownership rules.
 - [x] Turn existing CI artifacts into versioned releases/npm packages with
   TypeScript declarations, headers, checksums, licence notices and executable examples.

@@ -14,11 +14,12 @@ conversion policies before shipping support. Quantization/compression remains a
 measured design assessment rather than an enabled codec.
 
 Release evidence combines native correctness/allocation benchmarks, real browser
-execution, reference validators, visual comparisons and bounded fuzzing. Customer
-models/exporter versions, physical constrained-device measurements and successful
-Windows/macOS execution remain separate requirements. Packages are built locally
-and in CI with versions, headers, types, checksums and dependency notices. CI
-artifacts follow the repository's visibility; the project's own distribution
+execution, reference validators, visual comparisons and bounded fuzzing. Linux
+GNU/musl, Windows MSVC and macOS Intel/ARM native builds and C consumers pass in
+[CI](validation-evidence/github-ci.json). Customer models/exporter versions and
+physical constrained-device measurements remain separate requirements. Packages
+are built locally and in CI with versions, headers, types, checksums and dependency
+notices. CI artifacts follow the repository's visibility; the project's own distribution
 licence is undeclared and the npm package remains marked private.
 
 CAD/BIM and animation are scoped in [future-model-scope.md](future-model-scope.md).

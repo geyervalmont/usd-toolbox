@@ -139,6 +139,8 @@ Build the C library with `cargo build --release -p usd-toolbox-ffi`. The
 [generated header](crates/ffi/include/usd_toolbox.h) and
 [executable C example](examples/c/document.c) cover retained documents and owned
 results. Buffer sizing does not repeat prepared model exports or edits.
+Native bundles include the CMake example; musl bundles also carry a compatible
+`libunwind.a`, which the example links automatically.
 
 Materials remain independently usable: inspect and audit packages, edit or attach
 textures, generate safe downscales, preserve source graphs, bake procedural recipes,
@@ -174,9 +176,10 @@ Ryzen AI 9 HX 370 in a release build. These are workload-specific measurements.
 
 [Browser measurements](docs/web-performance.md) cover initialization, transfer,
 queries, conversion and WASM memory. Chromium, Firefox and WebKit have run the
-worker conformance suite. Linux GNU/musl C consumers have been exercised;
-Windows/macOS execution remains pending. A throttled container is not a physical
-mobile-device benchmark. See [recorded validation evidence](docs/validation-evidence/README.md)
+worker conformance suite. Native builds and executable C consumers pass on Linux
+GNU/musl, Windows MSVC and macOS Intel/ARM; [CI evidence](docs/validation-evidence/github-ci.json)
+records the tested commit and platform runs. A throttled container is not a
+physical mobile-device benchmark. See [recorded validation evidence](docs/validation-evidence/README.md)
 and [remaining delivery gates](todo.md).
 
 ```sh

@@ -15,7 +15,7 @@ The remaining delivery gates are tracked in [todo.md](../../todo.md).
 | Fuzz smoke | Eight targets, 3,459,779 executions, no failures in the final smoke run | [Report](fuzz-smoke.json); `scripts/run_fuzz_smoke.py` |
 | Native performance | Eight workload groups passed deterministic allocation/lifecycle gates | [Baselines and thresholds](../performance.md) |
 | Browser performance | Desktop and 1-CPU/1-GiB container measurements | [Desktop](browser-desktop.json), [constrained container](browser-constrained-container.json), [interpretation](../web-performance.md) |
-| Native C consumers | Linux GNU and musl builds compiled, linked and executed real C consumers | `scripts/test_c_api.py`; `examples/c` |
+| Native C consumers | Linux GNU/musl, Windows MSVC and macOS Intel/ARM builds compiled, linked and executed real C consumers | [Platform jobs and artifacts](github-ci.json); `scripts/test_c_api.py`; `examples/c` |
 | Package footprint | Separate minimal and material-enabled WASM measurements | [Build sizes](web-build-sizes.json) |
 
 The public model corpus is pinned by hashes and includes source licence records
@@ -30,11 +30,16 @@ performance runs predate the LOD packaging and queued-request scheduling changes
 they are retained as attributed baselines, not relabelled as final-build results.
 Fuzzing is a bounded smoke test, not proof that malformed inputs cannot fail.
 
-Three gates need external inputs or execution environments: permissioned
-customer models with exporter versions, a physical constrained device, and
-Windows MSVC/macOS Intel+ARM execution with C consumers. A constrained container
-does not supply physical-device evidence, and configured CI jobs do not count
-as successful runs.
+Two gates need external inputs or execution environments: permissioned customer
+models with exporter versions and a physical constrained device. A constrained
+container does not supply physical-device evidence.
+
+[Hosted CI evidence](github-ci.json) records the tested source commit, successful
+correctness and package runs, individual platform jobs and artifact digests.
+It includes executable C consumers on all five native targets, actual browser
+engines and reference-format validators. Artifact downloads expire according to
+their recorded retention dates; the recorded outcomes remain attributable to
+the tested commit.
 
 Versioned local packages include headers or TypeScript declarations, examples,
 checksums and dependency notices. The local measurements below predate public CI
