@@ -1,0 +1,1056 @@
+{
+  "schema": "usd-toolbox.full-registry-validation.v1",
+  "success": true,
+  "python": "3.12.14",
+  "openusd": "0.26.8",
+  "runtime_packages": {
+    "usd-exchange": "3.0.1",
+    "MaterialX": "1.39.5"
+  },
+  "materialx_search_paths": "/reference/runtime/MaterialX/libraries",
+  "plugins": [
+    {
+      "name": "usdMtlx",
+      "path": "/reference/runtime/usd_exchange.libs/libusd_usdMtlx.so",
+      "sha256": "fd366400409aa27c9fffaf3ef67e1c8d0c3634aedb697e12f31e865c5949fca4",
+      "loaded": true
+    },
+    {
+      "type": "UsdMtlxDiscoveryPlugin",
+      "owner": "usdMtlx",
+      "loaded": true
+    },
+    {
+      "type": "UsdMtlxParserPlugin",
+      "owner": "usdMtlx",
+      "loaded": true
+    }
+  ],
+  "registry_probe": [
+    {
+      "identifier": "UsdPreviewSurface",
+      "valid": true,
+      "source_type": "glslfx",
+      "definition": "/reference/runtime/usd_exchange.libs/usd/usdShaders/resources/shaders/shaderDefs.usda",
+      "definition_sha256": "db9ae851fea7181aaf9bf296be8f0e6d894fa0fbc06a4c837a01985a5d0f5e70",
+      "inputs": [
+        "clearcoat",
+        "clearcoatRoughness",
+        "diffuseColor",
+        "displacement",
+        "emissiveColor",
+        "ior",
+        "metallic",
+        "normal",
+        "occlusion",
+        "opacity",
+        "opacityMode",
+        "opacityThreshold",
+        "roughness",
+        "specularColor",
+        "useSpecularWorkflow"
+      ],
+      "outputs": [
+        "displacement",
+        "surface"
+      ]
+    },
+    {
+      "identifier": "ND_open_pbr_surface_surfaceshader",
+      "valid": true,
+      "source_type": "mtlx",
+      "definition": "/reference/runtime/MaterialX/libraries/bxdf/open_pbr_surface.mtlx",
+      "definition_sha256": "2904f680a939215409fea90e3586db1e2087c5e29000611c1bf4be518fc65f83",
+      "inputs": [
+        "base_color",
+        "base_diffuse_roughness",
+        "base_metalness",
+        "base_weight",
+        "coat_color",
+        "coat_darkening",
+        "coat_ior",
+        "coat_roughness",
+        "coat_roughness_anisotropy",
+        "coat_weight",
+        "emission_color",
+        "emission_luminance",
+        "fuzz_color",
+        "fuzz_roughness",
+        "fuzz_weight",
+        "geometry_coat_normal",
+        "geometry_coat_tangent",
+        "geometry_normal",
+        "geometry_opacity",
+        "geometry_tangent",
+        "geometry_thin_walled",
+        "specular_color",
+        "specular_ior",
+        "specular_roughness",
+        "specular_roughness_anisotropy",
+        "specular_weight",
+        "subsurface_color",
+        "subsurface_radius",
+        "subsurface_radius_scale",
+        "subsurface_scatter_anisotropy",
+        "subsurface_weight",
+        "thin_film_ior",
+        "thin_film_thickness",
+        "thin_film_weight",
+        "transmission_color",
+        "transmission_depth",
+        "transmission_dispersion_abbe_number",
+        "transmission_dispersion_scale",
+        "transmission_scatter",
+        "transmission_scatter_anisotropy",
+        "transmission_weight"
+      ],
+      "outputs": [
+        "out"
+      ]
+    },
+    {
+      "identifier": "ND_image_color3",
+      "valid": true,
+      "source_type": "mtlx",
+      "definition": "/reference/runtime/MaterialX/libraries/stdlib/stdlib_defs.mtlx",
+      "definition_sha256": "47c6c0e7f4a3c140925f29d4bc5fc977950e1be95e1a2c3f62b40f412b234678",
+      "inputs": [
+        "default",
+        "file",
+        "filtertype",
+        "frameendaction",
+        "frameoffset",
+        "framerange",
+        "layer",
+        "texcoord",
+        "uaddressmode",
+        "vaddressmode"
+      ],
+      "outputs": [
+        "out"
+      ]
+    },
+    {
+      "identifier": "ND_image_float",
+      "valid": true,
+      "source_type": "mtlx",
+      "definition": "/reference/runtime/MaterialX/libraries/stdlib/stdlib_defs.mtlx",
+      "definition_sha256": "47c6c0e7f4a3c140925f29d4bc5fc977950e1be95e1a2c3f62b40f412b234678",
+      "inputs": [
+        "default",
+        "file",
+        "filtertype",
+        "frameendaction",
+        "frameoffset",
+        "framerange",
+        "layer",
+        "texcoord",
+        "uaddressmode",
+        "vaddressmode"
+      ],
+      "outputs": [
+        "out"
+      ]
+    },
+    {
+      "identifier": "ND_normalmap_float",
+      "valid": true,
+      "source_type": "mtlx",
+      "definition": "/reference/runtime/MaterialX/libraries/stdlib/stdlib_defs.mtlx",
+      "definition_sha256": "47c6c0e7f4a3c140925f29d4bc5fc977950e1be95e1a2c3f62b40f412b234678",
+      "inputs": [
+        "bitangent",
+        "in",
+        "normal",
+        "scale",
+        "tangent"
+      ],
+      "outputs": [
+        "out"
+      ]
+    },
+    {
+      "identifier": "ND_displacement_float",
+      "valid": true,
+      "source_type": "mtlx",
+      "definition": "/reference/runtime/MaterialX/libraries/pbrlib/pbrlib_defs.mtlx",
+      "definition_sha256": "cba74f62b3620f114b3a6e0316b7bd5708a37d447dd64ad3ae288d570a89ba8e",
+      "inputs": [
+        "displacement",
+        "scale"
+      ],
+      "outputs": [
+        "out"
+      ]
+    },
+    {
+      "identifier": "ND_standard_surface_surfaceshader",
+      "valid": true,
+      "source_type": "mtlx",
+      "definition": "/reference/runtime/MaterialX/libraries/bxdf/standard_surface.mtlx",
+      "definition_sha256": "2211a94bc37644cd420d0ee5de0359db2bc30f7823965676e511287a9fcd487d",
+      "inputs": [
+        "base",
+        "base_color",
+        "coat",
+        "coat_IOR",
+        "coat_affect_color",
+        "coat_affect_roughness",
+        "coat_anisotropy",
+        "coat_color",
+        "coat_normal",
+        "coat_rotation",
+        "coat_roughness",
+        "diffuse_roughness",
+        "emission",
+        "emission_color",
+        "metalness",
+        "normal",
+        "opacity",
+        "sheen",
+        "sheen_color",
+        "sheen_roughness",
+        "specular",
+        "specular_IOR",
+        "specular_anisotropy",
+        "specular_color",
+        "specular_rotation",
+        "specular_roughness",
+        "subsurface",
+        "subsurface_anisotropy",
+        "subsurface_color",
+        "subsurface_radius",
+        "subsurface_scale",
+        "tangent",
+        "thin_film_IOR",
+        "thin_film_thickness",
+        "thin_walled",
+        "transmission",
+        "transmission_color",
+        "transmission_depth",
+        "transmission_dispersion",
+        "transmission_extra_roughness",
+        "transmission_scatter",
+        "transmission_scatter_anisotropy"
+      ],
+      "outputs": [
+        "out"
+      ]
+    },
+    {
+      "identifier": "ND_noise3d_color3FA",
+      "valid": true,
+      "source_type": "mtlx",
+      "definition": "/reference/runtime/MaterialX/libraries/stdlib/stdlib_defs.mtlx",
+      "definition_sha256": "47c6c0e7f4a3c140925f29d4bc5fc977950e1be95e1a2c3f62b40f412b234678",
+      "inputs": [
+        "amplitude",
+        "pivot",
+        "position"
+      ],
+      "outputs": [
+        "out"
+      ]
+    }
+  ],
+  "validators": [
+    "usdGeomValidators:EncapsulationChecker",
+    "usdGeomValidators:StageMetadataChecker",
+    "usdGeomValidators:SubsetFamilies",
+    "usdGeomValidators:SubsetParentIsImageable",
+    "usdLuxValidators:EncapsulationRulesValidator",
+    "usdPhysicsValidators:ArticulationChecker",
+    "usdPhysicsValidators:ColliderChecker",
+    "usdPhysicsValidators:PhysicsJointChecker",
+    "usdPhysicsValidators:RigidBodyChecker",
+    "usdShadeValidators:EncapsulationMaterialValidator",
+    "usdShadeValidators:EncapsulationRulesValidator",
+    "usdShadeValidators:MaterialBindingApiAppliedValidator",
+    "usdShadeValidators:MaterialBindingCollectionValidator",
+    "usdShadeValidators:MaterialBindingRelationships",
+    "usdShadeValidators:NormalMapTextureValidator",
+    "usdShadeValidators:ShaderSdrCompliance",
+    "usdShadeValidators:SubsetMaterialBindFamilyName",
+    "usdShadeValidators:SubsetsMaterialBindFamily",
+    "usdSkelValidators:SkelBindingApiAppliedValidator",
+    "usdSkelValidators:SkelBindingApiValidator",
+    "usdUtilsValidators:FileExtensionValidator",
+    "usdUtilsValidators:MissingReferenceValidator",
+    "usdUtilsValidators:PackageEncapsulationValidator",
+    "usdUtilsValidators:RootPackageValidator",
+    "usdUtilsValidators:UsdzPackageValidator",
+    "usdValidation:AttributeTypeMismatch",
+    "usdValidation:CompositionErrorTest",
+    "usdValidation:StageMetadataChecker"
+  ],
+  "assets": [
+    {
+      "path": "/reference/exports/material.usdz",
+      "sha256": "26f02f740f758ccc4cc0139466a39443da422427227d1d906d547b1421e0d88b",
+      "shaders": [
+        {
+          "path": "/Materials/reference_material/OpenPBR",
+          "identifier": "ND_open_pbr_surface_surfaceshader",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/bxdf/open_pbr_surface.mtlx",
+          "definition_sha256": "2904f680a939215409fea90e3586db1e2087c5e29000611c1bf4be518fc65f83",
+          "inputs": [
+            "base_color",
+            "base_diffuse_roughness",
+            "base_metalness",
+            "base_weight",
+            "coat_color",
+            "coat_darkening",
+            "coat_ior",
+            "coat_roughness",
+            "coat_roughness_anisotropy",
+            "coat_weight",
+            "emission_color",
+            "emission_luminance",
+            "fuzz_color",
+            "fuzz_roughness",
+            "fuzz_weight",
+            "geometry_coat_normal",
+            "geometry_coat_tangent",
+            "geometry_normal",
+            "geometry_opacity",
+            "geometry_tangent",
+            "geometry_thin_walled",
+            "specular_color",
+            "specular_ior",
+            "specular_roughness",
+            "specular_roughness_anisotropy",
+            "specular_weight",
+            "subsurface_color",
+            "subsurface_radius",
+            "subsurface_radius_scale",
+            "subsurface_scatter_anisotropy",
+            "subsurface_weight",
+            "thin_film_ior",
+            "thin_film_thickness",
+            "thin_film_weight",
+            "transmission_color",
+            "transmission_depth",
+            "transmission_dispersion_abbe_number",
+            "transmission_dispersion_scale",
+            "transmission_scatter",
+            "transmission_scatter_anisotropy",
+            "transmission_weight"
+          ],
+          "outputs": [
+            "out"
+          ]
+        }
+      ],
+      "findings": [],
+      "success": true
+    },
+    {
+      "path": "/reference/exports/pbr/material.usdz",
+      "sha256": "56954d600de85fe996e8d6b6b9578509b734a976ee8ed5613e2e416ebe8c71a2",
+      "shaders": [
+        {
+          "path": "/Materials/pbr_fixture/base_color_image",
+          "identifier": "ND_image_color3",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/stdlib/stdlib_defs.mtlx",
+          "definition_sha256": "47c6c0e7f4a3c140925f29d4bc5fc977950e1be95e1a2c3f62b40f412b234678",
+          "inputs": [
+            "default",
+            "file",
+            "filtertype",
+            "frameendaction",
+            "frameoffset",
+            "framerange",
+            "layer",
+            "texcoord",
+            "uaddressmode",
+            "vaddressmode"
+          ],
+          "outputs": [
+            "out"
+          ]
+        },
+        {
+          "path": "/Materials/pbr_fixture/base_color_multiply",
+          "identifier": "ND_multiply_color3",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/stdlib/stdlib_defs.mtlx",
+          "definition_sha256": "47c6c0e7f4a3c140925f29d4bc5fc977950e1be95e1a2c3f62b40f412b234678",
+          "inputs": [
+            "in1",
+            "in2"
+          ],
+          "outputs": [
+            "out"
+          ]
+        },
+        {
+          "path": "/Materials/pbr_fixture/base_metalness_image",
+          "identifier": "ND_image_color4",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/stdlib/stdlib_defs.mtlx",
+          "definition_sha256": "47c6c0e7f4a3c140925f29d4bc5fc977950e1be95e1a2c3f62b40f412b234678",
+          "inputs": [
+            "default",
+            "file",
+            "filtertype",
+            "frameendaction",
+            "frameoffset",
+            "framerange",
+            "layer",
+            "texcoord",
+            "uaddressmode",
+            "vaddressmode"
+          ],
+          "outputs": [
+            "out"
+          ]
+        },
+        {
+          "path": "/Materials/pbr_fixture/base_metalness_channel",
+          "identifier": "ND_extract_color4",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/stdlib/stdlib_defs.mtlx",
+          "definition_sha256": "47c6c0e7f4a3c140925f29d4bc5fc977950e1be95e1a2c3f62b40f412b234678",
+          "inputs": [
+            "in",
+            "index"
+          ],
+          "outputs": [
+            "out"
+          ]
+        },
+        {
+          "path": "/Materials/pbr_fixture/base_metalness_multiply",
+          "identifier": "ND_multiply_float",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/stdlib/stdlib_defs.mtlx",
+          "definition_sha256": "47c6c0e7f4a3c140925f29d4bc5fc977950e1be95e1a2c3f62b40f412b234678",
+          "inputs": [
+            "in1",
+            "in2"
+          ],
+          "outputs": [
+            "out"
+          ]
+        },
+        {
+          "path": "/Materials/pbr_fixture/specular_roughness_image",
+          "identifier": "ND_image_color4",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/stdlib/stdlib_defs.mtlx",
+          "definition_sha256": "47c6c0e7f4a3c140925f29d4bc5fc977950e1be95e1a2c3f62b40f412b234678",
+          "inputs": [
+            "default",
+            "file",
+            "filtertype",
+            "frameendaction",
+            "frameoffset",
+            "framerange",
+            "layer",
+            "texcoord",
+            "uaddressmode",
+            "vaddressmode"
+          ],
+          "outputs": [
+            "out"
+          ]
+        },
+        {
+          "path": "/Materials/pbr_fixture/specular_roughness_channel",
+          "identifier": "ND_extract_color4",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/stdlib/stdlib_defs.mtlx",
+          "definition_sha256": "47c6c0e7f4a3c140925f29d4bc5fc977950e1be95e1a2c3f62b40f412b234678",
+          "inputs": [
+            "in",
+            "index"
+          ],
+          "outputs": [
+            "out"
+          ]
+        },
+        {
+          "path": "/Materials/pbr_fixture/geometry_opacity_image",
+          "identifier": "ND_image_color4",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/stdlib/stdlib_defs.mtlx",
+          "definition_sha256": "47c6c0e7f4a3c140925f29d4bc5fc977950e1be95e1a2c3f62b40f412b234678",
+          "inputs": [
+            "default",
+            "file",
+            "filtertype",
+            "frameendaction",
+            "frameoffset",
+            "framerange",
+            "layer",
+            "texcoord",
+            "uaddressmode",
+            "vaddressmode"
+          ],
+          "outputs": [
+            "out"
+          ]
+        },
+        {
+          "path": "/Materials/pbr_fixture/geometry_opacity_channel",
+          "identifier": "ND_extract_color4",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/stdlib/stdlib_defs.mtlx",
+          "definition_sha256": "47c6c0e7f4a3c140925f29d4bc5fc977950e1be95e1a2c3f62b40f412b234678",
+          "inputs": [
+            "in",
+            "index"
+          ],
+          "outputs": [
+            "out"
+          ]
+        },
+        {
+          "path": "/Materials/pbr_fixture/geometry_opacity_multiply",
+          "identifier": "ND_multiply_float",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/stdlib/stdlib_defs.mtlx",
+          "definition_sha256": "47c6c0e7f4a3c140925f29d4bc5fc977950e1be95e1a2c3f62b40f412b234678",
+          "inputs": [
+            "in1",
+            "in2"
+          ],
+          "outputs": [
+            "out"
+          ]
+        },
+        {
+          "path": "/Materials/pbr_fixture/geometry_normal_image",
+          "identifier": "ND_image_vector3",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/stdlib/stdlib_defs.mtlx",
+          "definition_sha256": "47c6c0e7f4a3c140925f29d4bc5fc977950e1be95e1a2c3f62b40f412b234678",
+          "inputs": [
+            "default",
+            "file",
+            "filtertype",
+            "frameendaction",
+            "frameoffset",
+            "framerange",
+            "layer",
+            "texcoord",
+            "uaddressmode",
+            "vaddressmode"
+          ],
+          "outputs": [
+            "out"
+          ]
+        },
+        {
+          "path": "/Materials/pbr_fixture/normal_flip",
+          "identifier": "ND_multiply_vector3",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/stdlib/stdlib_defs.mtlx",
+          "definition_sha256": "47c6c0e7f4a3c140925f29d4bc5fc977950e1be95e1a2c3f62b40f412b234678",
+          "inputs": [
+            "in1",
+            "in2"
+          ],
+          "outputs": [
+            "out"
+          ]
+        },
+        {
+          "path": "/Materials/pbr_fixture/normal_offset",
+          "identifier": "ND_add_vector3",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/stdlib/stdlib_defs.mtlx",
+          "definition_sha256": "47c6c0e7f4a3c140925f29d4bc5fc977950e1be95e1a2c3f62b40f412b234678",
+          "inputs": [
+            "in1",
+            "in2"
+          ],
+          "outputs": [
+            "out"
+          ]
+        },
+        {
+          "path": "/Materials/pbr_fixture/NormalMap",
+          "identifier": "ND_normalmap_float",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/stdlib/stdlib_defs.mtlx",
+          "definition_sha256": "47c6c0e7f4a3c140925f29d4bc5fc977950e1be95e1a2c3f62b40f412b234678",
+          "inputs": [
+            "bitangent",
+            "in",
+            "normal",
+            "scale",
+            "tangent"
+          ],
+          "outputs": [
+            "out"
+          ]
+        },
+        {
+          "path": "/Materials/pbr_fixture/Bump",
+          "identifier": "ND_bump_vector3",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/stdlib/stdlib_defs.mtlx",
+          "definition_sha256": "47c6c0e7f4a3c140925f29d4bc5fc977950e1be95e1a2c3f62b40f412b234678",
+          "inputs": [
+            "bitangent",
+            "height",
+            "normal",
+            "scale",
+            "tangent"
+          ],
+          "outputs": [
+            "out"
+          ]
+        },
+        {
+          "path": "/Materials/pbr_fixture/OpenPBR",
+          "identifier": "ND_open_pbr_surface_surfaceshader",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/bxdf/open_pbr_surface.mtlx",
+          "definition_sha256": "2904f680a939215409fea90e3586db1e2087c5e29000611c1bf4be518fc65f83",
+          "inputs": [
+            "base_color",
+            "base_diffuse_roughness",
+            "base_metalness",
+            "base_weight",
+            "coat_color",
+            "coat_darkening",
+            "coat_ior",
+            "coat_roughness",
+            "coat_roughness_anisotropy",
+            "coat_weight",
+            "emission_color",
+            "emission_luminance",
+            "fuzz_color",
+            "fuzz_roughness",
+            "fuzz_weight",
+            "geometry_coat_normal",
+            "geometry_coat_tangent",
+            "geometry_normal",
+            "geometry_opacity",
+            "geometry_tangent",
+            "geometry_thin_walled",
+            "specular_color",
+            "specular_ior",
+            "specular_roughness",
+            "specular_roughness_anisotropy",
+            "specular_weight",
+            "subsurface_color",
+            "subsurface_radius",
+            "subsurface_radius_scale",
+            "subsurface_scatter_anisotropy",
+            "subsurface_weight",
+            "thin_film_ior",
+            "thin_film_thickness",
+            "thin_film_weight",
+            "transmission_color",
+            "transmission_depth",
+            "transmission_dispersion_abbe_number",
+            "transmission_dispersion_scale",
+            "transmission_scatter",
+            "transmission_scatter_anisotropy",
+            "transmission_weight"
+          ],
+          "outputs": [
+            "out"
+          ]
+        },
+        {
+          "path": "/Materials/pbr_fixture/Displacement",
+          "identifier": "ND_displacement_float",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/pbrlib/pbrlib_defs.mtlx",
+          "definition_sha256": "cba74f62b3620f114b3a6e0316b7bd5708a37d447dd64ad3ae288d570a89ba8e",
+          "inputs": [
+            "displacement",
+            "scale"
+          ],
+          "outputs": [
+            "out"
+          ]
+        }
+      ],
+      "findings": [],
+      "success": true
+    },
+    {
+      "path": "/reference/exports/procedural.usdz",
+      "sha256": "58c89c00bb5edc1e9f36a032f99e253c8cb94e9956c53537f62951e18780dc59",
+      "shaders": [
+        {
+          "path": "/Materials/Procedural/Pattern/Grain",
+          "identifier": "ND_noise3d_color3FA",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/stdlib/stdlib_defs.mtlx",
+          "definition_sha256": "47c6c0e7f4a3c140925f29d4bc5fc977950e1be95e1a2c3f62b40f412b234678",
+          "inputs": [
+            "amplitude",
+            "pivot",
+            "position"
+          ],
+          "outputs": [
+            "out"
+          ]
+        },
+        {
+          "path": "/Materials/Procedural/Pattern/Tint",
+          "identifier": "ND_multiply_color3",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/stdlib/stdlib_defs.mtlx",
+          "definition_sha256": "47c6c0e7f4a3c140925f29d4bc5fc977950e1be95e1a2c3f62b40f412b234678",
+          "inputs": [
+            "in1",
+            "in2"
+          ],
+          "outputs": [
+            "out"
+          ]
+        },
+        {
+          "path": "/Materials/Procedural/Surface",
+          "identifier": "ND_standard_surface_surfaceshader",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/bxdf/standard_surface.mtlx",
+          "definition_sha256": "2211a94bc37644cd420d0ee5de0359db2bc30f7823965676e511287a9fcd487d",
+          "inputs": [
+            "base",
+            "base_color",
+            "coat",
+            "coat_IOR",
+            "coat_affect_color",
+            "coat_affect_roughness",
+            "coat_anisotropy",
+            "coat_color",
+            "coat_normal",
+            "coat_rotation",
+            "coat_roughness",
+            "diffuse_roughness",
+            "emission",
+            "emission_color",
+            "metalness",
+            "normal",
+            "opacity",
+            "sheen",
+            "sheen_color",
+            "sheen_roughness",
+            "specular",
+            "specular_IOR",
+            "specular_anisotropy",
+            "specular_color",
+            "specular_rotation",
+            "specular_roughness",
+            "subsurface",
+            "subsurface_anisotropy",
+            "subsurface_color",
+            "subsurface_radius",
+            "subsurface_scale",
+            "tangent",
+            "thin_film_IOR",
+            "thin_film_thickness",
+            "thin_walled",
+            "transmission",
+            "transmission_color",
+            "transmission_depth",
+            "transmission_dispersion",
+            "transmission_extra_roughness",
+            "transmission_scatter",
+            "transmission_scatter_anisotropy"
+          ],
+          "outputs": [
+            "out"
+          ]
+        }
+      ],
+      "findings": [],
+      "success": true
+    },
+    {
+      "path": "/reference/exports/model.usdz",
+      "sha256": "9c78eb9cb54f40e086a40257cdbb010ea662b7aafb8830b5f52712ebc44ccfea",
+      "shaders": [
+        {
+          "path": "/Materials/_Looks_Fabric/OpenPBR",
+          "identifier": "ND_open_pbr_surface_surfaceshader",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/bxdf/open_pbr_surface.mtlx",
+          "definition_sha256": "2904f680a939215409fea90e3586db1e2087c5e29000611c1bf4be518fc65f83",
+          "inputs": [
+            "base_color",
+            "base_diffuse_roughness",
+            "base_metalness",
+            "base_weight",
+            "coat_color",
+            "coat_darkening",
+            "coat_ior",
+            "coat_roughness",
+            "coat_roughness_anisotropy",
+            "coat_weight",
+            "emission_color",
+            "emission_luminance",
+            "fuzz_color",
+            "fuzz_roughness",
+            "fuzz_weight",
+            "geometry_coat_normal",
+            "geometry_coat_tangent",
+            "geometry_normal",
+            "geometry_opacity",
+            "geometry_tangent",
+            "geometry_thin_walled",
+            "specular_color",
+            "specular_ior",
+            "specular_roughness",
+            "specular_roughness_anisotropy",
+            "specular_weight",
+            "subsurface_color",
+            "subsurface_radius",
+            "subsurface_radius_scale",
+            "subsurface_scatter_anisotropy",
+            "subsurface_weight",
+            "thin_film_ior",
+            "thin_film_thickness",
+            "thin_film_weight",
+            "transmission_color",
+            "transmission_depth",
+            "transmission_dispersion_abbe_number",
+            "transmission_dispersion_scale",
+            "transmission_scatter",
+            "transmission_scatter_anisotropy",
+            "transmission_weight"
+          ],
+          "outputs": [
+            "out"
+          ]
+        },
+        {
+          "path": "/Materials/_Looks_Fabric/base_color_image",
+          "identifier": "ND_image_color3",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/stdlib/stdlib_defs.mtlx",
+          "definition_sha256": "47c6c0e7f4a3c140925f29d4bc5fc977950e1be95e1a2c3f62b40f412b234678",
+          "inputs": [
+            "default",
+            "file",
+            "filtertype",
+            "frameendaction",
+            "frameoffset",
+            "framerange",
+            "layer",
+            "texcoord",
+            "uaddressmode",
+            "vaddressmode"
+          ],
+          "outputs": [
+            "out"
+          ]
+        },
+        {
+          "path": "/Materials/_Looks_Trim/OpenPBR",
+          "identifier": "ND_open_pbr_surface_surfaceshader",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/bxdf/open_pbr_surface.mtlx",
+          "definition_sha256": "2904f680a939215409fea90e3586db1e2087c5e29000611c1bf4be518fc65f83",
+          "inputs": [
+            "base_color",
+            "base_diffuse_roughness",
+            "base_metalness",
+            "base_weight",
+            "coat_color",
+            "coat_darkening",
+            "coat_ior",
+            "coat_roughness",
+            "coat_roughness_anisotropy",
+            "coat_weight",
+            "emission_color",
+            "emission_luminance",
+            "fuzz_color",
+            "fuzz_roughness",
+            "fuzz_weight",
+            "geometry_coat_normal",
+            "geometry_coat_tangent",
+            "geometry_normal",
+            "geometry_opacity",
+            "geometry_tangent",
+            "geometry_thin_walled",
+            "specular_color",
+            "specular_ior",
+            "specular_roughness",
+            "specular_roughness_anisotropy",
+            "specular_weight",
+            "subsurface_color",
+            "subsurface_radius",
+            "subsurface_radius_scale",
+            "subsurface_scatter_anisotropy",
+            "subsurface_weight",
+            "thin_film_ior",
+            "thin_film_thickness",
+            "thin_film_weight",
+            "transmission_color",
+            "transmission_depth",
+            "transmission_dispersion_abbe_number",
+            "transmission_dispersion_scale",
+            "transmission_scatter",
+            "transmission_scatter_anisotropy",
+            "transmission_weight"
+          ],
+          "outputs": [
+            "out"
+          ]
+        }
+      ],
+      "findings": [],
+      "success": true
+    },
+    {
+      "path": "/reference/exports/desk.usdz",
+      "sha256": "60c7b73419ce9644ea1520ec515fd7b0780b8d7b1c3b3a7826a02eca89c25532",
+      "shaders": [
+        {
+          "path": "/Materials/_Looks_Frame/OpenPBR",
+          "identifier": "ND_open_pbr_surface_surfaceshader",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/bxdf/open_pbr_surface.mtlx",
+          "definition_sha256": "2904f680a939215409fea90e3586db1e2087c5e29000611c1bf4be518fc65f83",
+          "inputs": [
+            "base_color",
+            "base_diffuse_roughness",
+            "base_metalness",
+            "base_weight",
+            "coat_color",
+            "coat_darkening",
+            "coat_ior",
+            "coat_roughness",
+            "coat_roughness_anisotropy",
+            "coat_weight",
+            "emission_color",
+            "emission_luminance",
+            "fuzz_color",
+            "fuzz_roughness",
+            "fuzz_weight",
+            "geometry_coat_normal",
+            "geometry_coat_tangent",
+            "geometry_normal",
+            "geometry_opacity",
+            "geometry_tangent",
+            "geometry_thin_walled",
+            "specular_color",
+            "specular_ior",
+            "specular_roughness",
+            "specular_roughness_anisotropy",
+            "specular_weight",
+            "subsurface_color",
+            "subsurface_radius",
+            "subsurface_radius_scale",
+            "subsurface_scatter_anisotropy",
+            "subsurface_weight",
+            "thin_film_ior",
+            "thin_film_thickness",
+            "thin_film_weight",
+            "transmission_color",
+            "transmission_depth",
+            "transmission_dispersion_abbe_number",
+            "transmission_dispersion_scale",
+            "transmission_scatter",
+            "transmission_scatter_anisotropy",
+            "transmission_weight"
+          ],
+          "outputs": [
+            "out"
+          ]
+        },
+        {
+          "path": "/Materials/_Looks_Timber/OpenPBR",
+          "identifier": "ND_open_pbr_surface_surfaceshader",
+          "valid": true,
+          "source_type": "mtlx",
+          "definition": "/reference/runtime/MaterialX/libraries/bxdf/open_pbr_surface.mtlx",
+          "definition_sha256": "2904f680a939215409fea90e3586db1e2087c5e29000611c1bf4be518fc65f83",
+          "inputs": [
+            "base_color",
+            "base_diffuse_roughness",
+            "base_metalness",
+            "base_weight",
+            "coat_color",
+            "coat_darkening",
+            "coat_ior",
+            "coat_roughness",
+            "coat_roughness_anisotropy",
+            "coat_weight",
+            "emission_color",
+            "emission_luminance",
+            "fuzz_color",
+            "fuzz_roughness",
+            "fuzz_weight",
+            "geometry_coat_normal",
+            "geometry_coat_tangent",
+            "geometry_normal",
+            "geometry_opacity",
+            "geometry_tangent",
+            "geometry_thin_walled",
+            "specular_color",
+            "specular_ior",
+            "specular_roughness",
+            "specular_roughness_anisotropy",
+            "specular_weight",
+            "subsurface_color",
+            "subsurface_radius",
+            "subsurface_radius_scale",
+            "subsurface_scatter_anisotropy",
+            "subsurface_weight",
+            "thin_film_ior",
+            "thin_film_thickness",
+            "thin_film_weight",
+            "transmission_color",
+            "transmission_depth",
+            "transmission_dispersion_abbe_number",
+            "transmission_dispersion_scale",
+            "transmission_scatter",
+            "transmission_scatter_anisotropy",
+            "transmission_weight"
+          ],
+          "outputs": [
+            "out"
+          ]
+        }
+      ],
+      "findings": [],
+      "success": true
+    },
+    {
+      "path": "/reference/exports/transforms.usdz",
+      "sha256": "a45981fb8b0983339ff8e20b79506acb2b12a81a82a83fe35b2411921683f874",
+      "shaders": [],
+      "findings": [],
+      "success": true
+    }
+  ],
+  "failures": [],
+  "exemptions": []
+}

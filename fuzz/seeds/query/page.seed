@@ -1,0 +1,1 @@
+{"limit": 8, "fields": ["name", "metadata", "world_transform"], "sort": "name"}

@@ -1,0 +1,914 @@
+{
+  "schema": "usd-toolbox.performance-report.v1",
+  "host": {
+    "cpu": "AMD Ryzen AI 9 HX 370 w/ Radeon 890M",
+    "platform": "Linux-7.2.5-3-omarchy-x86_64-with-glibc2.44",
+    "architecture": "x86_64",
+    "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18)",
+    "affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23
+    ]
+  },
+  "rss_method": "fresh C exec trampoline + child wait4; excludes Python parent high-water memory",
+  "revision": "ddd2efb-dirty",
+  "quick": false,
+  "executables": {
+    "document_benchmark_sha256": "da9ccd3412d8857ea1471de9b34d74eac98b1dac500c2fc5c2e7fad1ef05c955",
+    "geometry_benchmark_sha256": "0b95fbb86cf3a76e0901fd848e892c1bee09f451a4524e95ba7c1f1de41005f8"
+  },
+  "measurements": {
+    "repeated": {
+      "elapsed_ms": 125.97974500022247,
+      "peak_rss_kib": 47984,
+      "user_seconds": 0.107819,
+      "system_seconds": 0.015988,
+      "stages": {
+        "bounds_cold": {
+          "allocated_bytes": 3182,
+          "allocation_calls": 5,
+          "incremental_peak_requested_bytes": 2606,
+          "live_requested_bytes": 44958358,
+          "milliseconds": 0.003126,
+          "peak_requested_bytes": 44958358
+        },
+        "bounds_warm": {
+          "allocated_bytes": 0,
+          "allocation_calls": 0,
+          "incremental_peak_requested_bytes": 0,
+          "live_requested_bytes": 44958358,
+          "milliseconds": 0.0045179999999999994,
+          "peak_requested_bytes": 44958358
+        },
+        "case": "repeated",
+        "exact_id_query": {
+          "measurement": {
+            "allocated_bytes": 1503000,
+            "allocation_calls": 16000,
+            "incremental_peak_requested_bytes": 838,
+            "live_requested_bytes": 44955752,
+            "milliseconds": 1.1677,
+            "peak_requested_bytes": 44956590
+          },
+          "p50_ns": 1122,
+          "p95_ns": 1152
+        },
+        "faces": 1,
+        "lifecycle": {
+          "cycles": 10,
+          "measurement": {
+            "allocated_bytes": 44767160,
+            "allocation_calls": 328710,
+            "incremental_peak_requested_bytes": 3746061,
+            "live_requested_bytes": 8995,
+            "milliseconds": 40.601719,
+            "peak_requested_bytes": 3755056
+          },
+          "retained_growth_bytes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "lookup": {
+          "measurement": {
+            "allocated_bytes": 0,
+            "allocation_calls": 0,
+            "incremental_peak_requested_bytes": 0,
+            "live_requested_bytes": 44955716,
+            "milliseconds": 0.09395500000000001,
+            "peak_requested_bytes": 44955716
+          },
+          "p50_ns": 70,
+          "p95_ns": 71
+        },
+        "metadata_edit": {
+          "allocated_bytes": 10524,
+          "allocation_calls": 44,
+          "incremental_peak_requested_bytes": 6344,
+          "live_requested_bytes": 44959131,
+          "milliseconds": 0.021899000000000002,
+          "peak_requested_bytes": 44964702
+        },
+        "nodes": 10000,
+        "notes": [
+          "Allocation tracking adds atomic overhead; compare this instrumented executable only with itself.",
+          "requested allocation bytes exclude allocator overhead; runner records OS peak RSS separately.",
+          "JSON parsing and document stages exclude file/network transfer and browser initialization; PNG bytes retained but never decoded by core metadata queries.",
+          "Deep workload uses independent chains of 128 nodes; lifecycle fixtures capped at 1000 nodes or 32x32 dense grid."
+        ],
+        "open_and_index": {
+          "allocated_bytes": 14034728,
+          "allocation_calls": 218416,
+          "incremental_peak_requested_bytes": 7197310,
+          "live_requested_bytes": 44947652,
+          "milliseconds": 29.588677,
+          "peak_requested_bytes": 45507610
+        },
+        "parse_json": {
+          "allocated_bytes": 29920980,
+          "allocation_calls": 83342,
+          "incremental_peak_requested_bytes": 29920980,
+          "live_requested_bytes": 38310300,
+          "milliseconds": 15.452455,
+          "peak_requested_bytes": 38310323
+        },
+        "payload_allocations_retained": true,
+        "rename": {
+          "allocated_bytes": 241149,
+          "allocation_calls": 19,
+          "incremental_peak_requested_bytes": 240469,
+          "live_requested_bytes": 44959145,
+          "milliseconds": 4.1805460000000005,
+          "peak_requested_bytes": 45199123
+        },
+        "repeated_query_live_growth_bytes": 0,
+        "samples": 1000,
+        "schema": "usd-toolbox.document-benchmark.v1",
+        "size": 10000,
+        "time_to_first_metadata_ms": 45.041132000000005,
+        "unique_meshes": 1
+      }
+    },
+    "wide": {
+      "elapsed_ms": 467.61678400071105,
+      "peak_rss_kib": 222868,
+      "user_seconds": 0.393806,
+      "system_seconds": 0.070796,
+      "stages": {
+        "bounds_cold": {
+          "allocated_bytes": 3182,
+          "allocation_calls": 5,
+          "incremental_peak_requested_bytes": 2606,
+          "live_requested_bytes": 215375546,
+          "milliseconds": 0.0033060000000000003,
+          "peak_requested_bytes": 215375546
+        },
+        "bounds_warm": {
+          "allocated_bytes": 0,
+          "allocation_calls": 0,
+          "incremental_peak_requested_bytes": 0,
+          "live_requested_bytes": 215375546,
+          "milliseconds": 0.004177999999999999,
+          "peak_requested_bytes": 215375546
+        },
+        "case": "wide",
+        "exact_id_query": {
+          "measurement": {
+            "allocated_bytes": 1504000,
+            "allocation_calls": 16000,
+            "incremental_peak_requested_bytes": 839,
+            "live_requested_bytes": 215372940,
+            "milliseconds": 1.19057,
+            "peak_requested_bytes": 215373779
+          },
+          "p50_ns": 1142,
+          "p95_ns": 1172
+        },
+        "faces": 1,
+        "lifecycle": {
+          "cycles": 10,
+          "measurement": {
+            "allocated_bytes": 44767120,
+            "allocation_calls": 328710,
+            "incremental_peak_requested_bytes": 3746057,
+            "live_requested_bytes": 8991,
+            "milliseconds": 28.629596,
+            "peak_requested_bytes": 3755048
+          },
+          "retained_growth_bytes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "lookup": {
+          "measurement": {
+            "allocated_bytes": 0,
+            "allocation_calls": 0,
+            "incremental_peak_requested_bytes": 0,
+            "live_requested_bytes": 215372904,
+            "milliseconds": 0.11896,
+            "peak_requested_bytes": 215372904
+          },
+          "p50_ns": 90,
+          "p95_ns": 100
+        },
+        "metadata_edit": {
+          "allocated_bytes": 10524,
+          "allocation_calls": 44,
+          "incremental_peak_requested_bytes": 6344,
+          "live_requested_bytes": 215376319,
+          "milliseconds": 0.02828,
+          "peak_requested_bytes": 215381890
+        },
+        "nodes": 50000,
+        "notes": [
+          "Allocation tracking adds atomic overhead; compare this instrumented executable only with itself.",
+          "requested allocation bytes exclude allocator overhead; runner records OS peak RSS separately.",
+          "JSON parsing and document stages exclude file/network transfer and browser initialization; PNG bytes retained but never decoded by core metadata queries.",
+          "Deep workload uses independent chains of 128 nodes; lifecycle fixtures capped at 1000 nodes or 32x32 dense grid."
+        ],
+        "open_and_index": {
+          "allocated_bytes": 68427304,
+          "allocation_calls": 1091584,
+          "incremental_peak_requested_bytes": 34966206,
+          "live_requested_bytes": 215364840,
+          "milliseconds": 182.276337,
+          "peak_requested_bytes": 218164798
+        },
+        "parse_json": {
+          "allocated_bytes": 149643452,
+          "allocation_calls": 416674,
+          "incremental_peak_requested_bytes": 149643452,
+          "live_requested_bytes": 183198592,
+          "milliseconds": 80.026713,
+          "peak_requested_bytes": 183198615
+        },
+        "payload_allocations_retained": true,
+        "rename": {
+          "allocated_bytes": 1201149,
+          "allocation_calls": 19,
+          "incremental_peak_requested_bytes": 1200468,
+          "live_requested_bytes": 215376332,
+          "milliseconds": 19.249164,
+          "peak_requested_bytes": 216576310
+        },
+        "repeated_query_live_growth_bytes": 0,
+        "samples": 1000,
+        "schema": "usd-toolbox.document-benchmark.v1",
+        "size": 50000,
+        "time_to_first_metadata_ms": 262.30305,
+        "unique_meshes": 1
+      }
+    },
+    "deep": {
+      "elapsed_ms": 127.91046100028325,
+      "peak_rss_kib": 49864,
+      "user_seconds": 0.107237,
+      "system_seconds": 0.018827,
+      "stages": {
+        "bounds_cold": {
+          "allocated_bytes": 6726,
+          "allocation_calls": 15,
+          "incremental_peak_requested_bytes": 4091,
+          "live_requested_bytes": 46606368,
+          "milliseconds": 0.006041,
+          "peak_requested_bytes": 46607765
+        },
+        "bounds_warm": {
+          "allocated_bytes": 0,
+          "allocation_calls": 0,
+          "incremental_peak_requested_bytes": 0,
+          "live_requested_bytes": 46606368,
+          "milliseconds": 0.004197,
+          "peak_requested_bytes": 46606368
+        },
+        "case": "deep",
+        "exact_id_query": {
+          "measurement": {
+            "allocated_bytes": 1503000,
+            "allocation_calls": 16000,
+            "incremental_peak_requested_bytes": 838,
+            "live_requested_bytes": 46603674,
+            "milliseconds": 1.112032,
+            "peak_requested_bytes": 46604512
+          },
+          "p50_ns": 1062,
+          "p95_ns": 1102
+        },
+        "faces": 1,
+        "lifecycle": {
+          "cycles": 10,
+          "measurement": {
+            "allocated_bytes": 46125130,
+            "allocation_calls": 370940,
+            "incremental_peak_requested_bytes": 3936002,
+            "live_requested_bytes": 8991,
+            "milliseconds": 33.163255,
+            "peak_requested_bytes": 3944993
+          },
+          "retained_growth_bytes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "lookup": {
+          "measurement": {
+            "allocated_bytes": 0,
+            "allocation_calls": 0,
+            "incremental_peak_requested_bytes": 0,
+            "live_requested_bytes": 46603638,
+            "milliseconds": 0.09067,
+            "peak_requested_bytes": 46603638
+          },
+          "p50_ns": 70,
+          "p95_ns": 71
+        },
+        "metadata_edit": {
+          "allocated_bytes": 10524,
+          "allocation_calls": 44,
+          "incremental_peak_requested_bytes": 6344,
+          "live_requested_bytes": 46607141,
+          "milliseconds": 0.024213,
+          "peak_requested_bytes": 46612712
+        },
+        "nodes": 10000,
+        "notes": [
+          "Allocation tracking adds atomic overhead; compare this instrumented executable only with itself.",
+          "requested allocation bytes exclude allocator overhead; runner records OS peak RSS separately.",
+          "JSON parsing and document stages exclude file/network transfer and browser initialization; PNG bytes retained but never decoded by core metadata queries.",
+          "Deep workload uses independent chains of 128 nodes; lifecycle fixtures capped at 1000 nodes or 32x32 dense grid."
+        ],
+        "open_and_index": {
+          "allocated_bytes": 14642979,
+          "allocation_calls": 239828,
+          "incremental_peak_requested_bytes": 8188286,
+          "live_requested_bytes": 46595574,
+          "milliseconds": 35.484491,
+          "peak_requested_bytes": 46607705
+        },
+        "parse_json": {
+          "allocated_bytes": 30030103,
+          "allocation_calls": 93263,
+          "incremental_peak_requested_bytes": 30030103,
+          "live_requested_bytes": 38419419,
+          "milliseconds": 15.789438999999998,
+          "peak_requested_bytes": 38419442
+        },
+        "payload_allocations_retained": true,
+        "rename": {
+          "allocated_bytes": 241149,
+          "allocation_calls": 19,
+          "incremental_peak_requested_bytes": 240469,
+          "live_requested_bytes": 46607155,
+          "milliseconds": 2.175348,
+          "peak_requested_bytes": 46847133
+        },
+        "repeated_query_live_growth_bytes": 0,
+        "samples": 1000,
+        "schema": "usd-toolbox.document-benchmark.v1",
+        "size": 10000,
+        "time_to_first_metadata_ms": 51.27392999999999,
+        "unique_meshes": 1
+      }
+    },
+    "many_small": {
+      "elapsed_ms": 91.16314200218767,
+      "peak_rss_kib": 30980,
+      "user_seconds": 0.072281,
+      "system_seconds": 0.016841,
+      "stages": {
+        "bounds_cold": {
+          "allocated_bytes": 3182,
+          "allocation_calls": 5,
+          "incremental_peak_requested_bytes": 2606,
+          "live_requested_bytes": 25945226,
+          "milliseconds": 0.003606,
+          "peak_requested_bytes": 25945226
+        },
+        "bounds_warm": {
+          "allocated_bytes": 0,
+          "allocation_calls": 0,
+          "incremental_peak_requested_bytes": 0,
+          "live_requested_bytes": 25945226,
+          "milliseconds": 0.004328,
+          "peak_requested_bytes": 25945226
+        },
+        "case": "many_small",
+        "exact_id_query": {
+          "measurement": {
+            "allocated_bytes": 1503000,
+            "allocation_calls": 16000,
+            "incremental_peak_requested_bytes": 838,
+            "live_requested_bytes": 25942620,
+            "milliseconds": 1.130645,
+            "peak_requested_bytes": 25943458
+          },
+          "p50_ns": 1082,
+          "p95_ns": 1112
+        },
+        "faces": 5000,
+        "lifecycle": {
+          "cycles": 10,
+          "measurement": {
+            "allocated_bytes": 51511740,
+            "allocation_calls": 390370,
+            "incremental_peak_requested_bytes": 4406427,
+            "live_requested_bytes": 9003,
+            "milliseconds": 35.611354999999996,
+            "peak_requested_bytes": 4415430
+          },
+          "retained_growth_bytes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "lookup": {
+          "measurement": {
+            "allocated_bytes": 0,
+            "allocation_calls": 0,
+            "incremental_peak_requested_bytes": 0,
+            "live_requested_bytes": 25942584,
+            "milliseconds": 0.079009,
+            "peak_requested_bytes": 25942584
+          },
+          "p50_ns": 50,
+          "p95_ns": 61
+        },
+        "metadata_edit": {
+          "allocated_bytes": 10524,
+          "allocation_calls": 44,
+          "incremental_peak_requested_bytes": 6344,
+          "live_requested_bytes": 25945999,
+          "milliseconds": 0.021077000000000002,
+          "peak_requested_bytes": 25951570
+        },
+        "nodes": 5000,
+        "notes": [
+          "Allocation tracking adds atomic overhead; compare this instrumented executable only with itself.",
+          "requested allocation bytes exclude allocator overhead; runner records OS peak RSS separately.",
+          "JSON parsing and document stages exclude file/network transfer and browser initialization; PNG bytes retained but never decoded by core metadata queries.",
+          "Deep workload uses independent chains of 128 nodes; lifecycle fixtures capped at 1000 nodes or 32x32 dense grid."
+        ],
+        "open_and_index": {
+          "allocated_bytes": 7005400,
+          "allocation_calls": 109182,
+          "incremental_peak_requested_bytes": 3594166,
+          "live_requested_bytes": 25934513,
+          "milliseconds": 14.870728,
+          "peak_requested_bytes": 26214471
+        },
+        "parse_json": {
+          "allocated_bytes": 18425288,
+          "allocation_calls": 62504,
+          "incremental_peak_requested_bytes": 18425288,
+          "live_requested_bytes": 22620305,
+          "milliseconds": 11.24978,
+          "peak_requested_bytes": 22620328
+        },
+        "payload_allocations_retained": true,
+        "rename": {
+          "allocated_bytes": 121149,
+          "allocation_calls": 19,
+          "incremental_peak_requested_bytes": 120469,
+          "live_requested_bytes": 25946013,
+          "milliseconds": 1.0020879999999999,
+          "peak_requested_bytes": 26065991
+        },
+        "repeated_query_live_growth_bytes": 0,
+        "samples": 1000,
+        "schema": "usd-toolbox.document-benchmark.v1",
+        "size": 5000,
+        "time_to_first_metadata_ms": 26.120508,
+        "unique_meshes": 5000
+      }
+    },
+    "dense": {
+      "elapsed_ms": 13.89103000110481,
+      "peak_rss_kib": 6096,
+      "user_seconds": 0.011531,
+      "system_seconds": 0.00089,
+      "stages": {
+        "bounds_cold": {
+          "allocated_bytes": 3182,
+          "allocation_calls": 5,
+          "incremental_peak_requested_bytes": 2606,
+          "live_requested_bytes": 2515571,
+          "milliseconds": 0.09040000000000001,
+          "peak_requested_bytes": 2515571
+        },
+        "bounds_warm": {
+          "allocated_bytes": 0,
+          "allocation_calls": 0,
+          "incremental_peak_requested_bytes": 0,
+          "live_requested_bytes": 2515571,
+          "milliseconds": 0.007864,
+          "peak_requested_bytes": 2515571
+        },
+        "case": "dense",
+        "exact_id_query": {
+          "measurement": {
+            "allocated_bytes": 1500000,
+            "allocation_calls": 16000,
+            "incremental_peak_requested_bytes": 835,
+            "live_requested_bytes": 2512965,
+            "milliseconds": 1.512128,
+            "peak_requested_bytes": 2513800
+          },
+          "p50_ns": 1423,
+          "p95_ns": 1753
+        },
+        "faces": 32768,
+        "lifecycle": {
+          "cycles": 10,
+          "measurement": {
+            "allocated_bytes": 1829020,
+            "allocation_calls": 1090,
+            "incremental_peak_requested_bytes": 98340,
+            "live_requested_bytes": 8990,
+            "milliseconds": 1.6436300000000001,
+            "peak_requested_bytes": 107330
+          },
+          "retained_growth_bytes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "lookup": {
+          "measurement": {
+            "allocated_bytes": 0,
+            "allocation_calls": 0,
+            "incremental_peak_requested_bytes": 0,
+            "live_requested_bytes": 2512929,
+            "milliseconds": 0.066678,
+            "peak_requested_bytes": 2512929
+          },
+          "p50_ns": 40,
+          "p95_ns": 40
+        },
+        "metadata_edit": {
+          "allocated_bytes": 10524,
+          "allocation_calls": 44,
+          "incremental_peak_requested_bytes": 6344,
+          "live_requested_bytes": 2516344,
+          "milliseconds": 0.043146000000000004,
+          "peak_requested_bytes": 2521915
+        },
+        "nodes": 1,
+        "notes": [
+          "Allocation tracking adds atomic overhead; compare this instrumented executable only with itself.",
+          "requested allocation bytes exclude allocator overhead; runner records OS peak RSS separately.",
+          "JSON parsing and document stages exclude file/network transfer and browser initialization; PNG bytes retained but never decoded by core metadata queries.",
+          "Deep workload uses independent chains of 128 nodes; lifecycle fixtures capped at 1000 nodes or 32x32 dense grid."
+        ],
+        "open_and_index": {
+          "allocated_bytes": 4828,
+          "allocation_calls": 37,
+          "incremental_peak_requested_bytes": 4071,
+          "live_requested_bytes": 2504865,
+          "milliseconds": 2.3670660000000003,
+          "peak_requested_bytes": 2504975
+        },
+        "parse_json": {
+          "allocated_bytes": 2893285,
+          "allocation_calls": 61,
+          "incremental_peak_requested_bytes": 1451621,
+          "live_requested_bytes": 2500904,
+          "milliseconds": 2.0543750000000003,
+          "peak_requested_bytes": 2500927
+        },
+        "payload_allocations_retained": true,
+        "rename": {
+          "allocated_bytes": 1149,
+          "allocation_calls": 18,
+          "incremental_peak_requested_bytes": 1035,
+          "live_requested_bytes": 2516361,
+          "milliseconds": 0.004648,
+          "peak_requested_bytes": 2516902
+        },
+        "repeated_query_live_growth_bytes": 0,
+        "samples": 1000,
+        "schema": "usd-toolbox.document-benchmark.v1",
+        "size": 128,
+        "time_to_first_metadata_ms": 4.421441000000001,
+        "unique_meshes": 1
+      }
+    },
+    "textured": {
+      "elapsed_ms": 410.198452998884,
+      "peak_rss_kib": 61172,
+      "user_seconds": 0.395515,
+      "system_seconds": 0.011962,
+      "stages": {
+        "bounds_cold": {
+          "allocated_bytes": 3182,
+          "allocation_calls": 5,
+          "incremental_peak_requested_bytes": 2606,
+          "live_requested_bytes": 25609874,
+          "milliseconds": 0.003497,
+          "peak_requested_bytes": 25609874
+        },
+        "bounds_warm": {
+          "allocated_bytes": 0,
+          "allocation_calls": 0,
+          "incremental_peak_requested_bytes": 0,
+          "live_requested_bytes": 25609874,
+          "milliseconds": 0.004367,
+          "peak_requested_bytes": 25609874
+        },
+        "case": "textured",
+        "exact_id_query": {
+          "measurement": {
+            "allocated_bytes": 1501000,
+            "allocation_calls": 16000,
+            "incremental_peak_requested_bytes": 836,
+            "live_requested_bytes": 25607268,
+            "milliseconds": 1.039114,
+            "peak_requested_bytes": 25608104
+          },
+          "p50_ns": 992,
+          "p95_ns": 1022
+        },
+        "faces": 1,
+        "lifecycle": {
+          "cycles": 10,
+          "measurement": {
+            "allocated_bytes": 162431360,
+            "allocation_calls": 43570,
+            "incremental_peak_requested_bytes": 6614865,
+            "live_requested_bytes": 8993,
+            "milliseconds": 286.636114,
+            "peak_requested_bytes": 6623858
+          },
+          "retained_growth_bytes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "lookup": {
+          "measurement": {
+            "allocated_bytes": 0,
+            "allocation_calls": 0,
+            "incremental_peak_requested_bytes": 0,
+            "live_requested_bytes": 25607232,
+            "milliseconds": 0.058353,
+            "peak_requested_bytes": 25607232
+          },
+          "p50_ns": 40,
+          "p95_ns": 41
+        },
+        "metadata_edit": {
+          "allocated_bytes": 10527,
+          "allocation_calls": 44,
+          "incremental_peak_requested_bytes": 6346,
+          "live_requested_bytes": 25610647,
+          "milliseconds": 0.023601,
+          "peak_requested_bytes": 25616220
+        },
+        "nodes": 100,
+        "notes": [
+          "Allocation tracking adds atomic overhead; compare this instrumented executable only with itself.",
+          "requested allocation bytes exclude allocator overhead; runner records OS peak RSS separately.",
+          "JSON parsing and document stages exclude file/network transfer and browser initialization; PNG bytes retained but never decoded by core metadata queries.",
+          "Deep workload uses independent chains of 128 nodes; lifecycle fixtures capped at 1000 nodes or 32x32 dense grid."
+        ],
+        "open_and_index": {
+          "allocated_bytes": 172304,
+          "allocation_calls": 2433,
+          "incremental_peak_requested_bytes": 123074,
+          "live_requested_bytes": 25599168,
+          "milliseconds": 21.169642999999997,
+          "peak_requested_bytes": 25604726
+        },
+        "parse_json": {
+          "allocated_bytes": 549782582,
+          "allocation_calls": 1091,
+          "incremental_peak_requested_bytes": 75574210,
+          "live_requested_bytes": 25481652,
+          "milliseconds": 67.440765,
+          "peak_requested_bytes": 92352159
+        },
+        "payload_allocations_retained": true,
+        "rename": {
+          "allocated_bytes": 1149,
+          "allocation_calls": 18,
+          "incremental_peak_requested_bytes": 1035,
+          "live_requested_bytes": 25610663,
+          "milliseconds": 0.033429,
+          "peak_requested_bytes": 25611205
+        },
+        "repeated_query_live_growth_bytes": 0,
+        "samples": 1000,
+        "schema": "usd-toolbox.document-benchmark.v1",
+        "size": 100,
+        "time_to_first_metadata_ms": 88.61040799999999,
+        "unique_meshes": 1
+      }
+    },
+    "over_limit": {
+      "elapsed_ms": 2.787859000818571,
+      "peak_rss_kib": 3704,
+      "user_seconds": 0.0,
+      "system_seconds": 0.00111,
+      "stages": {
+        "case": "over_limit",
+        "rejected": true,
+        "rejection": {
+          "allocated_bytes": 376,
+          "allocation_calls": 5,
+          "incremental_peak_requested_bytes": 376,
+          "live_requested_bytes": 733,
+          "milliseconds": 0.036815,
+          "peak_requested_bytes": 13384
+        },
+        "schema": "usd-toolbox.document-benchmark.v1"
+      }
+    },
+    "geometry": {
+      "elapsed_ms": 7.277339998836396,
+      "peak_rss_kib": 5060,
+      "user_seconds": 0.004462,
+      "system_seconds": 0.001788,
+      "stages": {
+        "arch": "x86_64",
+        "grid_size": 32,
+        "notes": [
+          "Synthetic planar grid; timings include atomic copy-returning edit_scene validation and payload copy.",
+          "LOD maximum original-vertex displacement is not a surface Hausdorff bound; open edges are locked."
+        ],
+        "platform": "linux",
+        "profile": "release",
+        "schema": "usd-toolbox.geometry-benchmark.v1",
+        "source_faces": 2048,
+        "stages": [
+          {
+            "milliseconds": 0.779375,
+            "report": {
+              "faces_after": 2048,
+              "faces_before": 2048,
+              "max_vertex_displacement": 0.0,
+              "mesh": "grid",
+              "notes": [
+                "Face-corner normals use 60 degree smoothing with material boundaries retained; area_weighted=true.",
+                "Existing tangents cleared because their source normals changed; exporters regenerate them when required."
+              ],
+              "operation": "generate_normals",
+              "vertices_after": 1089,
+              "vertices_before": 1089
+            }
+          },
+          {
+            "milliseconds": 3.288332,
+            "report": {
+              "faces_after": 1056,
+              "faces_before": 2048,
+              "max_vertex_displacement": 1.4142135623730951,
+              "mesh": "grid",
+              "notes": [
+                "Target=1024; reached=false; work_limited=false; displacement is measured in scene units.",
+                "Conservative interior edge collapse locks open edges, material boundaries and corner-attribute seams. Error bound is maximum original vertex displacement, not surface Hausdorff distance, UV distortion, or a global intersection guarantee. Tangents are cleared for regeneration."
+              ],
+              "operation": "simplify_mesh",
+              "vertices_after": 593,
+              "vertices_before": 1089
+            }
+          },
+          {
+            "milliseconds": 1.18448,
+            "report": {
+              "faces_after": 2048,
+              "faces_before": 2048,
+              "max_vertex_displacement": 0.0,
+              "mesh": "grid",
+              "notes": [
+                "Position clusters retain the earliest compatible vertex. Vertex/varying attributes must match exactly; face-corner seams are retained. Degenerate faces and bindings are remapped."
+              ],
+              "operation": "weld_vertices",
+              "vertices_after": 1089,
+              "vertices_before": 1089
+            }
+          }
+        ]
+      }
+    },
+    "panels_preflight": {
+      "elapsed_ms": 2.7754969996749423,
+      "peak_rss_kib": 7160,
+      "user_seconds": 0.000914,
+      "system_seconds": 0.000918
+    },
+    "panels_import_inspect": {
+      "elapsed_ms": 2.9705619999731425,
+      "peak_rss_kib": 8440,
+      "user_seconds": 0.0,
+      "system_seconds": 0.001925
+    },
+    "panels_package": {
+      "elapsed_ms": 3.895492998708505,
+      "peak_rss_kib": 8820,
+      "user_seconds": 0.001924,
+      "system_seconds": 0.000965
+    },
+    "panels_export": {
+      "elapsed_ms": 3.687535998324165,
+      "peak_rss_kib": 10496,
+      "user_seconds": 0.001775,
+      "system_seconds": 0.000884
+    },
+    "panels_artifacts": {
+      "source_bytes": 2622,
+      "usdz_bytes": 22880,
+      "glb_bytes": 15824
+    },
+    "desk_preflight": {
+      "elapsed_ms": 2.5513209984637797,
+      "peak_rss_kib": 7092,
+      "user_seconds": 0.0,
+      "system_seconds": 0.00156
+    },
+    "desk_import_inspect": {
+      "elapsed_ms": 3.5897140005545225,
+      "peak_rss_kib": 8404,
+      "user_seconds": 0.001284,
+      "system_seconds": 0.001284
+    },
+    "desk_package": {
+      "elapsed_ms": 4.252073002135148,
+      "peak_rss_kib": 9424,
+      "user_seconds": 0.002221,
+      "system_seconds": 0.001097
+    },
+    "desk_export": {
+      "elapsed_ms": 3.2211440011451486,
+      "peak_rss_kib": 10124,
+      "user_seconds": 0.001587,
+      "system_seconds": 0.000793
+    },
+    "desk_artifacts": {
+      "source_bytes": 7917,
+      "usdz_bytes": 25377,
+      "glb_bytes": 22620
+    }
+  },
+  "deterministic_checks": [
+    "repeated: zero-allocation lookup/warm bounds, <=128KiB metadata edit, retained payload pointers, zero lifecycle growth",
+    "wide: zero-allocation lookup/warm bounds, <=128KiB metadata edit, retained payload pointers, zero lifecycle growth",
+    "deep: zero-allocation lookup/warm bounds, <=128KiB metadata edit, retained payload pointers, zero lifecycle growth",
+    "many_small: zero-allocation lookup/warm bounds, <=128KiB metadata edit, retained payload pointers, zero lifecycle growth",
+    "dense: zero-allocation lookup/warm bounds, <=128KiB metadata edit, retained payload pointers, zero lifecycle growth",
+    "textured: zero-allocation lookup/warm bounds, <=128KiB metadata edit, retained payload pointers, zero lifecycle growth",
+    "over-limit nodes rejected",
+    "32x32 planar LOD: <=1100 faces and <=2 scene-unit original-vertex displacement"
+  ],
+  "timing_warnings": [],
+  "toolbox_sha256": "aaff04878cb0b727a449435ed74458f33c541272552f3d82f55533ba95fb9185"
+}

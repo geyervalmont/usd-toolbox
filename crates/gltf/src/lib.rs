@@ -1,4 +1,6 @@
 //! glTF 2.0 and GLB material export with explicit loss reporting.
+mod preview;
+pub mod scene;
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::io::Cursor;
@@ -450,8 +452,8 @@ fn encode_base_color(
         (None, None) => Ok((factor, None)),
         (Some(base), None) => Ok((factor, Some(registry.register_existing(base, tier)?))),
         (base, Some(opacity)) => {
-            let base_image = base.map(|texture| decode_texture(texture, tier)).transpose()?;
-            let opacity_image = decode_texture(opacity, tier)?;
+            let base_image = base.map(|texture| registry.decode_texture(texture, tier)).transpose()?;
+            let opacity_image = registry.decode_texture(opacity, tier)?;
             let (width, height) = base_image
                 .as_ref()
                 .map_or_else(|| opacity_image.dimensions(), RgbaImage::dimensions);
@@ -496,14 +498,14 @@ fn pack_metallic_roughness(
         }
     }
 
-    let first_image = decode_texture(first, tier)?;
+    let first_image = registry.decode_texture(first, tier)?;
     let (width, height) = first_image.dimensions();
     let metallic_image = metallic
-        .map(|texture| decode_texture(texture, tier))
+        .map(|texture| registry.decode_texture(texture, tier))
         .transpose()?
         .map(|image| resize_if_needed(image, width, height, material, "base_metalness", losses));
     let roughness_image = roughness
-        .map(|texture| decode_texture(texture, tier))
+        .map(|texture| registry.decode_texture(texture, tier))
         .transpose()?
         .map(|image| resize_if_needed(image, width, height, material, "specular_roughness", losses));
     let mut packed = RgbaImage::from_pixel(width, height, Rgba([255; 4]));
@@ -534,7 +536,7 @@ fn register_normal(
     losses: &mut Vec<Loss>,
 ) -> Result<u32, ExportError> {
     if texture.normal_convention == Some(NormalConvention::DirectX) {
-        let mut image = decode_texture(texture, tier)?;
+        let mut image = registry.decode_texture(texture, tier)?;
         for pixel in image.pixels_mut() {
             pixel.0[1] = 255 - pixel.0[1];
         }
@@ -551,6 +553,7 @@ fn register_normal(
 
 #[derive(Default)]
 struct ImageRegistry {
+    previews: preview::TexturePreviews,
     images: Vec<ImageEntry>,
     by_digest: BTreeMap<String, u32>,
     binary: Vec<u8>,
@@ -563,10 +566,27 @@ struct ImageEntry {
 
 impl ImageRegistry {
     fn register_existing(&mut self, texture: &TextureRef, tier: Tier) -> Result<u32, ExportError> {
-        let source = texture
-            .source_for(tier)
-            .ok_or_else(|| ExportError::InvalidModel(format!("texture `{}` has no tiers", texture.role)))?;
+        let source = self.previews.source(texture, tier)?;
         self.register(source.bytes.clone(), source.media_type.clone())
+    }
+
+    fn decode_texture(&self, texture: &TextureRef, tier: Tier) -> Result<RgbaImage, ExportError> {
+        let source = self.previews.source(texture, tier)?;
+        let mut reader = image::ImageReader::new(Cursor::new(&source.bytes))
+            .with_guessed_format()
+            .map_err(json_export_error)?;
+        if let Some(max_bytes) = self.previews.max_bytes {
+            let mut limits = image::Limits::default();
+            limits.max_alloc = Some(max_bytes as u64);
+            reader.limits(limits);
+        }
+        reader
+            .decode()
+            .map(|image| image.to_rgba8())
+            .map_err(|error| ExportError::Encode {
+                format: "glTF image",
+                detail: format!("{}: {error}", source.package_path()),
+            })
     }
 
     fn register_png(&mut self, image: RgbaImage) -> Result<u32, ExportError> {
@@ -602,7 +622,7 @@ impl ImageRegistry {
         if texture.channel == destination {
             return self.register_existing(texture, tier);
         }
-        let source = decode_texture(texture, tier)?;
+        let source = self.decode_texture(texture, tier)?;
         let mut output = RgbaImage::from_pixel(source.width(), source.height(), Rgba([255; 4]));
         for (target, source) in output.pixels_mut().zip(source.pixels()) {
             let value = select_channel(source, texture.channel);
@@ -647,7 +667,7 @@ impl ImageRegistry {
         if texture.channel == Channel::B {
             return self.register_existing(texture, tier);
         }
-        let source = decode_texture(texture, tier)?;
+        let source = self.decode_texture(texture, tier)?;
         // The Khronos default direction is +X, encoded as (1.0, 0.5).
         let mut output = RgbaImage::from_pixel(source.width(), source.height(), Rgba([255, 128, 255, 255]));
         for (target, source) in output.pixels_mut().zip(source.pixels()) {
@@ -772,18 +792,6 @@ fn constant_only(
             default
         }
     }
-}
-
-fn decode_texture(texture: &TextureRef, tier: Tier) -> Result<RgbaImage, ExportError> {
-    let source = texture
-        .source_for(tier)
-        .ok_or_else(|| ExportError::InvalidModel(format!("texture `{}` has no tiers", texture.role)))?;
-    image::load_from_memory(&source.bytes)
-        .map(|image| image.to_rgba8())
-        .map_err(|error| ExportError::Encode {
-            format: "glTF image",
-            detail: format!("{}: {error}", source.package_path()),
-        })
 }
 
 fn resize_if_needed(

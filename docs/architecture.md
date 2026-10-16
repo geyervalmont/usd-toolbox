@@ -18,16 +18,21 @@ USD / USDZ ──┘           │             ├─> USD / USDZ / Omniverse
 ```
 
 That diagram is the implemented material slice, not the limit of the project.
-The planned scene slice follows the same shape:
+The implemented static scene slice follows the same shape:
 
 ```text
-USD / USDZ ──> neutral scene + bindings ──┬─> glTF / GLB
-                                          └─> browser scene data
+USD / USDZ / GLB / glTF ──> neutral scene + bindings ──┬─> glTF / GLB
+                                          ├─> USD / USDZ
+                                          └─> browser preview / model operations
 ```
 
-Scene/geometry types and a material-binding table will be added alongside the
-current material types. They will not be folded into `Material`, and exporters
-will continue to consume the neutral model rather than another format crate.
+`core::scene` contains scene and geometry contracts separately from `Material`.
+The USD and glTF scene adapters both consume that neutral contract; neither
+format crate depends on the other. Reusable SceneDocument indexes and caches stay in the core; mutations are atomic
+and advance generation. Geometry remains independent of material payloads. The
+CLI/C/WASM boundaries orchestrate formats; the format crates still do not call one
+another. The [static model toolbox](model-toolbox.md) records the supported
+profile, limits, boundary APIs and conformance checks.
 
 `Material` owns identity, surface parameters, surface-frame geometry inputs,
 physical tiling, auxiliary assets, provenance, and variant sets. It owns no mesh,

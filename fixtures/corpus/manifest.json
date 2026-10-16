@@ -1,0 +1,120 @@
+{
+  "schema": "usd-toolbox.corpus.v1",
+  "assets": [
+    {
+      "id": "Box",
+      "source": "KhronosGroup/glTF-Sample-Assets",
+      "revision": "edc7c9e67c639d230715049ee31f9a96a6babbbe",
+      "license": "CC-BY-4.0",
+      "credits": "Cesium",
+      "root": "Box/Box.glb",
+      "expected": "accept",
+      "files": [
+        {
+          "path": "Box/Box.glb",
+          "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/Box/glTF-Binary/Box.glb",
+          "sha256": "ed52f7192b8311d700ac0ce80644e3852cd01537e4d62241b9acba023da3d54e",
+          "bytes": 1664
+        },
+        {
+          "path": "Box/README.md",
+          "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/Box/README.md",
+          "sha256": "ae63b4ad1c8136b881686e66faf930c9b9e71fa823a7a4b1738076ae06739c35",
+          "bytes": 898
+        }
+      ]
+    },
+    {
+      "id": "BoomBox",
+      "source": "KhronosGroup/glTF-Sample-Assets",
+      "revision": "edc7c9e67c639d230715049ee31f9a96a6babbbe",
+      "license": "CC0-1.0",
+      "credits": "Microsoft",
+      "root": "BoomBox/BoomBox.glb",
+      "expected": "accept",
+      "files": [
+        {
+          "path": "BoomBox/BoomBox.glb",
+          "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/BoomBox/glTF-Binary/BoomBox.glb",
+          "sha256": "f8b918445ebdd006768232205a62f5182d2208ca57f84c6ccc084943c0bc8f15",
+          "bytes": 10614184
+        },
+        {
+          "path": "BoomBox/README.md",
+          "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/BoomBox/README.md",
+          "sha256": "4a0ba4006d903b85dea52788053399d835b22ebb3ab4b1e305ccee103d7b2271",
+          "bytes": 1000
+        }
+      ]
+    },
+    {
+      "id": "NormalTangentMirrorTest",
+      "source": "KhronosGroup/glTF-Sample-Assets",
+      "revision": "edc7c9e67c639d230715049ee31f9a96a6babbbe",
+      "license": "CC-BY-4.0",
+      "credits": "Ed Mackey / Analytical Graphics, Inc.",
+      "root": "NormalTangentMirrorTest/NormalTangentMirrorTest.glb",
+      "expected": "accept",
+      "files": [
+        {
+          "path": "NormalTangentMirrorTest/NormalTangentMirrorTest.glb",
+          "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/NormalTangentMirrorTest/glTF-Binary/NormalTangentMirrorTest.glb",
+          "sha256": "31ce5f3c873fc55531a17ccacf001e3d1d482a508695aa826fa79cc196e0ce78",
+          "bytes": 1567084
+        },
+        {
+          "path": "NormalTangentMirrorTest/README.md",
+          "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/NormalTangentMirrorTest/README.md",
+          "sha256": "f7a39616f1e33b7b743dbac044a1fff1eb262c8488a718b1a2b7873b381997d8",
+          "bytes": 4436
+        }
+      ]
+    },
+    {
+      "id": "SheenChair",
+      "source": "KhronosGroup/glTF-Sample-Assets",
+      "revision": "edc7c9e67c639d230715049ee31f9a96a6babbbe",
+      "license": "CC0-1.0",
+      "credits": "Eric Chadwick / Wayfair, LLC.",
+      "root": "SheenChair/SheenChair.glb",
+      "expected": "profile",
+      "files": [
+        {
+          "path": "SheenChair/SheenChair.glb",
+          "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/SheenChair/glTF-Binary/SheenChair.glb",
+          "sha256": "f0af2a2b102d28d540236306ae19f8fb36842df76bd38cf76f063f9bd2853399",
+          "bytes": 4125648
+        },
+        {
+          "path": "SheenChair/README.md",
+          "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/SheenChair/README.md",
+          "sha256": "7bbb705e0532711b80a512161da64ab0f2a719412121daf24b8177bdbdbaca7a",
+          "bytes": 4250
+        }
+      ]
+    },
+    {
+      "id": "RecursiveSkeletons",
+      "source": "KhronosGroup/glTF-Sample-Assets",
+      "revision": "edc7c9e67c639d230715049ee31f9a96a6babbbe",
+      "license": "CC-BY-4.0",
+      "credits": "Vicente Penades / SharpGLTF; see upstream credits",
+      "root": "RecursiveSkeletons/RecursiveSkeletons.glb",
+      "expected": "reject",
+      "files": [
+        {
+          "path": "RecursiveSkeletons/RecursiveSkeletons.glb",
+          "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RecursiveSkeletons/glTF-Binary/RecursiveSkeletons.glb",
+          "sha256": "15fb11ee4d3b31735efe7dc776a31e8fa67568ea148a3315442970303675b641",
+          "bytes": 561620
+        },
+        {
+          "path": "RecursiveSkeletons/README.md",
+          "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RecursiveSkeletons/README.md",
+          "sha256": "8961715feb593db3b77f5011a802c98c7f11ec794f1e65a6057eb8c0ed3ac17e",
+          "bytes": 1987
+        }
+      ]
+    }
+  ]
+}

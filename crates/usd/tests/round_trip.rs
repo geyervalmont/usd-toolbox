@@ -221,3 +221,47 @@ fn unsupported_usdz_auxiliary_types_stay_embedded_in_metadata() {
         .unwrap();
     assert_eq!(imported, vec![material]);
 }
+
+#[test]
+fn materialx_vector_and_scalar_amplitude_ports_match_native_sdr_contracts() {
+    use openusd::sdf::{AbstractData, Path, Value as UsdValue};
+    let options = UsdExportOptions {
+        format: UsdFormat::Usda,
+        ..Default::default()
+    };
+    let mut normal = Material::new("normal", "Normal");
+    normal.geometry.normal = Some([0.0, 0.0, 1.0].into());
+    let export = UsdExporter.export(&[normal], &options).unwrap();
+    let data = openusd::usda::parse(std::str::from_utf8(&export.bytes).unwrap()).unwrap();
+    let port = Path::new("/Materials/normal/OpenPBR.inputs:geometry_normal").unwrap();
+    assert_eq!(
+        data.get_field(&port, "typeName").unwrap().as_ref(),
+        &UsdValue::Token("float3".into())
+    );
+
+    let mut procedural = Material::new("procedural", "Procedural");
+    procedural.materialx = Some(serde_json::from_value(serde_json::json!({
+        "material_name":"Procedural", "document":{"category":"materialx", "attributes":{"version":"1.39"}, "children":[
+            {"category":"noise3d", "attributes":{"name":"Noise","type":"color3"}, "children":[
+                {"category":"input", "attributes":{"name":"amplitude","type":"float","value":"0.5"}}
+            ]},
+            {"category":"open_pbr_surface", "attributes":{"name":"Surface","type":"surfaceshader"}, "children":[
+                {"category":"input", "attributes":{"name":"base_color","type":"color3","nodename":"Noise"}}
+            ]},
+            {"category":"surfacematerial", "attributes":{"name":"Procedural","type":"material"}, "children":[
+                {"category":"input", "attributes":{"name":"surfaceshader","type":"surfaceshader","nodename":"Surface"}}
+            ]}
+        ]}
+    })).unwrap());
+    let export = UsdExporter.export(std::slice::from_ref(&procedural), &options).unwrap();
+    let data = openusd::usda::parse(std::str::from_utf8(&export.bytes).unwrap()).unwrap();
+    let identifier = Path::new("/Materials/procedural/Noise.info:id").unwrap();
+    assert_eq!(
+        data.get_field(&identifier, "default").unwrap().as_ref(),
+        &UsdValue::Token("ND_noise3d_color3FA".into())
+    );
+    let imported = UsdImporter
+        .import(Input::Bytes(&export.bytes), &Default::default())
+        .unwrap();
+    assert_eq!(imported, vec![procedural]);
+}

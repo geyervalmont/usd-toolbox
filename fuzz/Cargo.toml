@@ -1,0 +1,80 @@
+[package]
+name = "usd-toolbox-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+[package.metadata]
+cargo-fuzz = true
+
+[workspace]
+members = ["."]
+
+[dependencies]
+libfuzzer-sys = "0.4"
+serde_json = "1"
+image = { version = "0.25", default-features = false, features = ["jpeg", "png"] }
+usd-toolbox-core = { path = "../crates/core" }
+usd-toolbox-usd = { path = "../crates/usd" }
+usd-toolbox-materialx = { path = "../crates/materialx" }
+usd-toolbox-gltf = { path = "../crates/gltf" }
+
+[profile.release]
+debug = 1
+
+[[bin]]
+name = "usda"
+path = "fuzz_targets/usda.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "usdc"
+path = "fuzz_targets/usdc.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "usdz"
+path = "fuzz_targets/usdz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "materialx"
+path = "fuzz_targets/materialx.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "gltf"
+path = "fuzz_targets/gltf.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "images"
+path = "fuzz_targets/images.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "metadata"
+path = "fuzz_targets/metadata.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "query"
+path = "fuzz_targets/query.rs"
+test = false
+doc = false
+bench = false
+

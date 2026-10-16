@@ -1,163 +1,201 @@
 # usd-toolbox
 
 [![CI](https://github.com/geyervalmont/usd-toolbox/actions/workflows/ci.yml/badge.svg)](https://github.com/geyervalmont/usd-toolbox/actions/workflows/ci.yml)
-[![Build artifacts](https://github.com/geyervalmont/usd-toolbox/actions/workflows/artifacts.yml/badge.svg)](https://github.com/geyervalmont/usd-toolbox/actions/workflows/artifacts.yml)
+[![Packages](https://github.com/geyervalmont/usd-toolbox/actions/workflows/artifacts.yml/badge.svg)](https://github.com/geyervalmont/usd-toolbox/actions/workflows/artifacts.yml)
 
-A standalone Rust interchange toolkit for portable 3D assets. USD/USDZ is the
-primary container, with MaterialX and glTF/GLB spokes. Materials are the first
-implemented domain; the workspace, native boundary, and browser boundary are
-named for the broader geometry-and-material pipeline they will grow into.
+**Import, query, edit and package static 3D models and materials.** A Rust toolkit
+for USD/USDZ, glTF/GLB and MaterialX, with a CLI, browser WASM package and C ABI.
 
-The intended geometry path follows the same hub-and-spoke rule as materials:
-USD scene data enters a neutral scene model, then the browser or exporter emits
-Three.js-friendly data, glTF, or GLB without adding direct format-to-format
-converters.
+Open a model once, keep its geometry in memory, and query only the names, metadata,
+bindings or bounds you need. Prepare reusable assets with atomic edits, indexed
+previews and explicit geometry LODs. Format adapters share a neutral Rust model;
+portable APIs take caller-supplied bytes and require no native OpenUSD installation.
 
-This repository is independent of OPAL. OPAL is its first consumer, not an
-architectural dependency.
+## Capabilities
 
-## What works
-
-- OpenPBR-aligned materials with stable identity, physical tiling, arbitrary
-  variants, auxiliary assets, complete provenance, and constant/textured/
-  modulated values.
-- Explicit, deterministic capability and loss reports before or during export.
-- Texture-set import from PNG/JPEG bytes, explicit colour space and normal-map
-  convention, gloss-to-roughness conversion, and deterministic preview–8K tiers.
-- Deterministic USDA, USDC, and 64-byte-aligned uncompressed USDZ export; guarded
-  import with archive limits, hash verification, and lineage validation.
-- Material inspection, versioned JSON migration, validated merge-patch editing,
-  semantic diffs, extraction/removal, and AI/manual texture attachment.
-- Per-material and corpus health audits with actionable issue codes, tier and
-  metadata policy, actual image checks, and duplicate candidates.
-- Provider-agnostic tier jobs, safe automatic downscales, stable multimodal
-  embedding inputs, cosine similarity, and deterministic clustering.
-- Versioned procedural paint, masonry, timber, terrazzo, and textile recipes
-  with deterministic PBR texture baking and SVG/Revit hatch outputs.
-- Native MaterialX 1.38/1.39 graphs, checked dependencies, shared XML/USD shading
-  authoring, and browser preview bundles; glTF 2.0/GLB export with ratified
-  `KHR_materials_*` extensions and channel packing.
-- Revit Generic appearance-asset image-set ZIP export matching the OPAL
-  connector's diffuse/bump/glossiness contract.
-- An independently versioned Omniverse target producing self-contained USDZ.
-- A `usd-toolbox build` command which reads staged texture paths, emits USDZ, and
-  writes a machine-readable tier/loss report without moving image bytes through PHP.
-- CLI, `wasm-bindgen`, and panic-safe C ABI surfaces for the same workflows.
-
-USD and MaterialX importers guarantee full fidelity for documents written by
-this library, using an embedded versioned neutral manifest. Native MaterialX Standard Surface/OpenPBR documents preserve procedural graphs
-and supplied images. Third-party USD inspection remains conservative: direct
-constants are projected and unresolved connections are reported instead of guessed.
-Geometry and material bindings remain deliberately outside the model for now.
-
-## Workspace
-
-| Crate | Responsibility |
+| Workflow | Available tools |
 |---|---|
-| `usd-toolbox-cli` | Isolated filesystem/process boundary for workers and scripts |
-| `usd-toolbox-core` | Neutral model, validation, capabilities, loss contract |
-| `usd-toolbox-materials` | Inspect/edit/audit/tier/embedding workflows |
-| `usd-toolbox-procedural` | Versioned recipes, deterministic PBR baking, vector hatches |
-| `usd-toolbox-textures` | Image ingest, map conventions, tier generation |
-| `usd-toolbox-usd` | USDA/USDC/USDZ import and export |
-| `usd-toolbox-materialx` | MaterialX graph import and export |
-| `usd-toolbox-gltf` | glTF/GLB export and texture packing |
-| `usd-toolbox-revit` | Revit Generic appearance image-set export |
-| `usd-toolbox-omniverse` | Omniverse-compatible OpenUSD target adapter |
-| `usd-toolbox-wasm` | Browser API |
-| `usd-toolbox-ffi` | Native C ABI and generated header |
+| **Models** | Static USD and glTF import; hierarchy, shared meshes, transforms, UVs and material bindings; preflight, validation, extraction and USDZ/GLB export |
+| **Metadata and queries** | Typed scene/node/mesh/material metadata; indexed ID/path lookup; filters, counts, projections, stable pagination and cached physical bounds |
+| **Editing and geometry** | Rename, reparent, duplicate and merge; metadata updates; pivot/axis conversion, transform baking, normal generation, welding, repair and LOD sets |
+| **Materials and textures** | OpenPBR-aligned materials, MaterialX graph preservation, PNG/JPEG texture tiers, inspection, audits, edits, provenance and procedural PBR recipes |
+| **Browser and native integration** | Typed ESM worker API, transferable buffers and explicit disposal; reusable C document handles and prepared export results |
+| **Additional targets** | Revit appearance image sets and Omniverse USDZ; optional native OpenUSD preprocessing for composed stages and instances |
 
-The format crates only communicate through `usd-toolbox-core`; there are
-no format-to-format converters.
+Support is profile-specific. Capability discovery and structured diagnostics report
+unsupported features and conversion losses. See [model tools](docs/model-toolbox.md),
+[material workflows](docs/material-workflows.md) and the [format boundaries](#supported-profiles).
 
-## Rust example
+## Try the CLI
 
-```rust
-use usd_toolbox_core::{Exporter, Material};
-use usd_toolbox_usd::{UsdExportOptions, UsdExporter};
+From a checkout, with Rust 1.96 or newer:
 
-let mut material = Material::new("paint-red", "Paint Red");
-material.surface.base_color = [0.62, 0.03, 0.02, 1.0].into();
-material.surface.specular_roughness = 0.36.into();
+```sh
+cargo build --release --locked -p usd-toolbox-cli
+mkdir -p target/demo
 
-let exported = UsdExporter.export(&[material], &UsdExportOptions::default())?;
-std::fs::write("paint-red.usdz", exported.bytes)?;
-assert!(exported.losses.is_empty());
-# Ok::<(), Box<dyn std::error::Error>>(())
+# Inspect the included textured model and check its GLB compatibility.
+target/release/usd-toolbox model inspect --input fixtures/models/panels.usda
+target/release/usd-toolbox model preflight \
+  --input fixtures/models/panels.usda --target glb --geometry
+
+# Package the model and its supplied texture into USDZ.
+target/release/usd-toolbox model pack \
+  --input fixtures/models/panels.usda \
+  --output target/demo/panels.usdz --report target/demo/package.json
+
+# Export an indexed GLB with preview-sized textures.
+target/release/usd-toolbox model export \
+  --input target/demo/panels.usdz --target glb --tier preview \
+  --output target/demo/panels.glb --report target/demo/preview.json
 ```
 
-The reusable spokes remain bytes-in/bytes-out. The CLI is the one deliberate
-filesystem adapter: it resolves staged paths and then calls those same APIs.
+The original [panels fixture](fixtures/models/README.md) includes its texture and
+exercises indexed geometry, material subsets, a UV seam and millimetre units.
+The CLI resolves referenced dependencies beneath the source directory.
 
-## Build and verify
+Query a bounded page without including vertex or image buffers:
 
-```bash
-cargo fmt --all --check
-cargo clippy --workspace --all-targets -- -D warnings
-cargo test --workspace
+```sh
+cat > target/demo/query.json <<'JSON'
+{
+  "filter": { "node_type": "mesh" },
+  "fields": ["name", "metadata", "bounds", "effective_material"],
+  "sort": "name",
+  "limit": 50
+}
+JSON
+
+target/release/usd-toolbox model query \
+  --input target/demo/panels.usdz --request target/demo/query.json
+
+target/release/usd-toolbox model capabilities
+```
+
+Query bounds are in metres. Metadata preserves exact 64-bit integers as tagged
+decimal strings. For many queries against one import, retain a Rust
+`SceneDocument`, browser `Model` or C document handle. The CLI opens an input per
+invocation. See the [query contract](docs/query-api.md) and
+[geometry LOD packaging](docs/geometry-lods.md) for complete examples.
+
+## Use it in the browser
+
+Build the typed worker package with Python 3.11+ and the matching wasm-bindgen CLI:
+
+```sh
 rustup target add wasm32-unknown-unknown
+cargo install wasm-bindgen-cli --version 0.2.128 --locked
+python3 scripts/build_web_package.py
+```
+
+The result is `target/web-package`. Install that directory as a local application
+dependency, or follow the [Vite deployment example](examples/vite/main.js). Keep
+its worker, JavaScript glue and WASM file together. The default package includes
+model tools; `--full` also includes material authoring and additional target APIs.
+
+```ts
+import { Toolbox, type QueryRequest } from '@usd-toolbox/web';
+
+const request: QueryRequest = {
+  filter: { node_type: 'mesh' },
+  fields: ['name', 'metadata', 'bounds'],
+  limit: 50,
+};
+
+// Accept a self-contained GLB or USDZ File from your application.
+async function inspectAndPreview(file: File) {
+  const toolbox = new Toolbox();
+  try {
+    const model = await toolbox.open(await file.arrayBuffer(), { name: file.name });
+    const page = await model.query(request);
+    const { bytes, diagnostics } = await model.export('glb', { textureTier: 'preview' });
+    return { page, bytes, diagnostics }; // bytes is an owned Uint8Array.
+  } finally {
+    toolbox.dispose(); // Releases the worker and every model it owns.
+  }
+}
+```
+
+Keep a toolbox and its models alive across repeated queries in an interactive
+application; `model.dispose()` releases one model. Applications supply external
+dependencies through `assets`. The standard build needs neither SharedArrayBuffer
+nor cross-origin isolation. Cancelling queued work preserves other handles;
+cancelling an active synchronous conversion terminates its worker and invalidates
+all models in that toolbox. See [web ownership, cancellation and deployment](packages/web/README.md).
+
+## Rust, C and material workflows
+
+The Rust workspace separates reusable data from host integration:
+
+| Crates | Responsibility |
+|---|---|
+| `usd-toolbox-core` | Neutral scenes/materials, typed metadata, retained queries, validation and edits |
+| `usd-toolbox-usd`, `usd-toolbox-gltf`, `usd-toolbox-materialx` | Format import/export and compatibility profiles |
+| `usd-toolbox-materials`, `usd-toolbox-textures`, `usd-toolbox-procedural` | Material-library operations, texture processing and deterministic recipes |
+| `usd-toolbox-revit`, `usd-toolbox-omniverse` | Additional delivery targets |
+| `usd-toolbox-cli`, `usd-toolbox-wasm`, `usd-toolbox-ffi` | Filesystem, browser and native host boundaries |
+
+Build the C library with `cargo build --release -p usd-toolbox-ffi`. The
+[generated header](crates/ffi/include/usd_toolbox.h) and
+[executable C example](examples/c/document.c) cover retained documents and owned
+results. Buffer sizing does not repeat prepared model exports or edits.
+
+Materials remain independently usable: inspect and audit packages, edit or attach
+textures, generate safe downscales, preserve source graphs, bake procedural recipes,
+and export to supported targets. Start with [material workflows](docs/material-workflows.md),
+[MaterialX](docs/materialx.md), [target adapters](docs/targets.md) or
+[host integration](docs/integration.md). The toolkit has no dependency on its
+consumer applications, including OPAL.
+
+## Supported profiles
+
+- **Portable USD:** static, precomposed polygon scenes with supported transforms,
+  primvars, bindings and PreviewSurface networks. Sublayers, references, selected
+  variants and instances require the separate [native OpenUSD adapter](docs/usd-profiles.md).
+- **glTF:** static triangles, strips and fans, shared meshes, supported PBR
+  materials and documented extensions. Animation, skinning, morph targets,
+  cameras/lights and compressed mesh/texture extensions are outside the
+  [current profile](crates/gltf/README.md).
+- **Images and shading:** PNG/JPEG processing; EXR/UDIM import and arbitrary
+  shader baking are unavailable. Retaining source graphs does not imply evaluating
+  them. See the [texture profile](crates/gltf/texture-profile.md).
+- **Geometry:** subdivision tessellation and CAD/BIM adapters are outside the
+  static workflow. Simplification bounds original-vertex displacement, may stop
+  above its target, and does not guarantee complete surface or texture error.
+  Rendering and shader code generation belong to consumer applications.
+
+## Performance and verification
+
+Queries reuse indexes and bounded caches. Small metadata edits preserve geometry
+and image allocations; exports use indexed geometry and explicit resource budgets.
+The [native baseline](docs/performance.md) records a 1.15 µs projected-query p95
+and a 0.022 ms metadata edit on a synthetic 10,000-placement scene, measured on a
+Ryzen AI 9 HX 370 in a release build. These are workload-specific measurements.
+
+[Browser measurements](docs/web-performance.md) cover initialization, transfer,
+queries, conversion and WASM memory. Chromium, Firefox and WebKit have run the
+worker conformance suite. Linux GNU/musl C consumers have been exercised;
+Windows/macOS execution remains pending. A throttled container is not a physical
+mobile-device benchmark. See [recorded validation evidence](docs/validation-evidence/README.md)
+and [remaining delivery gates](todo.md).
+
+```sh
+cargo fmt --all --check
+cargo clippy --workspace --all-targets --locked -- -D warnings
+cargo test --workspace --locked
 cargo check -p usd-toolbox-wasm --target wasm32-unknown-unknown
 ```
 
-To build the backend worker executable:
+The [CI workflows](.github/workflows) cover correctness, browser execution,
+reference validators, bounded fuzzing and performance regression checks.
+[Package workflow runs](https://github.com/geyervalmont/usd-toolbox/actions/workflows/artifacts.yml)
+provide versioned native/browser artifacts with headers or TypeScript declarations,
+examples, checksums and dependency notices when their builds succeed.
 
-```bash
-cargo build --release -p usd-toolbox-cli
-target/release/usd-toolbox --version
-target/release/usd-toolbox --help
-```
+## Licence
 
-Point `OPAL_TOOLBOX_BIN` at `target/release/usd-toolbox`. To build the optional
-native embedding library and regenerate its header:
-
-```bash
-cargo build --release -p usd-toolbox-ffi
-```
-
-Artifacts are `target/release/libusd_toolbox_ffi.so` (or the platform
-equivalent) and `crates/ffi/include/usd_toolbox.h`.
-
-To generate browser glue with `wasm-pack` installed:
-
-```bash
-wasm-pack build crates/wasm --target web --release
-```
-
-Every push to `main` publishes 30-day GitHub Actions artifacts for Linux,
-macOS, Windows, and browser WASM. Native bundles contain the CLI, dynamic and
-static C ABI libraries, generated C header, and README. The browser bundle is a
-`wasm-pack --target web` package ready for JavaScript bundlers or direct ES
-module loading. Download them from the latest
-[Build artifacts run](https://github.com/geyervalmont/usd-toolbox/actions/workflows/artifacts.yml).
-
-See [material-workflows.md](docs/material-workflows.md) for inspection, audit,
-editing, tier generation, and embeddings; [targets.md](docs/targets.md) for
-Revit and Omniverse; [integration.md](docs/integration.md) for CLI/FFI/WASM;
-and [architecture.md](docs/architecture.md) for package invariants.
-
-## Validation status
-
-CI checks the native workspace, the real WASM target, generated fixture packages,
-the OpenUSD and MaterialX reference runtimes, and Khronos' glTF Validator.
-If a full OpenUSD installation provides `usdchecker`, run:
-
-```bash
-scripts/check-usdz.sh path/to/material.usdz
-```
-
-The minimal `usd-core` Python wheel used by CI omits the optional MaterialX SDR
-plug-in. Its validation fallback therefore reports—but does not fail on—the one
-specific missing-registry finding for the standard OpenPBR node. A full
-MaterialX-enabled `usdchecker` remains the release gate.
-
-## Current boundaries
-
-- Image decoding and tier generation currently support PNG and JPEG.
-- glTF is export-only.
-- External USD graphs remain a conservative inspection path. Native MaterialX
-  support and its explicit boundaries are described in [materialx.md](docs/materialx.md).
-- Shader code generation and rendering are intentionally out of scope.
-- Geometry will arrive as another spoke plus a binding table; `Material` will
-  remain independently addressable.
-
-The delivery brief is retained in [implementation-brief.md](docs/implementation-brief.md).
+This repository does not currently declare a project distribution licence.
+Third-party licences and fixture attribution remain applicable; they do not grant
+a licence for the project itself. The generated npm package is marked `private`
+and is not published to the npm registry. See [vendored parser provenance](vendor/openusd/PATCHES.md)
+and [corpus attribution](fixtures/corpus/README.md).

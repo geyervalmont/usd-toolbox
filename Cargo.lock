@@ -597,8 +597,6 @@ checksum = "384b8ab6d37215f3c5301a95a4accb5d64aa607f1fcb26a11b5303878451b4fe"
 [[package]]
 name = "openusd"
 version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9d4f9438bafa6114b57ff495a22bca9ee51421d3c9c95b5609eafffad12c93e4"
 dependencies = [
  "bitflags",
  "bytemuck",
@@ -999,7 +997,7 @@ checksum = "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75"
 
 [[package]]
 name = "usd-toolbox-cli"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "clap",
  "image",
@@ -1022,21 +1020,23 @@ dependencies = [
 
 [[package]]
 name = "usd-toolbox-core"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "serde",
  "serde_json",
+ "sha2",
  "thiserror",
  "time",
 ]
 
 [[package]]
 name = "usd-toolbox-ffi"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "cbindgen",
  "serde",
  "serde_json",
+ "sha2",
  "time",
  "usd-toolbox-core",
  "usd-toolbox-gltf",
@@ -1047,11 +1047,12 @@ dependencies = [
  "usd-toolbox-revit",
  "usd-toolbox-textures",
  "usd-toolbox-usd",
+ "zip",
 ]
 
 [[package]]
 name = "usd-toolbox-gltf"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "base64",
  "image",
@@ -1063,7 +1064,7 @@ dependencies = [
 
 [[package]]
 name = "usd-toolbox-materials"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "image",
  "serde",
@@ -1076,7 +1077,7 @@ dependencies = [
 
 [[package]]
 name = "usd-toolbox-materialx"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "base64",
  "quick-xml",
@@ -1089,7 +1090,7 @@ dependencies = [
 
 [[package]]
 name = "usd-toolbox-omniverse"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "serde",
  "usd-toolbox-core",
@@ -1098,7 +1099,7 @@ dependencies = [
 
 [[package]]
 name = "usd-toolbox-procedural"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "image",
  "serde",
@@ -1109,7 +1110,7 @@ dependencies = [
 
 [[package]]
 name = "usd-toolbox-revit"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "image",
  "serde",
@@ -1121,7 +1122,7 @@ dependencies = [
 
 [[package]]
 name = "usd-toolbox-textures"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "fast_image_resize",
  "image",
@@ -1135,7 +1136,7 @@ dependencies = [
 
 [[package]]
 name = "usd-toolbox-usd"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "openusd",
  "serde",
@@ -1147,11 +1148,13 @@ dependencies = [
 
 [[package]]
 name = "usd-toolbox-wasm"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
+ "js-sys",
  "serde",
  "serde-wasm-bindgen",
  "serde_json",
+ "sha2",
  "time",
  "usd-toolbox-core",
  "usd-toolbox-gltf",

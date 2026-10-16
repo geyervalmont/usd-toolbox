@@ -1,0 +1,4 @@
+# Full native Sdr validation: Linux x86_64 / CPython 3.12 wheels.
+# usd-exchange bundles pxr; never co-install usd-core in this environment.
+usd-exchange==3.0.1 --hash=sha256:67bdb602ddf86a38eb7d340cef62d2a891c84733c45f1f770d4db48961545c68
+MaterialX==1.39.5 --hash=sha256:897c5a5df9068cc50b966e4bcda63fb71d03b79c453dcf5b62b3d16a5b3369ce

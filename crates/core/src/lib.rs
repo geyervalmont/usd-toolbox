@@ -8,6 +8,7 @@ mod error;
 mod io;
 mod materialx;
 mod model;
+pub mod scene;
 mod validation;
 
 pub use capabilities::{Capabilities, Parameter, Support, Target, dry_run, target_capabilities};

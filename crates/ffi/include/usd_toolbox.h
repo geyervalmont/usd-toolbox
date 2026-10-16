@@ -33,6 +33,17 @@ typedef struct UsdToolboxBuffer {
 } UsdToolboxBuffer;
 
 /**
+ * Borrowed UTF-8 filename and encoded binary content. No trailing NUL required.
+ * All pointers remain caller-owned and need live only through the open call.
+ */
+typedef struct UsdToolboxInputFile {
+  const uint8_t *name;
+  size_t name_len;
+  const uint8_t *data;
+  size_t data_len;
+} UsdToolboxInputFile;
+
+/**
  * C ABI target selector.
  */
 typedef uint32_t UsdToolboxTarget;
@@ -136,6 +147,53 @@ UsdToolboxStatus usd_toolbox_bake_procedural(const uint8_t *definition_json,
  * library and must not be freed concurrently or more than once.
  */
 void usd_toolbox_buffer_free(struct UsdToolboxBuffer *buffer);
+
+/**
+ * Open a root layer/glTF plus caller-resolved dependencies without JSON binary
+ * arrays. The first file is the root. Names are confined root-relative paths.
+ * Options match document_open_v1; format scene_json is unsupported for bundles.
+ *
+ * # Safety
+ * files must point to file_count valid aligned entries; their byte pointers and
+ * options must be readable for the specified lengths. out_handle is writable.
+ */
+UsdToolboxStatus usd_toolbox_document_open_bundle_v1(const struct UsdToolboxInputFile *files,
+                                                     size_t file_count,
+                                                     const uint8_t *options_json,
+                                                     size_t options_len,
+                                                     uint64_t *out_handle);
+
+/**
+ * Import a scene once and retain indexed query state. Options are JSON:
+ * {name, format: auto|usd|gltf|scene_json, document: DocumentOptions}.
+ * Release with usd_toolbox_document_release_v1. Existing byte-buffer APIs remain.
+ *
+ * # Safety
+ * Input pointers must be readable for their lengths. out_handle must be writable.
+ */
+UsdToolboxStatus usd_toolbox_document_open_v1(const uint8_t *input,
+                                              size_t input_len,
+                                              const uint8_t *options_json,
+                                              size_t options_len,
+                                              uint64_t *out_handle);
+
+/**
+ * Release a document. Unknown/already-released handles return INVALID_ARGUMENT.
+ */
+UsdToolboxStatus usd_toolbox_document_release_v1(uint64_t handle);
+
+/**
+ * Execute once and retain the output. Buffer sizing/copy never repeats a query,
+ * edit or conversion. Release each output with usd_toolbox_result_release_v1.
+ * Queries never expose bulk geometry unless SceneJson/export is requested.
+ *
+ * # Safety
+ * request_json must be readable for request_len; out_result must be writable.
+ */
+UsdToolboxStatus usd_toolbox_document_request_v1(uint64_t handle,
+                                                 const uint8_t *request_json,
+                                                 size_t request_len,
+                                                 uint64_t *out_result);
 
 /**
  * Computes a target loss report without writing a target document.
@@ -425,6 +483,102 @@ UsdToolboxStatus usd_toolbox_material_remove_texture(const uint8_t *request_json
                                                      uint8_t *output_json,
                                                      size_t output_capacity,
                                                      size_t *required_output);
+
+/**
+ * Discover portable operations and the exact format profiles without opening a document.
+ *
+ * # Safety
+ * output must be writable for capacity; required_output must be writable.
+ */
+UsdToolboxStatus usd_toolbox_model_capabilities_v1(uint8_t *output,
+                                                   size_t capacity,
+                                                   size_t *required_output);
+
+/**
+ * Exports scene JSON to USDZ/USDA/USDC/glTF/GLB using existing target constants.
+ * The second output is an array of scene and material conversion diagnostics.
+ *
+ * # Safety
+ * Non-null pointers must be valid for supplied lengths/capacities; required
+ * length pointers must be writable and output buffers must not overlap.
+ */
+UsdToolboxStatus usd_toolbox_model_export_v1(const uint8_t *scene_json,
+                                             size_t scene_len,
+                                             UsdToolboxTarget target,
+                                             uint8_t *output,
+                                             size_t output_capacity,
+                                             size_t *required_output,
+                                             uint8_t *report_json,
+                                             size_t report_capacity,
+                                             size_t *required_report);
+
+/**
+ * Imports a model USD layer or self-contained USDZ into scene JSON and diagnostics.
+ * Uses the standard two-pass buffer contract. Version 1 accepts static polygons.
+ *
+ * # Safety
+ * Non-null pointers must be valid for the supplied lengths/capacities; required
+ * length pointers must be writable and output buffers must not overlap.
+ */
+UsdToolboxStatus usd_toolbox_model_import_v1(const uint8_t *input,
+                                             size_t input_len,
+                                             const uint8_t *options_json,
+                                             size_t options_len,
+                                             uint8_t *scene_json,
+                                             size_t scene_capacity,
+                                             size_t *required_scene,
+                                             uint8_t *report_json,
+                                             size_t report_capacity,
+                                             size_t *required_report);
+
+/**
+ * Executes inspect/validate/apply/extract/diff/import_bundle/export_assets JSON.
+ * Returns versioned scene/inspection data or diagnostics. The root input is the
+ * first file of import_bundle. All operations are pure and return new data.
+ *
+ * # Safety
+ * Every non-null pointer must be valid for supplied length/capacity and the
+ * required_output pointer must be writable.
+ */
+UsdToolboxStatus usd_toolbox_model_operation_v1(const uint8_t *request_json,
+                                                size_t request_len,
+                                                uint8_t *output_json,
+                                                size_t output_capacity,
+                                                size_t *required_output);
+
+/**
+ * Preflight USD/glTF into a prepared JSON result, including unsupported input.
+ * This does not require successful scene import; inspect the report's completeness.
+ *
+ * # Safety
+ * Input/option pointers must be readable for their lengths; out_result writable.
+ */
+UsdToolboxStatus usd_toolbox_model_preflight_v1(const uint8_t *input,
+                                                size_t input_len,
+                                                const uint8_t *options_json,
+                                                size_t options_len,
+                                                uint64_t *out_result);
+
+/**
+ * Copy a prepared output and optional diagnostics using the two-pass contract.
+ * The result remains valid until released, independently of its document.
+ *
+ * # Safety
+ * Required-length pointers must be writable. Output pointers must be writable
+ * for their capacities and must not overlap each other or the length pointers.
+ */
+UsdToolboxStatus usd_toolbox_result_copy_v1(uint64_t handle,
+                                            uint8_t *output,
+                                            size_t output_capacity,
+                                            size_t *required_output,
+                                            uint8_t *report,
+                                            size_t report_capacity,
+                                            size_t *required_report);
+
+/**
+ * Release a prepared result. Does not affect the originating document.
+ */
+UsdToolboxStatus usd_toolbox_result_release_v1(uint64_t handle);
 
 /**
  * Returns the static library semantic version bytes. The pointer must not be freed.

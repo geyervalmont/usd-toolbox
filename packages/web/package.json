@@ -1,0 +1,14 @@
+{
+  "name": "@usd-toolbox/web",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Portable USD model queries and conversion in a browser worker",
+  "type": "module",
+  "exports": {
+    ".": { "types": "./index.d.ts", "import": "./index.js" },
+    "./worker": "./worker.js"
+  },
+  "files": ["index.js", "index.d.ts", "worker.js", "wasm", "README.md", "THIRD_PARTY_NOTICES", "build-report.json", "SHA256SUMS"],
+  "scripts": { "test": "node --test test/*.test.mjs" },
+  "engines": { "node": ">=22" }
+}

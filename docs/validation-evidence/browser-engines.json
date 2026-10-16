@@ -1,0 +1,1445 @@
+{
+  "schema": "usd-toolbox.browser-evidence.v1",
+  "package": "/src/target/web-package",
+  "reports": [
+    {
+      "browser": "chromium",
+      "init_ms": 30.699999999254942,
+      "query_p50_ms": 0.09999999776482582,
+      "query_p95_ms": 0.3999999985098839,
+      "memory": [
+        {
+          "wasm_bytes": 3276800,
+          "models": 1
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        }
+      ],
+      "phases": [
+        "queued",
+        "preflight",
+        "complete",
+        "open"
+      ]
+    },
+    {
+      "browser": "firefox",
+      "init_ms": 140,
+      "query_p50_ms": 0,
+      "query_p95_ms": 1,
+      "memory": [
+        {
+          "wasm_bytes": 3276800,
+          "models": 1
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        }
+      ],
+      "phases": [
+        "queued",
+        "preflight",
+        "complete",
+        "open"
+      ]
+    },
+    {
+      "browser": "webkit",
+      "init_ms": 71,
+      "query_p50_ms": 0,
+      "query_p95_ms": 1,
+      "memory": [
+        {
+          "wasm_bytes": 3276800,
+          "models": 1
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        },
+        {
+          "wasm_bytes": 3276800,
+          "models": 0
+        }
+      ],
+      "phases": [
+        "queued",
+        "preflight",
+        "complete",
+        "open"
+      ]
+    }
+  ],
+  "measured_at": "2026-10-16",
+  "package_build": {
+    "schema": "usd-toolbox.web-build.v1",
+    "version": "0.3.0",
+    "profile": "release",
+    "material_tools": false,
+    "files": {
+      "README.md": {
+        "bytes": 6706,
+        "gzip_bytes": 3231,
+        "sha256": "580db89d103dc45b0857122882ea2e444663756de77bdf88ec1eeb9403cdb35d"
+      },
+      "THIRD_PARTY_NOTICES/README.txt": {
+        "bytes": 237,
+        "gzip_bytes": 177,
+        "sha256": "58d795f3ae87e0efa2b918dd47fe1f2497d8be17e15d501f7d63428fe6603099"
+      },
+      "THIRD_PARTY_NOTICES/adler2-2.0.1/LICENSE-0BSD": {
+        "bytes": 665,
+        "gzip_bytes": 443,
+        "sha256": "861399f8c21c042b110517e76dc6b63a2b334276c8cf17412fc3c8908ca8dc17"
+      },
+      "THIRD_PARTY_NOTICES/adler2-2.0.1/LICENSE-APACHE": {
+        "bytes": 10860,
+        "gzip_bytes": 3942,
+        "sha256": "8ada45cd9f843acf64e4722ae262c622a2b3b3007c7310ef36ac1061a30f6adb"
+      },
+      "THIRD_PARTY_NOTICES/adler2-2.0.1/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 619,
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      "THIRD_PARTY_NOTICES/aho-corasick-1.1.5/COPYING": {
+        "bytes": 126,
+        "gzip_bytes": 111,
+        "sha256": "01c266bced4a434da0051174d6bee16a4c82cf634e2679b6155d40d75012390f"
+      },
+      "THIRD_PARTY_NOTICES/aho-corasick-1.1.5/LICENSE-MIT": {
+        "bytes": 1081,
+        "gzip_bytes": 654,
+        "sha256": "0f96a83840e146e43c0ec96a22ec1f392e0680e6c1226e6f3ba87e0740af850f"
+      },
+      "THIRD_PARTY_NOTICES/anstream-1.0.0/LICENSE-APACHE": {
+        "bytes": 11358,
+        "gzip_bytes": 3967,
+        "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+      },
+      "THIRD_PARTY_NOTICES/anstream-1.0.0/LICENSE-MIT": {
+        "bytes": 1062,
+        "gzip_bytes": 639,
+        "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6"
+      },
+      "THIRD_PARTY_NOTICES/anstyle-1.0.14/LICENSE-APACHE": {
+        "bytes": 11358,
+        "gzip_bytes": 3967,
+        "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+      },
+      "THIRD_PARTY_NOTICES/anstyle-1.0.14/LICENSE-MIT": {
+        "bytes": 1062,
+        "gzip_bytes": 639,
+        "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6"
+      },
+      "THIRD_PARTY_NOTICES/anstyle-parse-1.0.0/LICENSE-APACHE": {
+        "bytes": 11358,
+        "gzip_bytes": 3967,
+        "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+      },
+      "THIRD_PARTY_NOTICES/anstyle-parse-1.0.0/LICENSE-MIT": {
+        "bytes": 1062,
+        "gzip_bytes": 639,
+        "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6"
+      },
+      "THIRD_PARTY_NOTICES/anstyle-query-1.1.5/LICENSE-APACHE": {
+        "bytes": 11358,
+        "gzip_bytes": 3967,
+        "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+      },
+      "THIRD_PARTY_NOTICES/anstyle-query-1.1.5/LICENSE-MIT": {
+        "bytes": 1062,
+        "gzip_bytes": 639,
+        "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6"
+      },
+      "THIRD_PARTY_NOTICES/anstyle-wincon-3.0.11/LICENSE-APACHE": {
+        "bytes": 11358,
+        "gzip_bytes": 3967,
+        "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+      },
+      "THIRD_PARTY_NOTICES/anstyle-wincon-3.0.11/LICENSE-MIT": {
+        "bytes": 1062,
+        "gzip_bytes": 639,
+        "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6"
+      },
+      "THIRD_PARTY_NOTICES/autocfg-1.5.1/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/autocfg-1.5.1/LICENSE-MIT": {
+        "bytes": 1054,
+        "gzip_bytes": 644,
+        "sha256": "27995d58ad5c1145c1a8cd86244ce844886958a35eb2b78c6b772748669999ac"
+      },
+      "THIRD_PARTY_NOTICES/base64-0.22.1/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/base64-0.22.1/LICENSE-MIT": {
+        "bytes": 1076,
+        "gzip_bytes": 652,
+        "sha256": "0dd882e53de11566d50f8e8e2d5a651bcf3fabee4987d70f306233cf39094ba7"
+      },
+      "THIRD_PARTY_NOTICES/bitflags-2.13.1/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/bitflags-2.13.1/LICENSE-MIT": {
+        "bytes": 1071,
+        "gzip_bytes": 651,
+        "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+      },
+      "THIRD_PARTY_NOTICES/block-buffer-0.10.4/LICENSE-APACHE": {
+        "bytes": 10849,
+        "gzip_bytes": 3939,
+        "sha256": "a9040321c3712d8fd0b09cf52b17445de04a23a10165049ae187cd39e5c86be5"
+      },
+      "THIRD_PARTY_NOTICES/block-buffer-0.10.4/LICENSE-MIT": {
+        "bytes": 1082,
+        "gzip_bytes": 661,
+        "sha256": "d5c22aa3118d240e877ad41c5d9fa232f9c77d757d4aac0c2f943afc0a95e0ef"
+      },
+      "THIRD_PARTY_NOTICES/bumpalo-3.20.3/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/bumpalo-3.20.3/LICENSE-MIT": {
+        "bytes": 1059,
+        "gzip_bytes": 649,
+        "sha256": "65f94e99ddaf4f5d1782a6dae23f35d4293a9a01444a13135a6887017d353cee"
+      },
+      "THIRD_PARTY_NOTICES/bytemuck-1.25.2/LICENSE-APACHE": {
+        "bytes": 10398,
+        "gzip_bytes": 3718,
+        "sha256": "e3ba223bb1423f0aad8c3dfce0fe3148db48926d41e6fbc3afbbf5ff9e1c89cb"
+      },
+      "THIRD_PARTY_NOTICES/bytemuck-1.25.2/LICENSE-MIT": {
+        "bytes": 1110,
+        "gzip_bytes": 663,
+        "sha256": "9df9ba60a11af705f2e451b53762686e615d86f76b169cf075c3237730dbd7e2"
+      },
+      "THIRD_PARTY_NOTICES/bytemuck-1.25.2/LICENSE-ZLIB": {
+        "bytes": 851,
+        "gzip_bytes": 474,
+        "sha256": "84b34dd7608f7fb9b17bd588a6bf392bf7de504e2716f024a77d89f1b145a151"
+      },
+      "THIRD_PARTY_NOTICES/bytemuck_derive-1.12.0/LICENSE-APACHE": {
+        "bytes": 10398,
+        "gzip_bytes": 3718,
+        "sha256": "e3ba223bb1423f0aad8c3dfce0fe3148db48926d41e6fbc3afbbf5ff9e1c89cb"
+      },
+      "THIRD_PARTY_NOTICES/bytemuck_derive-1.12.0/LICENSE-MIT": {
+        "bytes": 1110,
+        "gzip_bytes": 663,
+        "sha256": "9df9ba60a11af705f2e451b53762686e615d86f76b169cf075c3237730dbd7e2"
+      },
+      "THIRD_PARTY_NOTICES/bytemuck_derive-1.12.0/LICENSE-ZLIB": {
+        "bytes": 851,
+        "gzip_bytes": 474,
+        "sha256": "84b34dd7608f7fb9b17bd588a6bf392bf7de504e2716f024a77d89f1b145a151"
+      },
+      "THIRD_PARTY_NOTICES/byteorder-lite-0.1.0/LICENSE-MIT": {
+        "bytes": 1081,
+        "gzip_bytes": 654,
+        "sha256": "0f96a83840e146e43c0ec96a22ec1f392e0680e6c1226e6f3ba87e0740af850f"
+      },
+      "THIRD_PARTY_NOTICES/cbindgen-0.29.4/LICENSE": {
+        "bytes": 16725,
+        "gzip_bytes": 5311,
+        "sha256": "1f256ecad192880510e84ad60474eab7589218784b9a50bc7ceee34c2b91f1d5"
+      },
+      "THIRD_PARTY_NOTICES/cfg-if-1.0.4/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/cfg-if-1.0.4/LICENSE-MIT": {
+        "bytes": 1057,
+        "gzip_bytes": 646,
+        "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397"
+      },
+      "THIRD_PARTY_NOTICES/clap-4.6.6/LICENSE-APACHE": {
+        "bytes": 11358,
+        "gzip_bytes": 3967,
+        "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+      },
+      "THIRD_PARTY_NOTICES/clap-4.6.6/LICENSE-MIT": {
+        "bytes": 1062,
+        "gzip_bytes": 639,
+        "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6"
+      },
+      "THIRD_PARTY_NOTICES/clap_builder-4.6.6/LICENSE-APACHE": {
+        "bytes": 11358,
+        "gzip_bytes": 3967,
+        "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+      },
+      "THIRD_PARTY_NOTICES/clap_builder-4.6.6/LICENSE-MIT": {
+        "bytes": 1062,
+        "gzip_bytes": 639,
+        "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6"
+      },
+      "THIRD_PARTY_NOTICES/clap_derive-4.6.4/LICENSE-APACHE": {
+        "bytes": 11358,
+        "gzip_bytes": 3967,
+        "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+      },
+      "THIRD_PARTY_NOTICES/clap_derive-4.6.4/LICENSE-MIT": {
+        "bytes": 1062,
+        "gzip_bytes": 639,
+        "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6"
+      },
+      "THIRD_PARTY_NOTICES/clap_lex-1.1.0/LICENSE-APACHE": {
+        "bytes": 11358,
+        "gzip_bytes": 3967,
+        "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+      },
+      "THIRD_PARTY_NOTICES/clap_lex-1.1.0/LICENSE-MIT": {
+        "bytes": 1062,
+        "gzip_bytes": 639,
+        "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6"
+      },
+      "THIRD_PARTY_NOTICES/colorchoice-1.0.5/LICENSE-APACHE": {
+        "bytes": 11358,
+        "gzip_bytes": 3967,
+        "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+      },
+      "THIRD_PARTY_NOTICES/colorchoice-1.0.5/LICENSE-MIT": {
+        "bytes": 1062,
+        "gzip_bytes": 639,
+        "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6"
+      },
+      "THIRD_PARTY_NOTICES/cpufeatures-0.2.17/LICENSE-APACHE": {
+        "bytes": 10849,
+        "gzip_bytes": 3939,
+        "sha256": "a9040321c3712d8fd0b09cf52b17445de04a23a10165049ae187cd39e5c86be5"
+      },
+      "THIRD_PARTY_NOTICES/cpufeatures-0.2.17/LICENSE-MIT": {
+        "bytes": 1082,
+        "gzip_bytes": 660,
+        "sha256": "ae9baa7beea910273c2f384c2a6b721fb7bd02bda3436074a1072e4ee689f985"
+      },
+      "THIRD_PARTY_NOTICES/crc32fast-1.5.1/LICENSE-APACHE": {
+        "bytes": 11358,
+        "gzip_bytes": 3967,
+        "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+      },
+      "THIRD_PARTY_NOTICES/crc32fast-1.5.1/LICENSE-MIT": {
+        "bytes": 1097,
+        "gzip_bytes": 665,
+        "sha256": "61d383b05b87d78f94d2937e2580cce47226d17823c0430fbcad09596537efcf"
+      },
+      "THIRD_PARTY_NOTICES/crunchy-0.2.4/LICENSE": {
+        "bytes": 1082,
+        "gzip_bytes": 659,
+        "sha256": "3eab77734a181b2a2e8418af9004f960f715f04aac4d76a26cf774f63a7b13d1"
+      },
+      "THIRD_PARTY_NOTICES/crypto-common-0.1.7/LICENSE-APACHE": {
+        "bytes": 10849,
+        "gzip_bytes": 3939,
+        "sha256": "a9040321c3712d8fd0b09cf52b17445de04a23a10165049ae187cd39e5c86be5"
+      },
+      "THIRD_PARTY_NOTICES/crypto-common-0.1.7/LICENSE-MIT": {
+        "bytes": 1065,
+        "gzip_bytes": 648,
+        "sha256": "3521672491a3479422d5fe1aca6645dd2984090f85da6e5205abfb18fb7a6897"
+      },
+      "THIRD_PARTY_NOTICES/deranged-0.5.8/LICENSE-Apache": {
+        "bytes": 11349,
+        "gzip_bytes": 3971,
+        "sha256": "edd65bdd88957a205c47d53fa499eed8865a70320f0f03f6391668cb304ea376"
+      },
+      "THIRD_PARTY_NOTICES/deranged-0.5.8/LICENSE-MIT": {
+        "bytes": 1062,
+        "gzip_bytes": 644,
+        "sha256": "231c837c45eb53f108fb48929e488965bc4fcc14e9ea21d35f50e6b99d98685b"
+      },
+      "THIRD_PARTY_NOTICES/derive_more-2.1.1/LICENSE": {
+        "bytes": 1080,
+        "gzip_bytes": 655,
+        "sha256": "8a35369f3ca263b3c62fbb5032947e53b6bfebc6c8a4d1bb982de1c069f6fba5"
+      },
+      "THIRD_PARTY_NOTICES/derive_more-impl-2.1.1/LICENSE": {
+        "bytes": 1080,
+        "gzip_bytes": 655,
+        "sha256": "8a35369f3ca263b3c62fbb5032947e53b6bfebc6c8a4d1bb982de1c069f6fba5"
+      },
+      "THIRD_PARTY_NOTICES/digest-0.10.7/LICENSE-APACHE": {
+        "bytes": 10849,
+        "gzip_bytes": 3939,
+        "sha256": "a9040321c3712d8fd0b09cf52b17445de04a23a10165049ae187cd39e5c86be5"
+      },
+      "THIRD_PARTY_NOTICES/digest-0.10.7/LICENSE-MIT": {
+        "bytes": 1057,
+        "gzip_bytes": 647,
+        "sha256": "9e0dfd2dd4173a530e238cb6adb37aa78c34c6bc7444e0e10c1ab5d8881f63ba"
+      },
+      "THIRD_PARTY_NOTICES/document-features-0.2.12/LICENSE-APACHE": {
+        "bytes": 10280,
+        "gzip_bytes": 3707,
+        "sha256": "074e6e32c86a4c0ef8b3ed25b721ca23aca83df277cd88106ef7177c354615ff"
+      },
+      "THIRD_PARTY_NOTICES/document-features-0.2.12/LICENSE-MIT": {
+        "bytes": 1082,
+        "gzip_bytes": 658,
+        "sha256": "aa893340d14b9844625be6a50ac644169a01b52f0211cbf81b09e1874c8cd81d"
+      },
+      "THIRD_PARTY_NOTICES/equivalent-1.0.2/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/equivalent-1.0.2/LICENSE-MIT": {
+        "bytes": 1049,
+        "gzip_bytes": 644,
+        "sha256": "7365cc8878a1d7ce155a58c4ca09c3d7a6be413efa5334a80ea842912b669349"
+      },
+      "THIRD_PARTY_NOTICES/errno-0.3.14/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/errno-0.3.14/LICENSE-MIT": {
+        "bytes": 1054,
+        "gzip_bytes": 644,
+        "sha256": "8764a597675778ddfd4e25f81b08a05dbcf089ac05662df7613fe67f150e3aa2"
+      },
+      "THIRD_PARTY_NOTICES/fast_image_resize-6.1.0/LICENSE-APACHE": {
+        "bytes": 11350,
+        "gzip_bytes": 3974,
+        "sha256": "5caa63b85f1c4683ed495f09991128fd777fda36066e2fcdf0f8533212776ed1"
+      },
+      "THIRD_PARTY_NOTICES/fast_image_resize-6.1.0/LICENSE-MIT": {
+        "bytes": 1073,
+        "gzip_bytes": 652,
+        "sha256": "59c7bec3a007a291de2369c504545cb61b5f4d7ac9893e50d523f2aff4fcc7c6"
+      },
+      "THIRD_PARTY_NOTICES/fastrand-2.5.0/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/fastrand-2.5.0/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 619,
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      "THIRD_PARTY_NOTICES/fdeflate-0.3.7/LICENSE-APACHE": {
+        "bytes": 10174,
+        "gzip_bytes": 3580,
+        "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+      },
+      "THIRD_PARTY_NOTICES/fdeflate-0.3.7/LICENSE-MIT": {
+        "bytes": 1036,
+        "gzip_bytes": 628,
+        "sha256": "c77a4cf9da729987d0fe7ccd811e3bd27393914ddf3d23467c18cc22954513b3"
+      },
+      "THIRD_PARTY_NOTICES/flate2-1.1.10/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/flate2-1.1.10/LICENSE-MIT": {
+        "bytes": 1062,
+        "gzip_bytes": 653,
+        "sha256": "025436edff4cfcdde17a5811fdea78892d8482efd1abdec5a17872d07a4f2112"
+      },
+      "THIRD_PARTY_NOTICES/fnv-1.0.7/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/fnv-1.0.7/LICENSE-MIT": {
+        "bytes": 1056,
+        "gzip_bytes": 644,
+        "sha256": "65fdb6c76cd61612070c066eec9ecdb30ee74fb27859d0d9af58b9f499fd0c3e"
+      },
+      "THIRD_PARTY_NOTICES/futures-core-0.3.34/LICENSE-APACHE": {
+        "bytes": 10874,
+        "gzip_bytes": 3960,
+        "sha256": "275c491d6d1160553c32fd6127061d7f9606c3ea25abfad6ca3f6ed088785427"
+      },
+      "THIRD_PARTY_NOTICES/futures-core-0.3.34/LICENSE-MIT": {
+        "bytes": 1094,
+        "gzip_bytes": 663,
+        "sha256": "6652c868f35dfe5e8ef636810a4e576b9d663f3a17fb0f5613ad73583e1b88fd"
+      },
+      "THIRD_PARTY_NOTICES/futures-task-0.3.34/LICENSE-APACHE": {
+        "bytes": 10874,
+        "gzip_bytes": 3960,
+        "sha256": "275c491d6d1160553c32fd6127061d7f9606c3ea25abfad6ca3f6ed088785427"
+      },
+      "THIRD_PARTY_NOTICES/futures-task-0.3.34/LICENSE-MIT": {
+        "bytes": 1094,
+        "gzip_bytes": 663,
+        "sha256": "6652c868f35dfe5e8ef636810a4e576b9d663f3a17fb0f5613ad73583e1b88fd"
+      },
+      "THIRD_PARTY_NOTICES/futures-util-0.3.34/LICENSE-APACHE": {
+        "bytes": 10874,
+        "gzip_bytes": 3960,
+        "sha256": "275c491d6d1160553c32fd6127061d7f9606c3ea25abfad6ca3f6ed088785427"
+      },
+      "THIRD_PARTY_NOTICES/futures-util-0.3.34/LICENSE-MIT": {
+        "bytes": 1094,
+        "gzip_bytes": 663,
+        "sha256": "6652c868f35dfe5e8ef636810a4e576b9d663f3a17fb0f5613ad73583e1b88fd"
+      },
+      "THIRD_PARTY_NOTICES/generic-array-0.14.7/LICENSE": {
+        "bytes": 1107,
+        "gzip_bytes": 679,
+        "sha256": "c09aae9d3c77b531f56351a9947bc7446511d6b025b3255312d3e3442a9a7583"
+      },
+      "THIRD_PARTY_NOTICES/getrandom-0.4.3/LICENSE-APACHE": {
+        "bytes": 10849,
+        "gzip_bytes": 3941,
+        "sha256": "aaff376532ea30a0cd5330b9502ad4a4c8bf769c539c87ffe78819d188a18ebf"
+      },
+      "THIRD_PARTY_NOTICES/getrandom-0.4.3/LICENSE-MIT": {
+        "bytes": 1130,
+        "gzip_bytes": 675,
+        "sha256": "523a42c25d245dde9c015f882cec7f4555aad883382a6cf19b4b7d9b2cd5419b"
+      },
+      "THIRD_PARTY_NOTICES/half-2.7.1/LICENSE-APACHE": {
+        "bytes": 10173,
+        "gzip_bytes": 3580,
+        "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9"
+      },
+      "THIRD_PARTY_NOTICES/half-2.7.1/LICENSE-MIT": {
+        "bytes": 1036,
+        "gzip_bytes": 621,
+        "sha256": "508a77d2e7b51d98adeed32648ad124b7b30241a8e70b2e72c99f92d8e5874d1"
+      },
+      "THIRD_PARTY_NOTICES/hashbrown-0.17.1/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/hashbrown-0.17.1/LICENSE-MIT": {
+        "bytes": 1060,
+        "gzip_bytes": 649,
+        "sha256": "ff8f68cb076caf8cefe7a6430d4ac086ce6af2ca8ce2c4e5a2004d4552ef52a2"
+      },
+      "THIRD_PARTY_NOTICES/heck-0.5.0/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/heck-0.5.0/LICENSE-MIT": {
+        "bytes": 1071,
+        "gzip_bytes": 652,
+        "sha256": "7b63ecd5f1902af1b63729947373683c32745c16a10e8e6292e2e2dcd7e90ae0"
+      },
+      "THIRD_PARTY_NOTICES/image-0.25.10/LICENSE-APACHE": {
+        "bytes": 10174,
+        "gzip_bytes": 3580,
+        "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+      },
+      "THIRD_PARTY_NOTICES/image-0.25.10/LICENSE-MIT": {
+        "bytes": 1036,
+        "gzip_bytes": 628,
+        "sha256": "c77a4cf9da729987d0fe7ccd811e3bd27393914ddf3d23467c18cc22954513b3"
+      },
+      "THIRD_PARTY_NOTICES/index.json": {
+        "bytes": 32740,
+        "gzip_bytes": 3932,
+        "sha256": "994da3b2f5b705265e726ed949a2474f74eba5c9c096f34d6ef60a611b95c60d"
+      },
+      "THIRD_PARTY_NOTICES/indexmap-2.14.2/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/indexmap-2.14.2/LICENSE-MIT": {
+        "bytes": 1049,
+        "gzip_bytes": 642,
+        "sha256": "ecc269ef87fd38a1d98e30bfac9ba964a9dbd9315c3770fed98d4d7cb5882055"
+      },
+      "THIRD_PARTY_NOTICES/is_terminal_polyfill-1.70.2/LICENSE-APACHE": {
+        "bytes": 11358,
+        "gzip_bytes": 3967,
+        "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+      },
+      "THIRD_PARTY_NOTICES/is_terminal_polyfill-1.70.2/LICENSE-MIT": {
+        "bytes": 1062,
+        "gzip_bytes": 639,
+        "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6"
+      },
+      "THIRD_PARTY_NOTICES/itoa-1.0.18/LICENSE-APACHE": {
+        "bytes": 9723,
+        "gzip_bytes": 3554,
+        "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+      },
+      "THIRD_PARTY_NOTICES/itoa-1.0.18/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 619,
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      "THIRD_PARTY_NOTICES/js-sys-0.3.105/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/js-sys-0.3.105/LICENSE-MIT": {
+        "bytes": 1057,
+        "gzip_bytes": 646,
+        "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397"
+      },
+      "THIRD_PARTY_NOTICES/libc-0.2.189/LICENSE-APACHE": {
+        "bytes": 9723,
+        "gzip_bytes": 3554,
+        "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+      },
+      "THIRD_PARTY_NOTICES/libc-0.2.189/LICENSE-MIT": {
+        "bytes": 1066,
+        "gzip_bytes": 644,
+        "sha256": "123a331b5dbf04c30097fa43b8f858bc85df671fe776de498d01f3d6b7c1f69e"
+      },
+      "THIRD_PARTY_NOTICES/libm-0.2.16/LICENSE.txt": {
+        "bytes": 14088,
+        "gzip_bytes": 4948,
+        "sha256": "3823dda7cf046602f4b4e77ec8e227863dc4736037cc85bb33d9f19febe16bb7"
+      },
+      "THIRD_PARTY_NOTICES/linux-raw-sys-0.12.1/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/linux-raw-sys-0.12.1/LICENSE-Apache-2.0_WITH_LLVM-exception": {
+        "bytes": 12243,
+        "gzip_bytes": 4296,
+        "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5"
+      },
+      "THIRD_PARTY_NOTICES/linux-raw-sys-0.12.1/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 619,
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      "THIRD_PARTY_NOTICES/litrs-1.0.0/LICENSE-APACHE": {
+        "bytes": 9723,
+        "gzip_bytes": 3554,
+        "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+      },
+      "THIRD_PARTY_NOTICES/litrs-1.0.0/LICENSE-MIT": {
+        "bytes": 1062,
+        "gzip_bytes": 645,
+        "sha256": "7dc1552e88f49132cb358b1b962fc5e79fa42d70bcbb88c526d33e45b8e98036"
+      },
+      "THIRD_PARTY_NOTICES/log-0.4.34/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/log-0.4.34/LICENSE-MIT": {
+        "bytes": 1071,
+        "gzip_bytes": 651,
+        "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+      },
+      "THIRD_PARTY_NOTICES/logos-0.16.1/LICENSE-APACHE": {
+        "bytes": 10860,
+        "gzip_bytes": 3961,
+        "sha256": "f30735c11407534952947e1c7b7457ddf28847000bb038402495ad66f3d020a4"
+      },
+      "THIRD_PARTY_NOTICES/logos-0.16.1/LICENSE-MIT": {
+        "bytes": 1104,
+        "gzip_bytes": 672,
+        "sha256": "112fcdb9f4935988cc2313e4cc38faaeccfff53eb1296499e618932d472908e0"
+      },
+      "THIRD_PARTY_NOTICES/logos-codegen-0.16.1/LICENSE-APACHE": {
+        "bytes": 10860,
+        "gzip_bytes": 3961,
+        "sha256": "f30735c11407534952947e1c7b7457ddf28847000bb038402495ad66f3d020a4"
+      },
+      "THIRD_PARTY_NOTICES/logos-codegen-0.16.1/LICENSE-MIT": {
+        "bytes": 1104,
+        "gzip_bytes": 672,
+        "sha256": "112fcdb9f4935988cc2313e4cc38faaeccfff53eb1296499e618932d472908e0"
+      },
+      "THIRD_PARTY_NOTICES/logos-derive-0.16.1/LICENSE-APACHE": {
+        "bytes": 10860,
+        "gzip_bytes": 3961,
+        "sha256": "f30735c11407534952947e1c7b7457ddf28847000bb038402495ad66f3d020a4"
+      },
+      "THIRD_PARTY_NOTICES/logos-derive-0.16.1/LICENSE-MIT": {
+        "bytes": 1104,
+        "gzip_bytes": 672,
+        "sha256": "112fcdb9f4935988cc2313e4cc38faaeccfff53eb1296499e618932d472908e0"
+      },
+      "THIRD_PARTY_NOTICES/lz4_flex-0.14.0/LICENSE": {
+        "bytes": 1079,
+        "gzip_bytes": 655,
+        "sha256": "0982c33390159842ecce8e9d6ce2e5e39961fe0e0ffbb2eec39c9ba46db6db10"
+      },
+      "THIRD_PARTY_NOTICES/memchr-2.8.3/COPYING": {
+        "bytes": 126,
+        "gzip_bytes": 111,
+        "sha256": "01c266bced4a434da0051174d6bee16a4c82cf634e2679b6155d40d75012390f"
+      },
+      "THIRD_PARTY_NOTICES/memchr-2.8.3/LICENSE-MIT": {
+        "bytes": 1081,
+        "gzip_bytes": 654,
+        "sha256": "0f96a83840e146e43c0ec96a22ec1f392e0680e6c1226e6f3ba87e0740af850f"
+      },
+      "THIRD_PARTY_NOTICES/miniz_oxide-0.8.9/LICENSE": {
+        "bytes": 1213,
+        "gzip_bytes": 713,
+        "sha256": "4108245a1f2df9d4e94df8abed5b4ba0759bb2f9b40a6b939f1be141077ae50b"
+      },
+      "THIRD_PARTY_NOTICES/miniz_oxide-0.8.9/LICENSE-APACHE.md": {
+        "bytes": 10174,
+        "gzip_bytes": 3580,
+        "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+      },
+      "THIRD_PARTY_NOTICES/miniz_oxide-0.8.9/LICENSE-MIT.md": {
+        "bytes": 1212,
+        "gzip_bytes": 712,
+        "sha256": "799e9ca9d179295ef372f25d3769cdda7d25bb2668add6a6a1e22d1e4c678b8d"
+      },
+      "THIRD_PARTY_NOTICES/miniz_oxide-0.8.9/LICENSE-ZLIB.md": {
+        "bytes": 984,
+        "gzip_bytes": 535,
+        "sha256": "0a54e647fe54104658b5e563c04c6f9edf251710e47bce692e0bd990a4ddaa39"
+      },
+      "THIRD_PARTY_NOTICES/miniz_oxide-0.9.1/LICENSE": {
+        "bytes": 1213,
+        "gzip_bytes": 713,
+        "sha256": "4108245a1f2df9d4e94df8abed5b4ba0759bb2f9b40a6b939f1be141077ae50b"
+      },
+      "THIRD_PARTY_NOTICES/miniz_oxide-0.9.1/LICENSE-APACHE.md": {
+        "bytes": 10174,
+        "gzip_bytes": 3580,
+        "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+      },
+      "THIRD_PARTY_NOTICES/miniz_oxide-0.9.1/LICENSE-MIT.md": {
+        "bytes": 1212,
+        "gzip_bytes": 712,
+        "sha256": "799e9ca9d179295ef372f25d3769cdda7d25bb2668add6a6a1e22d1e4c678b8d"
+      },
+      "THIRD_PARTY_NOTICES/miniz_oxide-0.9.1/LICENSE-ZLIB.md": {
+        "bytes": 984,
+        "gzip_bytes": 535,
+        "sha256": "0a54e647fe54104658b5e563c04c6f9edf251710e47bce692e0bd990a4ddaa39"
+      },
+      "THIRD_PARTY_NOTICES/moxcms-0.8.1/LICENSE-APACHE.md": {
+        "bytes": 11348,
+        "gzip_bytes": 3972,
+        "sha256": "90bf2d659c43045111b65c733ab2a6d4cbcb422a098368c8c58a9ba3db4ed0c5"
+      },
+      "THIRD_PARTY_NOTICES/moxcms-0.8.1/LICENSE.md": {
+        "bytes": 1506,
+        "gzip_bytes": 803,
+        "sha256": "2aa92cada6431e75615e3fe6cb1a9082c98f777d48ae1c087c0da0e37f7b8bff"
+      },
+      "THIRD_PARTY_NOTICES/num-conv-0.2.2/LICENSE-Apache": {
+        "bytes": 10174,
+        "gzip_bytes": 3580,
+        "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+      },
+      "THIRD_PARTY_NOTICES/num-conv-0.2.2/LICENSE-MIT": {
+        "bytes": 1050,
+        "gzip_bytes": 631,
+        "sha256": "e2e245f2b566d0bfafb0f6a04c16b82d710c4e6e7d799e39bb4ef6e541b85b98"
+      },
+      "THIRD_PARTY_NOTICES/num-traits-0.2.19/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/num-traits-0.2.19/LICENSE-MIT": {
+        "bytes": 1071,
+        "gzip_bytes": 651,
+        "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+      },
+      "THIRD_PARTY_NOTICES/once_cell-1.21.4/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/once_cell-1.21.4/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 619,
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      "THIRD_PARTY_NOTICES/once_cell_polyfill-1.70.2/LICENSE-APACHE": {
+        "bytes": 11358,
+        "gzip_bytes": 3967,
+        "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+      },
+      "THIRD_PARTY_NOTICES/once_cell_polyfill-1.70.2/LICENSE-MIT": {
+        "bytes": 1062,
+        "gzip_bytes": 639,
+        "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6"
+      },
+      "THIRD_PARTY_NOTICES/pin-project-lite-0.2.17/LICENSE-APACHE": {
+        "bytes": 10174,
+        "gzip_bytes": 3580,
+        "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+      },
+      "THIRD_PARTY_NOTICES/pin-project-lite-0.2.17/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 619,
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      "THIRD_PARTY_NOTICES/png-0.18.1/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/png-0.18.1/LICENSE-MIT": {
+        "bytes": 1048,
+        "gzip_bytes": 640,
+        "sha256": "eaf40297c75da471f7cda1f3458e8d91b4b2ec866e609527a13acfa93b638652"
+      },
+      "THIRD_PARTY_NOTICES/powerfmt-0.2.0/LICENSE-Apache": {
+        "bytes": 11349,
+        "gzip_bytes": 3971,
+        "sha256": "155420c6403d4e0fca34105e3c03fdd6939b64c393c7ec6f95f5b72c5474eab0"
+      },
+      "THIRD_PARTY_NOTICES/powerfmt-0.2.0/LICENSE-MIT": {
+        "bytes": 1062,
+        "gzip_bytes": 644,
+        "sha256": "070dbc7dda03a29296f2d58bdb9b7331af90f2abc9f31df22875d1eabaf29852"
+      },
+      "THIRD_PARTY_NOTICES/proc-macro2-1.0.107/LICENSE-APACHE": {
+        "bytes": 9723,
+        "gzip_bytes": 3554,
+        "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+      },
+      "THIRD_PARTY_NOTICES/proc-macro2-1.0.107/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 619,
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      "THIRD_PARTY_NOTICES/pxfm-0.1.30/LICENSE-APACHE.md": {
+        "bytes": 11348,
+        "gzip_bytes": 3972,
+        "sha256": "90bf2d659c43045111b65c733ab2a6d4cbcb422a098368c8c58a9ba3db4ed0c5"
+      },
+      "THIRD_PARTY_NOTICES/pxfm-0.1.30/LICENSE.md": {
+        "bytes": 1506,
+        "gzip_bytes": 803,
+        "sha256": "2aa92cada6431e75615e3fe6cb1a9082c98f777d48ae1c087c0da0e37f7b8bff"
+      },
+      "THIRD_PARTY_NOTICES/quick-xml-0.42.0/LICENSE-MIT.md": {
+        "bytes": 1082,
+        "gzip_bytes": 655,
+        "sha256": "f0cf9b1c62bbe3bd3a69f5f79c7158f513f612b4940a0a812d1db39d605318bc"
+      },
+      "THIRD_PARTY_NOTICES/quote-1.0.47/LICENSE-APACHE": {
+        "bytes": 9723,
+        "gzip_bytes": 3554,
+        "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+      },
+      "THIRD_PARTY_NOTICES/quote-1.0.47/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 619,
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      "THIRD_PARTY_NOTICES/regex-automata-0.4.18/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/regex-automata-0.4.18/LICENSE-MIT": {
+        "bytes": 1071,
+        "gzip_bytes": 651,
+        "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+      },
+      "THIRD_PARTY_NOTICES/regex-lite-0.1.9/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/regex-lite-0.1.9/LICENSE-MIT": {
+        "bytes": 1071,
+        "gzip_bytes": 651,
+        "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+      },
+      "THIRD_PARTY_NOTICES/regex-syntax-0.8.11/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/regex-syntax-0.8.11/LICENSE-MIT": {
+        "bytes": 1071,
+        "gzip_bytes": 651,
+        "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+      },
+      "THIRD_PARTY_NOTICES/rustc_version-0.4.1/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/rustc_version-0.4.1/LICENSE-MIT": {
+        "bytes": 1071,
+        "gzip_bytes": 652,
+        "sha256": "c9a75f18b9ab2927829a208fc6aa2cf4e63b8420887ba29cdb265d6619ae82d5"
+      },
+      "THIRD_PARTY_NOTICES/rustix-1.1.4/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/rustix-1.1.4/LICENSE-Apache-2.0_WITH_LLVM-exception": {
+        "bytes": 12243,
+        "gzip_bytes": 4296,
+        "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5"
+      },
+      "THIRD_PARTY_NOTICES/rustix-1.1.4/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 619,
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      "THIRD_PARTY_NOTICES/rustversion-1.0.23/LICENSE-APACHE": {
+        "bytes": 9723,
+        "gzip_bytes": 3554,
+        "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+      },
+      "THIRD_PARTY_NOTICES/rustversion-1.0.23/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 619,
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      "THIRD_PARTY_NOTICES/semver-1.0.28/LICENSE-APACHE": {
+        "bytes": 9723,
+        "gzip_bytes": 3554,
+        "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+      },
+      "THIRD_PARTY_NOTICES/semver-1.0.28/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 619,
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      "THIRD_PARTY_NOTICES/serde-1.0.229/LICENSE-APACHE": {
+        "bytes": 9723,
+        "gzip_bytes": 3554,
+        "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+      },
+      "THIRD_PARTY_NOTICES/serde-1.0.229/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 619,
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      "THIRD_PARTY_NOTICES/serde-wasm-bindgen-0.6.5/LICENSE": {
+        "bytes": 1094,
+        "gzip_bytes": 661,
+        "sha256": "62a81c033fcf173693b50f068939cd903d8a414d915776ff1fef5d5869aabcb7"
+      },
+      "THIRD_PARTY_NOTICES/serde_core-1.0.229/LICENSE-APACHE": {
+        "bytes": 9723,
+        "gzip_bytes": 3554,
+        "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+      },
+      "THIRD_PARTY_NOTICES/serde_core-1.0.229/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 619,
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      "THIRD_PARTY_NOTICES/serde_derive-1.0.229/LICENSE-APACHE": {
+        "bytes": 9723,
+        "gzip_bytes": 3554,
+        "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+      },
+      "THIRD_PARTY_NOTICES/serde_derive-1.0.229/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 619,
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      "THIRD_PARTY_NOTICES/serde_json-1.0.151/LICENSE-APACHE": {
+        "bytes": 9723,
+        "gzip_bytes": 3554,
+        "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+      },
+      "THIRD_PARTY_NOTICES/serde_json-1.0.151/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 619,
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      "THIRD_PARTY_NOTICES/serde_spanned-1.1.1/LICENSE-APACHE": {
+        "bytes": 11358,
+        "gzip_bytes": 3967,
+        "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+      },
+      "THIRD_PARTY_NOTICES/serde_spanned-1.1.1/LICENSE-MIT": {
+        "bytes": 1062,
+        "gzip_bytes": 639,
+        "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6"
+      },
+      "THIRD_PARTY_NOTICES/sha2-0.10.9/LICENSE-APACHE": {
+        "bytes": 10849,
+        "gzip_bytes": 3939,
+        "sha256": "a9040321c3712d8fd0b09cf52b17445de04a23a10165049ae187cd39e5c86be5"
+      },
+      "THIRD_PARTY_NOTICES/sha2-0.10.9/LICENSE-MIT": {
+        "bytes": 1138,
+        "gzip_bytes": 689,
+        "sha256": "b4eb00df6e2a4d22518fcaa6a2b4646f249b3a3c9814509b22bd2091f1392ff1"
+      },
+      "THIRD_PARTY_NOTICES/simd-adler32-0.3.10/LICENSE.md": {
+        "bytes": 1078,
+        "gzip_bytes": 657,
+        "sha256": "42a35170233e83e18856792e748de4c1ce4a63b2afce9a370c89ef3fe23f9f2d"
+      },
+      "THIRD_PARTY_NOTICES/slab-0.4.12/LICENSE": {
+        "bytes": 1055,
+        "gzip_bytes": 644,
+        "sha256": "8ce0830173fdac609dfb4ea603fdc002c2f4af0dc9b1a005653f5da9cf534b18"
+      },
+      "THIRD_PARTY_NOTICES/strsim-0.11.1/LICENSE": {
+        "bytes": 1166,
+        "gzip_bytes": 697,
+        "sha256": "1e697ce8d21401fbf1bddd9b5c3fd4c4c79ae1e3bdf51f81761c85e11d5a89cd"
+      },
+      "THIRD_PARTY_NOTICES/strum-0.28.0/LICENSE": {
+        "bytes": 1072,
+        "gzip_bytes": 648,
+        "sha256": "8bce3b45e49ecd1461f223b46de133d8f62cd39f745cfdaf81bee554b908bd42"
+      },
+      "THIRD_PARTY_NOTICES/strum_macros-0.28.0/LICENSE": {
+        "bytes": 1072,
+        "gzip_bytes": 648,
+        "sha256": "8bce3b45e49ecd1461f223b46de133d8f62cd39f745cfdaf81bee554b908bd42"
+      },
+      "THIRD_PARTY_NOTICES/syn-2.0.119/LICENSE-APACHE": {
+        "bytes": 9723,
+        "gzip_bytes": 3554,
+        "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+      },
+      "THIRD_PARTY_NOTICES/syn-2.0.119/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 619,
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      "THIRD_PARTY_NOTICES/syn-3.0.5/LICENSE-APACHE": {
+        "bytes": 9723,
+        "gzip_bytes": 3554,
+        "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+      },
+      "THIRD_PARTY_NOTICES/syn-3.0.5/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 619,
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      "THIRD_PARTY_NOTICES/tempfile-3.27.0/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/tempfile-3.27.0/LICENSE-MIT": {
+        "bytes": 1056,
+        "gzip_bytes": 646,
+        "sha256": "8b427f5bc501764575e52ba4f9d95673cf8f6d80a86d0d06599852e1a9a20a36"
+      },
+      "THIRD_PARTY_NOTICES/thiserror-2.0.20/LICENSE-APACHE": {
+        "bytes": 9723,
+        "gzip_bytes": 3554,
+        "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+      },
+      "THIRD_PARTY_NOTICES/thiserror-2.0.20/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 619,
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      "THIRD_PARTY_NOTICES/thiserror-impl-2.0.20/LICENSE-APACHE": {
+        "bytes": 9723,
+        "gzip_bytes": 3554,
+        "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+      },
+      "THIRD_PARTY_NOTICES/thiserror-impl-2.0.20/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 619,
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      "THIRD_PARTY_NOTICES/time-0.3.55/LICENSE-Apache": {
+        "bytes": 10174,
+        "gzip_bytes": 3580,
+        "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+      },
+      "THIRD_PARTY_NOTICES/time-0.3.55/LICENSE-MIT": {
+        "bytes": 1057,
+        "gzip_bytes": 636,
+        "sha256": "2537228d9a1b44a5dc595241349cae7090b326c8de165aaf89bfddef4a00d0fc"
+      },
+      "THIRD_PARTY_NOTICES/time-core-0.1.9/LICENSE-Apache": {
+        "bytes": 10174,
+        "gzip_bytes": 3580,
+        "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+      },
+      "THIRD_PARTY_NOTICES/time-core-0.1.9/LICENSE-MIT": {
+        "bytes": 1057,
+        "gzip_bytes": 636,
+        "sha256": "2537228d9a1b44a5dc595241349cae7090b326c8de165aaf89bfddef4a00d0fc"
+      },
+      "THIRD_PARTY_NOTICES/time-macros-0.2.32/LICENSE-Apache": {
+        "bytes": 10174,
+        "gzip_bytes": 3580,
+        "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+      },
+      "THIRD_PARTY_NOTICES/time-macros-0.2.32/LICENSE-MIT": {
+        "bytes": 1057,
+        "gzip_bytes": 636,
+        "sha256": "2537228d9a1b44a5dc595241349cae7090b326c8de165aaf89bfddef4a00d0fc"
+      },
+      "THIRD_PARTY_NOTICES/toml-0.9.12+spec-1.1.0/LICENSE-APACHE": {
+        "bytes": 11358,
+        "gzip_bytes": 3967,
+        "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+      },
+      "THIRD_PARTY_NOTICES/toml-0.9.12+spec-1.1.0/LICENSE-MIT": {
+        "bytes": 1062,
+        "gzip_bytes": 639,
+        "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6"
+      },
+      "THIRD_PARTY_NOTICES/toml_datetime-0.7.5+spec-1.1.0/LICENSE-APACHE": {
+        "bytes": 11358,
+        "gzip_bytes": 3967,
+        "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+      },
+      "THIRD_PARTY_NOTICES/toml_datetime-0.7.5+spec-1.1.0/LICENSE-MIT": {
+        "bytes": 1062,
+        "gzip_bytes": 639,
+        "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6"
+      },
+      "THIRD_PARTY_NOTICES/toml_parser-1.1.3+spec-1.1.0/LICENSE-APACHE": {
+        "bytes": 11358,
+        "gzip_bytes": 3967,
+        "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+      },
+      "THIRD_PARTY_NOTICES/toml_parser-1.1.3+spec-1.1.0/LICENSE-MIT": {
+        "bytes": 1062,
+        "gzip_bytes": 639,
+        "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6"
+      },
+      "THIRD_PARTY_NOTICES/toml_writer-1.1.2+spec-1.1.0/LICENSE-APACHE": {
+        "bytes": 11358,
+        "gzip_bytes": 3967,
+        "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+      },
+      "THIRD_PARTY_NOTICES/toml_writer-1.1.2+spec-1.1.0/LICENSE-MIT": {
+        "bytes": 1062,
+        "gzip_bytes": 639,
+        "sha256": "6efb0476a1cc085077ed49357026d8c173bf33017278ef440f222fb9cbcb66e6"
+      },
+      "THIRD_PARTY_NOTICES/twox-hash-2.1.4/LICENSE.txt": {
+        "bytes": 1080,
+        "gzip_bytes": 654,
+        "sha256": "f59bcb1c02654665f78a5f290bae76b6358137675f6459f51e6d474a4623d8ea"
+      },
+      "THIRD_PARTY_NOTICES/typed-path-0.12.3/LICENSE-APACHE": {
+        "bytes": 9723,
+        "gzip_bytes": 3554,
+        "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+      },
+      "THIRD_PARTY_NOTICES/typed-path-0.12.3/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 619,
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      "THIRD_PARTY_NOTICES/typenum-1.20.1/LICENSE": {
+        "bytes": 17,
+        "gzip_bytes": 37,
+        "sha256": "db11fec9946737df39ca3898d9cd8c10ec6f6c3a884a6802b0ad0b81b4e8f23a"
+      },
+      "THIRD_PARTY_NOTICES/typenum-1.20.1/LICENSE-APACHE": {
+        "bytes": 10835,
+        "gzip_bytes": 3946,
+        "sha256": "516b24e051bf5630880ebbd55c40a25ce9552ebaf8970a53e8976eb70e522406"
+      },
+      "THIRD_PARTY_NOTICES/typenum-1.20.1/LICENSE-MIT": {
+        "bytes": 1083,
+        "gzip_bytes": 657,
+        "sha256": "a825bd853ab71619a4923d7b4311221427848070ff44d990da39b0b274c1683f"
+      },
+      "THIRD_PARTY_NOTICES/unicode-ident-1.0.24/LICENSE-APACHE": {
+        "bytes": 9723,
+        "gzip_bytes": 3554,
+        "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+      },
+      "THIRD_PARTY_NOTICES/unicode-ident-1.0.24/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 619,
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      "THIRD_PARTY_NOTICES/unicode-ident-1.0.24/LICENSE-UNICODE": {
+        "bytes": 1995,
+        "gzip_bytes": 1062,
+        "sha256": "f7db81051789b729fea528a63ec4c938fdcb93d9d61d97dc8cc2e9df6d47f2a1"
+      },
+      "THIRD_PARTY_NOTICES/utf8parse-0.2.2/LICENSE-APACHE": {
+        "bytes": 9723,
+        "gzip_bytes": 3554,
+        "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+      },
+      "THIRD_PARTY_NOTICES/utf8parse-0.2.2/LICENSE-MIT": {
+        "bytes": 1052,
+        "gzip_bytes": 644,
+        "sha256": "e4c9b06fa850cb9b540a5e400e9f6394cf15efcf4098144de477d1d3dae10150"
+      },
+      "THIRD_PARTY_NOTICES/version_check-0.9.5/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/version_check-0.9.5/LICENSE-MIT": {
+        "bytes": 1085,
+        "gzip_bytes": 662,
+        "sha256": "b7e650f3fce5c53249d1cdc608b54df156a97edd636cf9d23498d0cfe7aec63e"
+      },
+      "THIRD_PARTY_NOTICES/wasm-bindgen-0.2.128/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/wasm-bindgen-0.2.128/LICENSE-MIT": {
+        "bytes": 1057,
+        "gzip_bytes": 646,
+        "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397"
+      },
+      "THIRD_PARTY_NOTICES/wasm-bindgen-macro-0.2.128/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/wasm-bindgen-macro-0.2.128/LICENSE-MIT": {
+        "bytes": 1057,
+        "gzip_bytes": 646,
+        "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397"
+      },
+      "THIRD_PARTY_NOTICES/wasm-bindgen-macro-support-0.2.128/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/wasm-bindgen-macro-support-0.2.128/LICENSE-MIT": {
+        "bytes": 1057,
+        "gzip_bytes": 646,
+        "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397"
+      },
+      "THIRD_PARTY_NOTICES/wasm-bindgen-shared-0.2.128/LICENSE-APACHE": {
+        "bytes": 10847,
+        "gzip_bytes": 3940,
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      "THIRD_PARTY_NOTICES/wasm-bindgen-shared-0.2.128/LICENSE-MIT": {
+        "bytes": 1057,
+        "gzip_bytes": 646,
+        "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397"
+      },
+      "THIRD_PARTY_NOTICES/winnow-0.7.15/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 610,
+        "sha256": "cb5aedb296c5246d1f22e9099f925a65146f9f0d6b4eebba97fd27a6cdbbab2d"
+      },
+      "THIRD_PARTY_NOTICES/winnow-1.0.4/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 610,
+        "sha256": "cb5aedb296c5246d1f22e9099f925a65146f9f0d6b4eebba97fd27a6cdbbab2d"
+      },
+      "THIRD_PARTY_NOTICES/zerocopy-0.8.56/LICENSE-APACHE": {
+        "bytes": 11350,
+        "gzip_bytes": 3969,
+        "sha256": "9d185ac6703c4b0453974c0d85e9eee43e6941009296bb1f5eb0b54e2329e9f3"
+      },
+      "THIRD_PARTY_NOTICES/zerocopy-0.8.56/LICENSE-BSD": {
+        "bytes": 1275,
+        "gzip_bytes": 689,
+        "sha256": "83c1763356e822adde0a2cae748d938a73fdc263849ccff6b27776dff213bd32"
+      },
+      "THIRD_PARTY_NOTICES/zerocopy-0.8.56/LICENSE-MIT": {
+        "bytes": 1060,
+        "gzip_bytes": 645,
+        "sha256": "1a2f5c12ddc934d58956aa5dbdd3255fe55fd957633ab7d0d39e4f0daa73f7df"
+      },
+      "THIRD_PARTY_NOTICES/zerocopy-derive-0.8.56/LICENSE-APACHE": {
+        "bytes": 11350,
+        "gzip_bytes": 3969,
+        "sha256": "9d185ac6703c4b0453974c0d85e9eee43e6941009296bb1f5eb0b54e2329e9f3"
+      },
+      "THIRD_PARTY_NOTICES/zerocopy-derive-0.8.56/LICENSE-BSD": {
+        "bytes": 1275,
+        "gzip_bytes": 689,
+        "sha256": "83c1763356e822adde0a2cae748d938a73fdc263849ccff6b27776dff213bd32"
+      },
+      "THIRD_PARTY_NOTICES/zerocopy-derive-0.8.56/LICENSE-MIT": {
+        "bytes": 1060,
+        "gzip_bytes": 645,
+        "sha256": "1a2f5c12ddc934d58956aa5dbdd3255fe55fd957633ab7d0d39e4f0daa73f7df"
+      },
+      "THIRD_PARTY_NOTICES/zip-8.6.0/LICENSE": {
+        "bytes": 1085,
+        "gzip_bytes": 657,
+        "sha256": "58545fed1565e42d687aecec6897d35c6d37ccb71479a137c0deb2203e125c79"
+      },
+      "THIRD_PARTY_NOTICES/zlib-rs-0.6.7/LICENSE": {
+        "bytes": 856,
+        "gzip_bytes": 476,
+        "sha256": "e72111c52b7d96ebe25348dee19f0744f444d3c95ae6b1ecb6ccaecc5bce05ba"
+      },
+      "THIRD_PARTY_NOTICES/zmij-1.0.23/LICENSE-MIT": {
+        "bytes": 1023,
+        "gzip_bytes": 619,
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      "THIRD_PARTY_NOTICES/zopfli-0.8.3/COPYING": {
+        "bytes": 11341,
+        "gzip_bytes": 3966,
+        "sha256": "018b1cb87efdf7a04c2fcc13d57ed63f62149113fb207b27ea13430d64f13513"
+      },
+      "THIRD_PARTY_NOTICES/zune-core-0.5.3/LICENSE-APACHE": {
+        "bytes": 11357,
+        "gzip_bytes": 3968,
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+      },
+      "THIRD_PARTY_NOTICES/zune-core-0.5.3/LICENSE-MIT": {
+        "bytes": 1073,
+        "gzip_bytes": 647,
+        "sha256": "d30047bca3b516639339a3c279bb84c3483124fb5a9dafe3c75056a85090e745"
+      },
+      "THIRD_PARTY_NOTICES/zune-core-0.5.3/LICENSE-ZLIB": {
+        "bytes": 859,
+        "gzip_bytes": 478,
+        "sha256": "d201d14804d3bcd3b944147173175e4abfbd838b7c8069b6bd3452496bf13e6c"
+      },
+      "THIRD_PARTY_NOTICES/zune-jpeg-0.5.15/LICENSE-APACHE": {
+        "bytes": 11357,
+        "gzip_bytes": 3968,
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+      },
+      "THIRD_PARTY_NOTICES/zune-jpeg-0.5.15/LICENSE-MIT": {
+        "bytes": 1073,
+        "gzip_bytes": 647,
+        "sha256": "d30047bca3b516639339a3c279bb84c3483124fb5a9dafe3c75056a85090e745"
+      },
+      "THIRD_PARTY_NOTICES/zune-jpeg-0.5.15/LICENSE-ZLIB": {
+        "bytes": 859,
+        "gzip_bytes": 478,
+        "sha256": "d201d14804d3bcd3b944147173175e4abfbd838b7c8069b6bd3452496bf13e6c"
+      },
+      "index.d.ts": {
+        "bytes": 10624,
+        "gzip_bytes": 2977,
+        "sha256": "381680ab31049cd0766ddd2ea7d51885df3d9b909dc8c6010d19030bba01777e"
+      },
+      "index.js": {
+        "bytes": 9602,
+        "gzip_bytes": 2690,
+        "sha256": "3acbfb7896a7a3e35a0b8a368a2b02888bd7d4608737185fb606379d9713258d"
+      },
+      "package.json": {
+        "bytes": 510,
+        "gzip_bytes": 305,
+        "sha256": "a399cfb63163a10e99b07345017a1fe6cb985d2e6659451bc8cf0874b88d717c"
+      },
+      "wasm/usd_toolbox_wasm.d.ts": {
+        "bytes": 7512,
+        "gzip_bytes": 1904,
+        "sha256": "214a6bec9b004d7b6ab50f8a75aff05829a4321fbf8f128ed231e8be44ad50ec"
+      },
+      "wasm/usd_toolbox_wasm.js": {
+        "bytes": 34161,
+        "gzip_bytes": 6569,
+        "sha256": "406e24557c23f610c1dac13d1c3e364c31bfb635721592fe473a408cddae89e7"
+      },
+      "wasm/usd_toolbox_wasm_bg.wasm": {
+        "bytes": 8404755,
+        "gzip_bytes": 1871941,
+        "sha256": "8951bc3b47fa73b661f17a2a8e0cd44d088cd21adc8f7baa959dc55ceff6d0ff"
+      },
+      "wasm/usd_toolbox_wasm_bg.wasm.d.ts": {
+        "bytes": 3458,
+        "gzip_bytes": 526,
+        "sha256": "8f74e5afaa241c1b7569e04e7c3a10c6e631b5a545c3e0881551c08147209916"
+      },
+      "worker.js": {
+        "bytes": 4653,
+        "gzip_bytes": 1608,
+        "sha256": "66f18f31891b284422d927d320837ce04154a8608817dfededb409b554e0bfa5"
+      }
+    }
+  }
+}

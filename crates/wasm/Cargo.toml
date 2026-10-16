@@ -8,21 +8,27 @@ rust-version.workspace = true
 [lib]
 crate-type = ["cdylib", "rlib"]
 
+[features]
+default = ["material-tools"]
+material-tools = ["dep:usd-toolbox-materials", "dep:usd-toolbox-materialx", "dep:usd-toolbox-omniverse", "dep:usd-toolbox-procedural", "dep:usd-toolbox-revit", "dep:usd-toolbox-textures", "dep:time"]
+
 [dependencies]
 usd-toolbox-core.workspace = true
 usd-toolbox-gltf.workspace = true
-usd-toolbox-materials.workspace = true
-usd-toolbox-materialx.workspace = true
-usd-toolbox-omniverse.workspace = true
-usd-toolbox-procedural.workspace = true
-usd-toolbox-revit.workspace = true
-usd-toolbox-textures.workspace = true
+usd-toolbox-materials = { workspace = true, optional = true }
+usd-toolbox-materialx = { workspace = true, optional = true }
+usd-toolbox-omniverse = { workspace = true, optional = true }
+usd-toolbox-procedural = { workspace = true, optional = true }
+usd-toolbox-revit = { workspace = true, optional = true }
+usd-toolbox-textures = { workspace = true, optional = true }
 usd-toolbox-usd.workspace = true
 serde.workspace = true
 serde_json.workspace = true
+sha2.workspace = true
 serde-wasm-bindgen.workspace = true
-time.workspace = true
+time = { workspace = true, optional = true }
 wasm-bindgen.workspace = true
+js-sys = "0.3.105"
 
 [lints]
 workspace = true

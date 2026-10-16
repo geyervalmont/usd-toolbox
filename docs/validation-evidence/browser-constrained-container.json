@@ -1,0 +1,157 @@
+{
+  "schema": "usd-toolbox.web-benchmark.v1",
+  "environment": "container limited to 1 CPU and 1 GiB RAM; not a physical mobile device",
+  "hardware_constrained_device": false,
+  "package_wasm": {
+    "bytes": 8122177,
+    "gzip_bytes": 1828954,
+    "sha256": "757a836b95bad26d7c963090a22b868901404ce9a36867df7b7998b12664a79a"
+  },
+  "asset": "BoomBox.glb",
+  "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+  "input_bytes": 10614184,
+  "fetch_ms": 76,
+  "worker_init_ms": [
+    99.29999999701977,
+    115.59999999776483,
+    107.09999999776483
+  ],
+  "cases": [
+    {
+      "transfer": false,
+      "runs": [
+        {
+          "open_ms": 730.3000000007451,
+          "first_metadata_ms": 733,
+          "query_p50_ms": 0,
+          "query_p95_ms": 0.10000000149011612,
+          "export_ms": 101.30000000074506,
+          "import_mib_per_second": 13.860707476927058,
+          "output_bytes": 10617424,
+          "caller_detached": false,
+          "wasm_bytes": 87818240,
+          "main_thread_heartbeats": 166
+        },
+        {
+          "open_ms": 423.1000000014901,
+          "first_metadata_ms": 423.30000000074506,
+          "query_p50_ms": 0,
+          "query_p95_ms": 0.10000000149011612,
+          "export_ms": 70.60000000149012,
+          "import_mib_per_second": 23.924544245744517,
+          "output_bytes": 10617424,
+          "caller_detached": false,
+          "wasm_bytes": 87818240,
+          "main_thread_heartbeats": 99
+        },
+        {
+          "open_ms": 396.6000000014901,
+          "first_metadata_ms": 396.80000000074506,
+          "query_p50_ms": 0,
+          "query_p95_ms": 0.20000000298023224,
+          "export_ms": 68.19999999925494,
+          "import_mib_per_second": 25.523133309057297,
+          "output_bytes": 10617424,
+          "caller_detached": false,
+          "wasm_bytes": 87818240,
+          "main_thread_heartbeats": 93
+        },
+        {
+          "open_ms": 400.30000000074506,
+          "first_metadata_ms": 400.5,
+          "query_p50_ms": 0,
+          "query_p95_ms": 0.10000000149011612,
+          "export_ms": 67.5,
+          "import_mib_per_second": 25.287221260033263,
+          "output_bytes": 10617424,
+          "caller_detached": false,
+          "wasm_bytes": 87818240,
+          "main_thread_heartbeats": 94
+        },
+        {
+          "open_ms": 393,
+          "first_metadata_ms": 393.19999999925494,
+          "query_p50_ms": 0,
+          "query_p95_ms": 0.10000000149011612,
+          "export_ms": 70.39999999850988,
+          "import_mib_per_second": 25.756933003588184,
+          "output_bytes": 10617424,
+          "caller_detached": false,
+          "wasm_bytes": 87818240,
+          "main_thread_heartbeats": 93
+        }
+      ]
+    },
+    {
+      "transfer": true,
+      "runs": [
+        {
+          "open_ms": 389.80000000074506,
+          "first_metadata_ms": 390,
+          "query_p50_ms": 0,
+          "query_p95_ms": 0.10000000149011612,
+          "export_ms": 68.70000000298023,
+          "import_mib_per_second": 25.96838037555364,
+          "output_bytes": 10617424,
+          "caller_detached": true,
+          "wasm_bytes": 87818240,
+          "main_thread_heartbeats": 92
+        },
+        {
+          "open_ms": 399.30000000074506,
+          "first_metadata_ms": 399.5,
+          "query_p50_ms": 0,
+          "query_p95_ms": 0.10000000149011612,
+          "export_ms": 67.39999999850988,
+          "import_mib_per_second": 25.350550138720934,
+          "output_bytes": 10617424,
+          "caller_detached": true,
+          "wasm_bytes": 87818240,
+          "main_thread_heartbeats": 93
+        },
+        {
+          "open_ms": 394.8999999985099,
+          "first_metadata_ms": 395.0999999977648,
+          "query_p50_ms": 0,
+          "query_p95_ms": 0.10000000149011612,
+          "export_ms": 70.69999999925494,
+          "import_mib_per_second": 25.63300752202672,
+          "output_bytes": 10617424,
+          "caller_detached": true,
+          "wasm_bytes": 87818240,
+          "main_thread_heartbeats": 93
+        },
+        {
+          "open_ms": 409.19999999925494,
+          "first_metadata_ms": 409.29999999701977,
+          "query_p50_ms": 0,
+          "query_p95_ms": 0.10000000149011612,
+          "export_ms": 67.69999999925494,
+          "import_mib_per_second": 24.737230377391462,
+          "output_bytes": 10617424,
+          "caller_detached": true,
+          "wasm_bytes": 87818240,
+          "main_thread_heartbeats": 95
+        },
+        {
+          "open_ms": 394.69999999925494,
+          "first_metadata_ms": 395,
+          "query_p50_ms": 0,
+          "query_p95_ms": 0.10000000149011612,
+          "export_ms": 68,
+          "import_mib_per_second": 25.645996124725777,
+          "output_bytes": 10617424,
+          "caller_detached": true,
+          "wasm_bytes": 87818240,
+          "main_thread_heartbeats": 93
+        }
+      ]
+    }
+  ],
+  "final_memory": {
+    "wasm_bytes": 87818240,
+    "models": 0
+  },
+  "measured_at": "2026-10-16",
+  "host": "AMD Ryzen AI 9 HX 370, Linux x86-64, Docker Playwright v1.64.1-noble"
+}

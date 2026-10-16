@@ -1,0 +1,42 @@
+name: Bounded sanitizer fuzzing
+
+on:
+  pull_request:
+    paths:
+      - 'crates/**'
+      - 'fuzz/**'
+      - 'scripts/run_fuzz_smoke.py'
+      - '.github/workflows/fuzz.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '23 4 * * 2'
+
+permissions:
+  contents: read
+
+jobs:
+  fuzz-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: nightly-2026-10-15
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Install pinned fuzz runner
+        run: cargo install cargo-fuzz --version 0.13.2 --locked
+      - name: Run bounded smoke or scheduled campaign
+        env:
+          FUZZ_SECONDS: ${{ github.event_name == 'schedule' && '120' || '10' }}
+        run: python scripts/run_fuzz_smoke.py --seconds "$FUZZ_SECONDS"
+      - name: Preserve logs, results, coverage inputs and failure artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: fuzz-smoke-${{ github.run_id }}
+          path: target/fuzz-smoke
+          if-no-files-found: warn
+          retention-days: 14

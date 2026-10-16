@@ -1,0 +1,81 @@
+#usda 1.0
+(
+    defaultPrim = "Panels"
+    metersPerUnit = 0.001
+    upAxis = "Y"
+)
+
+def Xform "Panels"
+{
+    double3 xformOp:translate = (1000, 0, 0)
+    uniform token[] xformOpOrder = ["xformOp:translate"]
+
+    def Mesh "Surface" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        double3 xformOp:translate = (0, 450, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+        point3f[] points = [(-250, 0, -250), (-250, 0, 250), (250, 0, 250), (250, 0, -250), (750, 0, 250), (750, 0, -250)]
+        int[] faceVertexCounts = [4, 4]
+        int[] faceVertexIndices = [0, 1, 2, 3, 3, 2, 4, 5]
+        uniform token subdivisionScheme = "none"
+        texCoord2f[] primvars:st = [(0, 0), (0, 1), (1, 1), (1, 0)] (
+            interpolation = "faceVarying"
+        )
+        int[] primvars:st:indices = [0, 1, 2, 3, 0, 1, 2, 3]
+        rel material:binding = </Looks/Fabric>
+        uniform token subsetFamily:materialBind:familyType = "nonOverlapping"
+        def GeomSubset "Trim" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token elementType = "face"
+            uniform token familyName = "materialBind"
+            int[] indices = [1]
+            rel material:binding = </Looks/Trim>
+        }
+    }
+}
+
+def Scope "Looks"
+{
+    def Material "Fabric"
+    {
+        token outputs:surface.connect = </Looks/Fabric/Surface.outputs:surface>
+        def Shader "Surface"
+        {
+            uniform token info:id = "UsdPreviewSurface"
+            color3f inputs:diffuseColor.connect = </Looks/Fabric/Texture.outputs:rgb>
+            float inputs:roughness = 0.65
+            token outputs:surface
+        }
+        def Shader "Texture"
+        {
+            uniform token info:id = "UsdUVTexture"
+            asset inputs:file = @checker.png@
+            token inputs:sourceColorSpace = "sRGB"
+            token inputs:wrapS = "repeat"
+            token inputs:wrapT = "repeat"
+            float2 inputs:st.connect = </Looks/Fabric/UV.outputs:result>
+            float3 outputs:rgb
+        }
+        def Shader "UV"
+        {
+            uniform token info:id = "UsdPrimvarReader_float2"
+            string inputs:varname = "st"
+            float2 outputs:result
+        }
+    }
+    def Material "Trim"
+    {
+        token outputs:surface.connect = </Looks/Trim/Surface.outputs:surface>
+        def Shader "Surface"
+        {
+            uniform token info:id = "UsdPreviewSurface"
+            color3f inputs:diffuseColor = (0.2, 0.04, 0.01)
+            float inputs:roughness = 0.3
+            token outputs:surface
+        }
+    }
+}

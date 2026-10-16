@@ -1,0 +1,31 @@
+{
+  "schema": "usd-toolbox.local-packages.v1",
+  "date": "2026-10-16",
+  "distribution": "private; no project distribution licence declared",
+  "packages": [
+    {
+      "file": "usd-toolbox-0.3.0-x86_64-unknown-linux-gnu.tar.gz",
+      "bytes": 31624001,
+      "sha256": "a19623424370528aef7935cf1710ed911399f4db49e925314409d3030b0d8ef6",
+      "checked_files": 319,
+      "dependencies_with_notices": 130
+    },
+    {
+      "file": "usd-toolbox-0.3.0-x86_64-unknown-linux-musl.tar.gz",
+      "bytes": 25878913,
+      "sha256": "24bc9f0487e1eae8165f27bfa7d033500d6cb23c1c8d47dc6af84ebf0a6fd63e",
+      "checked_files": 316,
+      "dependencies_with_notices": 130
+    },
+    {
+      "file": "usd-toolbox-web-0.3.0.tgz",
+      "bytes": 1980699,
+      "sha256": "9d80c3d07c10985984ea253e28648e0e8d24cd2bbaaf7452273bbf0c0ac28ba4",
+      "checked_files": 262,
+      "dependencies_with_notices": 130
+    }
+  ],
+  "extracted_gnu_c_example": "passed",
+  "musl_c_example": "compiled and executed in Alpine 3.22",
+  "notice_audit": "All 130 locked dependencies have copied notice files, including exact upstream openusd licence, lowercase Windows licences and r-efi AUTHORS licence text."
+}

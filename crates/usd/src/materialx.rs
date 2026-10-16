@@ -62,6 +62,20 @@ fn author_node(data: &mut sdf::Data, parent: &Path, element: &MaterialXElement) 
     if !graph {
         let id = if !element.attribute("nodedef").is_empty() {
             element.attribute("nodedef").to_owned()
+        } else if matches!(
+            element.category.as_str(),
+            "noise2d" | "noise3d" | "fractal2d" | "fractal3d"
+        ) && matches!(
+            element.attribute("type"),
+            "color3" | "color4" | "vector2" | "vector3" | "vector4"
+        ) && element
+            .children
+            .iter()
+            .any(|input| input.attribute("name") == "amplitude" && input.attribute("type") == "float")
+        {
+            // MaterialX provides separate scalar-amplitude overloads. The
+            // unsuffixed definitions require vector-valued amplitudes.
+            format!("ND_{}_{}FA", element.category, element.attribute("type"))
         } else if element.category == "normalmap" {
             "ND_normalmap_float".into()
         } else if element.category == "extract" || element.category == "convert" || element.category == "displacement" {
@@ -188,7 +202,7 @@ fn usd_type(kind: &str) -> Result<&'static str, ExportError> {
         "string" => "string",
         "filename" => "asset",
         "vector2" => "float2",
-        "vector3" => "vector3f",
+        "vector3" => "float3",
         "vector4" => "float4",
         "color3" => "color3f",
         "color4" => "color4f",

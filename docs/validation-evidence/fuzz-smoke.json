@@ -1,0 +1,129 @@
+{
+  "compiler": "rustc 1.101.0-nightly (7df81381d 2026-10-14)\nbinary: rustc\ncommit-hash: 7df81381d027710708209f36b98d11b1c88f8d2e\ncommit-date: 2026-10-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.101.0-nightly\nLLVM version: 23.1.3\n",
+  "schema": "usd-toolbox.fuzz-smoke.v1",
+  "date_utc": "2026-10-16T00:12:27.613930+00:00",
+  "toolchain": "nightly-2026-10-15",
+  "seed": 20261016,
+  "limits": {
+    "input_bytes": 65536,
+    "per_input_seconds": 3,
+    "rss_mb": 512,
+    "single_allocation_mb": 128,
+    "asan_quarantine_mb": 32,
+    "seconds_per_target": 10
+  },
+  "results": [
+    {
+      "target": "usda",
+      "exit_code": 0,
+      "wall_seconds": 11.049,
+      "stats": {
+        "number_of_executed_units": 275667,
+        "average_exec_per_sec": 25060,
+        "new_units_added": 4659,
+        "slowest_unit_time_sec": 0,
+        "peak_rss_mb": 156
+      },
+      "log": "usda/fuzz.log",
+      "artifacts": []
+    },
+    {
+      "target": "usdc",
+      "exit_code": 0,
+      "wall_seconds": 11.09,
+      "stats": {
+        "number_of_executed_units": 18028,
+        "average_exec_per_sec": 1638,
+        "new_units_added": 745,
+        "slowest_unit_time_sec": 0,
+        "peak_rss_mb": 150
+      },
+      "log": "usdc/fuzz.log",
+      "artifacts": []
+    },
+    {
+      "target": "usdz",
+      "exit_code": 0,
+      "wall_seconds": 11.092,
+      "stats": {
+        "number_of_executed_units": 151508,
+        "average_exec_per_sec": 13773,
+        "new_units_added": 2763,
+        "slowest_unit_time_sec": 0,
+        "peak_rss_mb": 161
+      },
+      "log": "usdz/fuzz.log",
+      "artifacts": []
+    },
+    {
+      "target": "materialx",
+      "exit_code": 0,
+      "wall_seconds": 11.087,
+      "stats": {
+        "number_of_executed_units": 206422,
+        "average_exec_per_sec": 18765,
+        "new_units_added": 3304,
+        "slowest_unit_time_sec": 0,
+        "peak_rss_mb": 129
+      },
+      "log": "materialx/fuzz.log",
+      "artifacts": []
+    },
+    {
+      "target": "gltf",
+      "exit_code": 0,
+      "wall_seconds": 11.153,
+      "stats": {
+        "number_of_executed_units": 173304,
+        "average_exec_per_sec": 15754,
+        "new_units_added": 2499,
+        "slowest_unit_time_sec": 0,
+        "peak_rss_mb": 131
+      },
+      "log": "gltf/fuzz.log",
+      "artifacts": []
+    },
+    {
+      "target": "images",
+      "exit_code": 0,
+      "wall_seconds": 11.044,
+      "stats": {
+        "number_of_executed_units": 696121,
+        "average_exec_per_sec": 63283,
+        "new_units_added": 3158,
+        "slowest_unit_time_sec": 0,
+        "peak_rss_mb": 130
+      },
+      "log": "images/fuzz.log",
+      "artifacts": []
+    },
+    {
+      "target": "metadata",
+      "exit_code": 0,
+      "wall_seconds": 11.096,
+      "stats": {
+        "number_of_executed_units": 1519080,
+        "average_exec_per_sec": 138098,
+        "new_units_added": 8236,
+        "slowest_unit_time_sec": 0,
+        "peak_rss_mb": 163
+      },
+      "log": "metadata/fuzz.log",
+      "artifacts": []
+    },
+    {
+      "target": "query",
+      "exit_code": 0,
+      "wall_seconds": 11.083,
+      "stats": {
+        "number_of_executed_units": 419649,
+        "average_exec_per_sec": 38149,
+        "new_units_added": 4543,
+        "slowest_unit_time_sec": 0,
+        "peak_rss_mb": 152
+      },
+      "log": "query/fuzz.log",
+      "artifacts": []
+    }
+  ]
+}

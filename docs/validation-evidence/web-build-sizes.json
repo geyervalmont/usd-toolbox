@@ -1,0 +1,14 @@
+{
+  "schema": "usd-toolbox.web-size-comparison.v1",
+  "measured_at": "2026-10-16",
+  "minimal": {
+    "bytes": 8404755,
+    "gzip_bytes": 1871941,
+    "sha256": "8951bc3b47fa73b661f17a2a8e0cd44d088cd21adc8f7baa959dc55ceff6d0ff"
+  },
+  "material_tools": {
+    "bytes": 12225272,
+    "gzip_bytes": 2745078,
+    "sha256": "ea66b48d0da990f4c5c9c8873e3b67d7b56cc585696723e80de4fcecbdf68454"
+  }
+}

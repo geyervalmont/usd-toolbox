@@ -1,0 +1,141 @@
+#usda 1.0
+(
+    defaultPrim = "Assembly"
+    metersPerUnit = 0.01
+    upAxis = "Z"
+)
+
+def Xform "Assembly"
+{
+    float3 xformOp:rotateXYZ = (17, 29, -13)
+    float3 xformOp:scale = (-2, 3, 0.5)
+    double3 xformOp:translate = (12, -5, 7)
+    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+
+    def Xform "XYZ"
+    {
+        float3 xformOp:rotateXYZ = (21, -32, 43)
+        double3 xformOp:translate:pivot = (1, 2, 3)
+        uniform token[] xformOpOrder = ["xformOp:translate:pivot", "xformOp:rotateXYZ", "!invert!xformOp:translate:pivot"]
+
+        def Mesh "Triangle"
+        {
+            int[] faceVertexCounts = [3]
+            int[] faceVertexIndices = [0, 1, 2]
+            normal3f[] normals = [(0, 0, 1)] (
+                interpolation = "constant"
+            )
+            point3f[] points = [(-1, 0, 0), (2, 0, 0), (0, 2, 0)]
+            uniform token subdivisionScheme = "none"
+        }
+    }
+
+    def Xform "XZY"
+    {
+        float3 xformOp:rotateXZY = (21, -32, 43)
+        double3 xformOp:translate:pivot = (1, 2, 3)
+        uniform token[] xformOpOrder = ["xformOp:translate:pivot", "xformOp:rotateXZY", "!invert!xformOp:translate:pivot"]
+
+        def Mesh "Triangle"
+        {
+            int[] faceVertexCounts = [3]
+            int[] faceVertexIndices = [0, 1, 2]
+            normal3f[] normals = [(0, 0, 1)] (
+                interpolation = "constant"
+            )
+            point3f[] points = [(-1, 0, 0), (2, 0, 0), (0, 2, 0)]
+            uniform token subdivisionScheme = "none"
+        }
+    }
+
+    def Xform "YXZ"
+    {
+        float3 xformOp:rotateYXZ = (21, -32, 43)
+        double3 xformOp:translate:pivot = (1, 2, 3)
+        uniform token[] xformOpOrder = ["xformOp:translate:pivot", "xformOp:rotateYXZ", "!invert!xformOp:translate:pivot"]
+
+        def Mesh "Triangle"
+        {
+            int[] faceVertexCounts = [3]
+            int[] faceVertexIndices = [0, 1, 2]
+            normal3f[] normals = [(0, 0, 1)] (
+                interpolation = "constant"
+            )
+            point3f[] points = [(-1, 0, 0), (2, 0, 0), (0, 2, 0)]
+            uniform token subdivisionScheme = "none"
+        }
+    }
+
+    def Xform "YZX"
+    {
+        float3 xformOp:rotateYZX = (21, -32, 43)
+        double3 xformOp:translate:pivot = (1, 2, 3)
+        uniform token[] xformOpOrder = ["xformOp:translate:pivot", "xformOp:rotateYZX", "!invert!xformOp:translate:pivot"]
+
+        def Mesh "Triangle"
+        {
+            int[] faceVertexCounts = [3]
+            int[] faceVertexIndices = [0, 1, 2]
+            normal3f[] normals = [(0, 0, 1)] (
+                interpolation = "constant"
+            )
+            point3f[] points = [(-1, 0, 0), (2, 0, 0), (0, 2, 0)]
+            uniform token subdivisionScheme = "none"
+        }
+    }
+
+    def Xform "ZXY"
+    {
+        float3 xformOp:rotateZXY = (21, -32, 43)
+        double3 xformOp:translate:pivot = (1, 2, 3)
+        uniform token[] xformOpOrder = ["xformOp:translate:pivot", "xformOp:rotateZXY", "!invert!xformOp:translate:pivot"]
+
+        def Mesh "Triangle"
+        {
+            int[] faceVertexCounts = [3]
+            int[] faceVertexIndices = [0, 1, 2]
+            normal3f[] normals = [(0, 0, 1)] (
+                interpolation = "constant"
+            )
+            point3f[] points = [(-1, 0, 0), (2, 0, 0), (0, 2, 0)]
+            uniform token subdivisionScheme = "none"
+        }
+    }
+
+    def Xform "ZYX"
+    {
+        float3 xformOp:rotateZYX = (21, -32, 43)
+        double3 xformOp:translate:pivot = (1, 2, 3)
+        uniform token[] xformOpOrder = ["xformOp:translate:pivot", "xformOp:rotateZYX", "!invert!xformOp:translate:pivot"]
+
+        def Mesh "Triangle"
+        {
+            int[] faceVertexCounts = [3]
+            int[] faceVertexIndices = [0, 1, 2]
+            normal3f[] normals = [(0, 0, 1)] (
+                interpolation = "constant"
+            )
+            point3f[] points = [(-1, 0, 0), (2, 0, 0), (0, 2, 0)]
+            uniform token subdivisionScheme = "none"
+        }
+    }
+
+    def Xform "Reset"
+    {
+        quatd xformOp:orient = (0.917060074385124, 0.10657017137238421, 0.21314034274476842, 0.3197105141171526)
+        double3 xformOp:translate = (1, 2, 3)
+        uniform token[] xformOpOrder = ["!resetXformStack!", "xformOp:translate", "xformOp:orient"]
+
+        def Mesh "Triangle"
+        {
+            int[] faceVertexCounts = [3]
+            int[] faceVertexIndices = [0, 1, 2]
+            normal3f[] normals = [(0, 0, 1)] (
+                interpolation = "constant"
+            )
+            point3f[] points = [(-1, 0, 0), (2, 0, 0), (0, 2, 0)]
+            uniform token subdivisionScheme = "none"
+        }
+    }
+}
+

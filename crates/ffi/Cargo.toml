@@ -21,6 +21,8 @@ usd-toolbox-usd.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 time.workspace = true
+zip.workspace = true
+sha2.workspace = true
 
 [build-dependencies]
 cbindgen = "0.29"

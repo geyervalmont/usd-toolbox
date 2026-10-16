@@ -7,6 +7,7 @@
 //! not understand Olsyn metadata.
 
 mod materialx;
+pub mod scene;
 
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::io::{Cursor, Read};
@@ -225,7 +226,7 @@ fn author_layer(materials: &[Material], manifest_json: &[u8], graph_tier: Tier) 
             UsdValue::String(env!("CARGO_PKG_VERSION").into()),
         ),
         ("olsyn_manifestSha256".into(), UsdValue::String(manifest_hash.0)),
-        ("olsyn_manifestJson".into(), UsdValue::String(manifest_text.into())),
+        ("olsyn_manifestJson".into(), manifest_json_value(manifest_text)),
     ]);
     if materials.len() == 1 {
         let provenance = &materials[0].provenance;
@@ -288,7 +289,7 @@ fn author_material(
         UsdValue::Dictionary(HashMap::from([
             (
                 "olsyn_tiling".into(),
-                UsdValue::String(serde_json::to_string(&material.tiling).map_err(encode_error)?),
+                manifest_json_value(&serde_json::to_string(&material.tiling).map_err(encode_error)?),
             ),
             (
                 "olsyn_provenance".into(),
@@ -351,7 +352,7 @@ fn author_variants(
                 FieldKey::CustomData,
                 UsdValue::Dictionary(HashMap::from([(
                     "olsyn_overrides".into(),
-                    UsdValue::String(serde_json::to_string(&variant.overrides).map_err(encode_error)?),
+                    manifest_json_value(&serde_json::to_string(&variant.overrides).map_err(encode_error)?),
                 )])),
             );
             author_variant_shader(data, &variant_path, &variant.overrides, graph_tier)?;
@@ -738,6 +739,27 @@ fn write_usdz(
     include_provenance_mirror: bool,
 ) -> Result<Vec<u8>, ExportError> {
     let stage = TextWriter::write_to_string(data).map_err(|error| encode_error(error.to_string()))?;
+    let entries = collect_usd_assets(materials, include_provenance_mirror)?;
+    let cursor = Cursor::new(Vec::new());
+    let mut archive = ArchiveWriter::new(cursor);
+    archive
+        .add_layer(ROOT_LAYER_USDA, stage.as_bytes())
+        .map_err(|error| encode_error(error.to_string()))?;
+    for (name, bytes) in entries {
+        archive
+            .add_layer(&name, &bytes)
+            .map_err(|error| encode_error(error.to_string()))?;
+    }
+    archive
+        .finish()
+        .map(Cursor::into_inner)
+        .map_err(|error| encode_error(error.to_string()))
+}
+
+fn collect_usd_assets(
+    materials: &[Material],
+    include_provenance_mirror: bool,
+) -> Result<BTreeMap<String, Vec<u8>>, ExportError> {
     let mut entries = BTreeMap::<String, Vec<u8>>::new();
     let mut packaged_hashes = BTreeSet::new();
     for material in materials {
@@ -801,20 +823,7 @@ fn write_usdz(
         entries.insert(PROVENANCE_ENTRY.into(), provenance_mirror(materials)?);
     }
 
-    let cursor = Cursor::new(Vec::new());
-    let mut archive = ArchiveWriter::new(cursor);
-    archive
-        .add_layer(ROOT_LAYER_USDA, stage.as_bytes())
-        .map_err(|error| encode_error(error.to_string()))?;
-    for (name, bytes) in entries {
-        archive
-            .add_layer(&name, &bytes)
-            .map_err(|error| encode_error(error.to_string()))?;
-    }
-    archive
-        .finish()
-        .map(Cursor::into_inner)
-        .map_err(|error| encode_error(error.to_string()))
+    Ok(entries)
 }
 
 fn import_usdz(bytes: &[u8], options: &UsdImportOptions) -> Result<Vec<Material>, ImportError> {
@@ -865,6 +874,10 @@ fn import_usdz(bytes: &[u8], options: &UsdImportOptions) -> Result<Vec<Material>
         let mut contents = Vec::with_capacity(usize::try_from(file.size()).unwrap_or(0));
         file.read_to_end(&mut contents)
             .map_err(|error| invalid_usd(format!("could not read `{name}`: {error}")))?;
+        if index == 0 && !contents.starts_with(USDC_MAGIC) {
+            let text = std::str::from_utf8(&contents).map_err(|e| invalid_usd(e.to_string()))?;
+            scene::preflight::guard_text_nesting(text, 256).map_err(|e| invalid_usd(e.to_string()))?;
+        }
         if entries.insert(name.clone(), contents).is_some() {
             return Err(invalid_usd(format!("duplicate package entry `{name}`")));
         }
@@ -895,7 +908,7 @@ fn provenance_mirror(materials: &[Material]) -> Result<Vec<u8>, ExportError> {
     let mut data = sdf::Data::new();
     data.create_spec(Path::abs_root(), SpecType::PseudoRoot).add(
         FieldKey::CustomLayerData,
-        UsdValue::Dictionary(HashMap::from([("olsyn_provenance".into(), UsdValue::String(json))])),
+        UsdValue::Dictionary(HashMap::from([("olsyn_provenance".into(), manifest_json_value(&json))])),
     );
     TextWriter::write_to_string(&data)
         .map(String::into_bytes)
@@ -919,6 +932,7 @@ fn import_layer(bytes: &[u8], options: &UsdImportOptions) -> Result<Vec<Material
         })
     } else {
         let text = std::str::from_utf8(bytes).map_err(|error| invalid_usd(error.to_string()))?;
+        scene::preflight::guard_text_nesting(text, 256).map_err(|e| invalid_usd(e.to_string()))?;
         let data = openusd::usda::parse(text).map_err(|error| invalid_usd(error.to_string()))?;
         manifest_from_layer(&data).or_else(|error| match error {
             ImportError::Missing(_) if options.allow_partial_graph => generic_materials_from_layer(&data),
@@ -940,10 +954,10 @@ fn manifest_from_layer(data: &dyn AbstractData) -> Result<Vec<Material>, ImportE
     let UsdValue::Dictionary(dictionary) = value.as_ref() else {
         return Err(ImportError::Missing("customLayerData".into()));
     };
-    let Some(UsdValue::String(json)) = dictionary.get("olsyn_manifestJson") else {
+    let Some(json) = dictionary.get("olsyn_manifestJson").and_then(manifest_json_text) else {
         return Err(ImportError::Missing("customLayerData[olsyn_manifestJson]".into()));
     };
-    let manifest: Manifest = serde_json::from_str(json).map_err(|error| invalid_usd(error.to_string()))?;
+    let manifest: Manifest = serde_json::from_str(&json).map_err(|error| invalid_usd(error.to_string()))?;
     if manifest.schema_version != MANIFEST_VERSION {
         return Err(ImportError::Unsupported(format!(
             "manifest schema version {}",
@@ -1262,6 +1276,8 @@ fn validate_entry_name(name: &str) -> Result<(), ImportError> {
         || name.starts_with('/')
         || name.ends_with('/')
         || name.contains('\\')
+        || name.contains(':')
+        || name.chars().any(char::is_control)
         || name
             .split('/')
             .any(|segment| segment.is_empty() || segment == "." || segment == "..")
@@ -1365,6 +1381,34 @@ fn invalid_usd(error: impl std::fmt::Display) -> ImportError {
     ImportError::Invalid {
         format: "USD",
         detail: error.to_string(),
+    }
+}
+
+/// Large escaped JSON strings trigger recursive lexing in openusd 0.7 debug and
+/// WASM builds. Keep small legacy strings; split larger JSON into short UTF-8
+/// string-array chunks. Both encodings represent the same manifest JSON bytes.
+fn manifest_json_value(json: &str) -> UsdValue {
+    if json.len() <= 4096 && json.bytes().filter(|b| matches!(b, b'"' | b'\\')).count() <= 256 {
+        return UsdValue::String(json.into());
+    }
+    let mut chunks = Vec::new();
+    let mut current = String::new();
+    for c in json.chars() {
+        if current.len() + c.len_utf8() > 256 {
+            chunks.push(std::mem::take(&mut current));
+        }
+        current.push(c);
+    }
+    if !current.is_empty() {
+        chunks.push(current);
+    }
+    UsdValue::StringVec(chunks)
+}
+fn manifest_json_text(value: &UsdValue) -> Option<String> {
+    match value {
+        UsdValue::String(value) => Some(value.clone()),
+        UsdValue::StringVec(chunks) => Some(chunks.concat()),
+        _ => None,
     }
 }
 

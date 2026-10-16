@@ -1,4 +1,5 @@
 //! Filesystem boundary for server workers, scripts, and CI.
+mod model;
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -40,6 +41,8 @@ struct Cli {
 
 #[derive(Debug, Subcommand)]
 enum Command {
+    /// Inspect, validate, package, convert and edit static models.
+    Model(model::ModelArgs),
     /// Build a self-contained USDZ from a staged texture manifest.
     Build(BuildArgs),
     /// Inspect neutral materials without dumping texture byte arrays.
@@ -397,6 +400,7 @@ fn main() -> ExitCode {
     }
     let cli = Cli::parse();
     let result = match cli.command {
+        Command::Model(args) => model::run(args).map_err(|e| BuildError::Unsupported(e.to_string())),
         Command::Build(args) => build(&args),
         Command::Inspect(args) => inspect_command(&args),
         Command::Audit(args) => audit_command(&args),

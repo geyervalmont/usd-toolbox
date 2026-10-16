@@ -1,0 +1,79 @@
+#usda 1.0
+(
+    defaultPrim = "Product"
+    metersPerUnit = 1
+    upAxis = "Y"
+    documentation = "Original toolbox conformance fixture: metadata and static authored USD semantics."
+    customLayerData = {
+        string exporter = "usd-toolbox-conformance"
+        int version = 1
+    }
+)
+
+def Xform "Product" (
+    kind = "component"
+    assetInfo = { string name = "椅子 — Chair" }
+    customData = {
+        string manufacturer = "Example Furniture"
+        uint64 productId = 18446744073709551615
+        int64 negativeId = -9223372036854775808
+        dictionary catalogue = {
+            token classification = "Furniture.Chair"
+            string[] tags = ["seat", "木材"]
+            int[] sizes = [1, 2, 3]
+        }
+    }
+    prepend apiSchemas = ["MaterialBindingAPI"]
+)
+{
+    rel material:binding = </Looks/Strong> ( bindMaterialAs = "strongerThanDescendants" )
+    color3f[] primvars:displayColor = [(0.25, 0.5, 0.75)] ( interpolation = "constant" )
+    custom string product:description = "A static metadata test"
+    custom uint64 product:serial = 9007199254740993
+    custom token[] product:classifications = ["furniture", "product"]
+    def Mesh "Surface" (prepend apiSchemas = ["MaterialBindingAPI"])
+    {
+        point3f[] points = [(0,0,0), (1,0,0), (1,1,0), (0,1,0)]
+        int[] faceVertexCounts = [4]
+        int[] faceVertexIndices = [0,1,2,3]
+        uniform token subdivisionScheme = "none"
+        rel material:binding = </Looks/Weak>
+    }
+    def Xform "Disabled" (active = false)
+    {
+        def Camera "IgnoredCamera" {}
+        def Mesh "IgnoredMesh" {}
+    }
+}
+
+def Scope "Looks"
+{
+    def Material "Strong"
+    {
+        color3f inputs:color = (0.8,0.2,0.1)
+        float inputs:roughness = 0.4
+        token outputs:surface.connect = </Looks/Strong/Interface.outputs:surface>
+        def NodeGraph "Interface"
+        {
+            color3f inputs:color.connect = </Looks/Strong.inputs:color>
+            token outputs:surface.connect = </Looks/Strong/Surface.outputs:surface>
+        }
+        def Shader "Surface"
+        {
+            uniform token info:id = "UsdPreviewSurface"
+            color3f inputs:diffuseColor.connect = </Looks/Strong/Interface.inputs:color>
+            float inputs:roughness.connect = </Looks/Strong.inputs:roughness>
+            token outputs:surface
+        }
+    }
+    def Material "Weak"
+    {
+        token outputs:surface.connect = </Looks/Weak/Surface.outputs:surface>
+        def Shader "Surface"
+        {
+            uniform token info:id = "UsdPreviewSurface"
+            color3f inputs:diffuseColor = (0, 0, 1)
+            token outputs:surface
+        }
+    }
+}

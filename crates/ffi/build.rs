@@ -1,6 +1,8 @@
 fn main() {
     let crate_dir = std::env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR");
     println!("cargo:rerun-if-changed=src/lib.rs");
+    println!("cargo:rerun-if-changed=src/models.rs");
+    println!("cargo:rerun-if-changed=src/documents.rs");
     println!("cargo:rerun-if-changed=cbindgen.toml");
     cbindgen::Builder::new()
         .with_crate(&crate_dir)

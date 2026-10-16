@@ -32,6 +32,10 @@ jobs:
           -p usd-toolbox-gltf
           -p usd-toolbox-wasm
           --target wasm32-unknown-unknown
+      - name: Check minimal model-only browser build
+        run: cargo check -p usd-toolbox-wasm --no-default-features --target wasm32-unknown-unknown
+      - name: Compile and execute a C consumer
+        run: python scripts/test_c_api.py target/debug/libusd_toolbox_ffi.so
 
   reference-formats:
     runs-on: ubuntu-latest
@@ -55,11 +59,45 @@ jobs:
           cargo run -q -p usd-toolbox-materialx --example write_pbr_fixture -- "$RUNNER_TEMP/pbr"
           cargo run -q -p usd-toolbox-cli -- export --input fixtures/materialx/procedural.mtlx --target usdz --output "$RUNNER_TEMP/procedural.usdz"
           cargo run -q -p usd-toolbox-gltf --example write_glb_fixture -- "$RUNNER_TEMP/material.glb"
+          cargo run -q -p usd-toolbox-cli -- model pack --input fixtures/models/panels.usda --output "$RUNNER_TEMP/model.usdz" --report "$RUNNER_TEMP/model.json"
+          cargo run -q -p usd-toolbox-cli -- model export --input "$RUNNER_TEMP/model.usdz" --target glb --output "$RUNNER_TEMP/model.glb"
+          cargo run -q -p usd-toolbox-cli -- model pack --input fixtures/models/transforms.usda --output "$RUNNER_TEMP/transforms.usdz"
+          cargo run -q -p usd-toolbox-cli -- model pack --input fixtures/models/desk.usda --output "$RUNNER_TEMP/desk.usdz"
+          cargo run -q -p usd-toolbox-cli -- model export --input "$RUNNER_TEMP/desk.usdz" --target glb --output "$RUNNER_TEMP/desk.glb"
       - name: Validate USDZ with OpenUSD
         run: |
           python scripts/validate_usdz.py "$RUNNER_TEMP/material.usdz"
           python scripts/validate_usdz.py "$RUNNER_TEMP/pbr/material.usdz"
           python scripts/validate_usdz.py "$RUNNER_TEMP/procedural.usdz"
+          python scripts/validate_usdz.py "$RUNNER_TEMP/model.usdz"
+          python scripts/validate_model.py "$RUNNER_TEMP/model.usdz"
+          python scripts/validate_transform_model.py "$RUNNER_TEMP/transforms.usdz"
+          python scripts/validate_usdz.py "$RUNNER_TEMP/desk.usdz"
+      - name: Validate optional native composition adapter
+        env:
+          USD_TOOLBOX_BIN: ${{ github.workspace }}/target/debug/usd-toolbox
+        run: python scripts/test_normalize_usd.py -v
+      - name: Install isolated full MaterialX-enabled OpenUSD reference
+        run: |
+          mkdir -p "$RUNNER_TEMP/full-registry"
+          docker run --rm -v "$PWD/scripts:/scripts:ro" -v "$RUNNER_TEMP/full-registry:/reference" \
+            python@sha256:2f17fc044b579bab302c2e8054d3a686e2cb9a83de48e70534b94cd8ebbe06a9 \
+            python -m pip install --no-cache-dir --no-deps --only-binary=:all: --require-hashes \
+            --target /reference/runtime -r /scripts/reference-registry-requirements.txt
+      - name: Validate all exports with full native shader registry
+        run: |
+          docker run --rm -v "$PWD/scripts:/scripts:ro" -v "$RUNNER_TEMP:/reference" \
+            -e PYTHONPATH=/reference/full-registry/runtime \
+            -e PXR_MTLX_STDLIB_SEARCH_PATHS=/reference/full-registry/runtime/MaterialX/libraries \
+            python@sha256:2f17fc044b579bab302c2e8054d3a686e2cb9a83de48e70534b94cd8ebbe06a9 \
+            python /scripts/validate_usd_full_registry.py --report /reference/full-registry-report.json \
+            /reference/material.usdz /reference/pbr/material.usdz /reference/procedural.usdz \
+            /reference/model.usdz /reference/desk.usdz /reference/transforms.usdz
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: full-shader-registry-evidence
+          path: ${{ runner.temp }}/full-registry-report.json
       - name: Validate MaterialX with reference bindings
         run: |
           python scripts/validate_materialx.py "$RUNNER_TEMP/material.mtlx"
@@ -68,4 +106,50 @@ jobs:
       - name: Validate GLB with Khronos validator
         env:
           NODE_PATH: ${{ runner.temp }}/gltf-validator/node_modules
-        run: node scripts/validate_gltf.cjs "$RUNNER_TEMP/material.glb"
+        run: |
+          node scripts/validate_gltf.cjs "$RUNNER_TEMP/material.glb"
+          node scripts/validate_gltf.cjs "$RUNNER_TEMP/model.glb"
+          node scripts/validate_gltf.cjs "$RUNNER_TEMP/desk.glb"
+      - name: Verify native and WASM model parity
+        run: |
+          rustup target add wasm32-unknown-unknown
+          cargo install wasm-bindgen-cli --version 0.2.128 --locked
+          cargo build -p usd-toolbox-wasm --target wasm32-unknown-unknown
+          wasm-bindgen --target nodejs --out-dir "$RUNNER_TEMP/model-wasm" target/wasm32-unknown-unknown/debug/usd_toolbox_wasm.wasm
+          node scripts/validate_model_wasm.cjs "$RUNNER_TEMP/model-wasm/usd_toolbox_wasm.js" "$RUNNER_TEMP/model.usdz" "$RUNNER_TEMP/model.glb"
+
+  browser:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+      - name: Install pinned browser and package tools
+        run: |
+          cargo install wasm-bindgen-cli --version 0.2.128 --locked
+          npm install --prefix "$RUNNER_TEMP/web-tools" --no-save --silent playwright@1.64.1 vite@7.3.1 typescript@5.9.3
+          "$RUNNER_TEMP/web-tools/node_modules/.bin/playwright" install --with-deps chromium firefox webkit
+      - name: Build typed model package
+        run: |
+          python scripts/build_web_package.py
+          node --test packages/web/test/client.test.mjs
+          "$RUNNER_TEMP/web-tools/node_modules/.bin/tsc" --noEmit --strict --target es2022 --module nodenext --lib es2022,dom packages/web/test/types.ts
+      - name: Exercise real engines and bundler URLs
+        env:
+          PLAYWRIGHT_MODULE: ${{ runner.temp }}/web-tools/node_modules/playwright
+          VITE_CLI: ${{ runner.temp }}/web-tools/node_modules/vite/bin/vite.js
+          BROWSERS: chromium,firefox,webkit
+          WEB_REPORT: target/browser-report.json
+        run: |
+          node scripts/test_web_package.mjs
+          node scripts/test_vite_package.mjs
+      - uses: actions/upload-artifact@v7
+        with:
+          name: browser-evidence
+          path: |
+            target/browser-report.json
+            target/web-package/build-report.json

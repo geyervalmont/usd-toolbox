@@ -5,6 +5,10 @@
 //! allocation entry points return `UsdToolboxBuffer` values which must be released by
 //! `usd_toolbox_buffer_free`. Inputs and structured outputs use UTF-8 JSON; binary
 //! target documents remain raw bytes.
+mod models;
+pub use models::*;
+mod documents;
+pub use documents::*;
 
 use std::cell::RefCell;
 use std::panic::{AssertUnwindSafe, catch_unwind};
@@ -917,10 +921,10 @@ struct FfiError {
 }
 
 impl FfiError {
-    fn invalid(message: impl Into<String>) -> Self {
+    fn invalid(message: impl std::fmt::Display) -> Self {
         Self {
             status: USD_TOOLBOX_STATUS_INVALID_ARGUMENT,
-            message: message.into(),
+            message: message.to_string(),
         }
     }
 

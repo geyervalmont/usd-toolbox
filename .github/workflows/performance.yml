@@ -1,0 +1,59 @@
+name: Model performance evidence
+
+on:
+  pull_request:
+    paths:
+      - 'crates/core/**'
+      - 'crates/usd/**'
+      - 'crates/gltf/**'
+      - 'scripts/benchmark_queries.py'
+      - 'docs/performance-baseline.json'
+      - 'Cargo.lock'
+      - '.github/workflows/performance.yml'
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: Runner label; use a controlled matching host to enforce timings
+        required: true
+        default: ubuntu-latest
+        type: string
+      enforce_timing:
+        description: Fail >3x timing/RSS regressions; requires exact baseline host/toolchain/affinity
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  measurements:
+    runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: '1.98.0'
+      - uses: Swatinem/rust-cache@v2
+      - name: Build current portable CLI and instrumented examples
+        run: cargo build --locked --release -p usd-toolbox-cli -p usd-toolbox-core --examples --bins
+      - name: Measure deterministic allocation/copy/lifecycle gates and advisory timings
+        env:
+          ENFORCE_TIMING: ${{ inputs.enforce_timing || 'false' }}
+        run: |
+          extra=()
+          if [ "$ENFORCE_TIMING" = "true" ]; then extra+=(--enforce-timing); fi
+          python3 scripts/benchmark_queries.py --skip-build --output performance-results \
+            --toolbox target/release/usd-toolbox --baseline docs/performance-baseline.json "${extra[@]}"
+      - name: Retain measurements and exact benchmark executables
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-performance-${{ github.sha }}
+          path: |
+            performance-results/
+            target/release/examples/document_benchmark
+            target/release/examples/geometry_benchmark
+            target/release/usd-toolbox
+          retention-days: 30
