@@ -5,8 +5,10 @@ import hashlib
 import json
 from pathlib import Path
 import shutil
+import subprocess
 import tomllib
 from dependency_notices import collect
+from native_support import musl_unwind_library
 
 ROOT = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser(description=__doc__)
@@ -37,6 +39,22 @@ for directory in ['crates/gltf', 'packages/web']:
     for source in (ROOT / directory).glob('*.md'):
         shutil.copyfile(source, destination / source.name)
 collect(package / 'THIRD_PARTY_NOTICES')
+if 'musl' in args.target:
+    unwind = musl_unwind_library(args.target)
+    shutil.copyfile(unwind, package / 'libunwind.a')
+    notices = package / 'THIRD_PARTY_NOTICES' / 'llvm-libunwind'
+    notices.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(ROOT / 'scripts/licenses/llvm-libunwind/LICENSE.TXT',
+                    notices / 'LICENSE.TXT')
+    (notices / 'provenance.json').write_text(json.dumps({
+        'component': 'LLVM libunwind, distributed in Rust rust-std',
+        'target': args.target,
+        'toolchain': subprocess.check_output(['rustc', '-Vv'], text=True).strip(),
+        'source_component': f'rust-std-{args.target}/lib/self-contained/libunwind.a',
+        'sha256': hashlib.sha256(unwind.read_bytes()).hexdigest(),
+        'license_source': 'https://github.com/llvm/llvm-project/tree/llvmorg-22.1.8/libunwind',
+        'link_order': 'libusd_toolbox_ffi.a libunwind.a -ldl -lpthread -lm',
+    }, indent=2) + '\n')
 (package / 'release.json').write_text(json.dumps({'schema': 'usd-toolbox.release.v1', 'version': version,
     'target': args.target, 'distribution': 'project distribution licence is not declared'}, indent=2) + '\n')
 (package / 'SHA256SUMS').write_text(''.join(
